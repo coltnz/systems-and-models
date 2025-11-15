@@ -4,13 +4,16 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CreateSystemDialog } from '@/components/CreateSystemDialog'
 import { CreateModelDialog } from '@/components/CreateModelDialog'
+import { CreateProvenanceDialog } from '@/components/CreateProvenanceDialog'
 import { getSystems } from '@/lib/db/systems'
 import { getModels } from '@/lib/db/models'
-import type { System, Model } from '@/types'
+import { getProvenance } from '@/lib/db/provenance'
+import type { System, Model, Provenance } from '@/types'
 
 export function Home() {
   const [systems, setSystems] = useState<System[]>([])
   const [models, setModels] = useState<Model[]>([])
+  const [provenance, setProvenance] = useState<Provenance[]>([])
 
   useEffect(() => {
     loadData()
@@ -20,8 +23,10 @@ export function Home() {
     try {
       const allSystems = getSystems()
       const allModels = getModels()
+      const allProvenance = getProvenance()
       setSystems(allSystems)
       setModels(allModels)
+      setProvenance(allProvenance)
     } catch (error) {
       console.error('Error loading data:', error)
     }
@@ -39,7 +44,7 @@ export function Home() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* Systems Section */}
           <div>
             <div className="flex items-center justify-between mb-4">
@@ -138,6 +143,60 @@ export function Home() {
                         <span className="px-2 py-1 bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 text-xs rounded">
                           {model.type}
                         </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Provenance Section */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-semibold">Provenance</h2>
+              <CreateProvenanceDialog onProvenanceCreated={loadData}>
+                <Button size="sm">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Why
+                </Button>
+              </CreateProvenanceDialog>
+            </div>
+
+            <div className="space-y-4">
+              {provenance.length === 0 ? (
+                <Card>
+                  <CardContent className="pt-6">
+                    <p className="text-center text-muted-foreground">
+                      No provenance yet. Add evidence, theories, or quotes!
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                provenance.map((prov) => (
+                  <Card key={prov.id} className="hover:shadow-md transition-shadow cursor-pointer">
+                    <CardHeader>
+                      <CardTitle className="text-lg">{prov.title}</CardTitle>
+                      <CardDescription>{prov.source}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex gap-2 flex-wrap">
+                        {prov.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="px-2 py-1 bg-secondary text-secondary-foreground text-xs rounded"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                        <span className="px-2 py-1 bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200 text-xs rounded">
+                          {prov.type}
+                        </span>
+                        {prov.credibility_score && (
+                          <span className="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-xs rounded">
+                            {prov.credibility_score}% credible
+                          </span>
+                        )}
                       </div>
                     </CardContent>
                   </Card>

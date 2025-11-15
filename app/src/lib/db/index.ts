@@ -1,5 +1,5 @@
 import initSqlJs, { Database } from 'sql.js'
-import type { System, Model, Relationship, Event, EvolutionNote } from '@/types'
+import type { System, Model, Provenance, Relationship, Event, EvolutionNote } from '@/types'
 
 let dbInstance: Database | null = null
 
@@ -33,6 +33,23 @@ const SCHEMA = `
     updated_by TEXT
   );
 
+  CREATE TABLE IF NOT EXISTS provenance (
+    id TEXT PRIMARY KEY,
+    type TEXT NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT,
+    content TEXT,
+    source TEXT NOT NULL,
+    source_url TEXT,
+    credibility_score INTEGER,
+    tags TEXT,
+    version INTEGER NOT NULL DEFAULT 1,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    created_by TEXT,
+    updated_by TEXT
+  );
+
   CREATE TABLE IF NOT EXISTS relationships (
     id TEXT PRIMARY KEY,
     from_type TEXT NOT NULL,
@@ -40,6 +57,7 @@ const SCHEMA = `
     to_type TEXT NOT NULL,
     to_id TEXT NOT NULL,
     relationship_type TEXT NOT NULL,
+    strength INTEGER,
     metadata TEXT,
     created_at INTEGER NOT NULL,
     UNIQUE(from_type, from_id, to_type, to_id, relationship_type)
@@ -67,6 +85,7 @@ const SCHEMA = `
 
   CREATE INDEX IF NOT EXISTS idx_systems_updated ON systems(updated_at DESC);
   CREATE INDEX IF NOT EXISTS idx_models_updated ON models(updated_at DESC);
+  CREATE INDEX IF NOT EXISTS idx_provenance_updated ON provenance(updated_at DESC);
   CREATE INDEX IF NOT EXISTS idx_relationships_from ON relationships(from_type, from_id);
   CREATE INDEX IF NOT EXISTS idx_relationships_to ON relationships(to_type, to_id);
   CREATE INDEX IF NOT EXISTS idx_events_entity ON events(entity_type, entity_id, created_at DESC);
