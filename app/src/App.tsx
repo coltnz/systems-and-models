@@ -1,10 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Home } from './pages/Home'
+import { Graph } from './pages/Graph'
+import { Button } from './components/ui/button'
+import { List, Network } from 'lucide-react'
 import { initDatabase } from './lib/db'
+
+type View = 'home' | 'graph'
 
 function App() {
   const [dbInitialized, setDbInitialized] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [currentView, setCurrentView] = useState<View>('home')
 
   useEffect(() => {
     initDatabase()
@@ -40,7 +46,35 @@ function App() {
     )
   }
 
-  return <Home />
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Navigation Bar */}
+      <nav className="border-b bg-card">
+        <div className="container mx-auto px-4 py-3 flex gap-2">
+          <Button
+            variant={currentView === 'home' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setCurrentView('home')}
+          >
+            <List className="w-4 h-4 mr-2" />
+            List View
+          </Button>
+          <Button
+            variant={currentView === 'graph' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setCurrentView('graph')}
+          >
+            <Network className="w-4 h-4 mr-2" />
+            Graph View
+          </Button>
+        </div>
+      </nav>
+
+      {/* Content */}
+      {currentView === 'home' && <Home />}
+      {currentView === 'graph' && <Graph />}
+    </div>
+  )
 }
 
 export default App

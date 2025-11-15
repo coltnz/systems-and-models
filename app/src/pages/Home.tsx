@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, Link2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { CreateSystemDialog } from '@/components/CreateSystemDialog'
 import { CreateModelDialog } from '@/components/CreateModelDialog'
 import { CreateProvenanceDialog } from '@/components/CreateProvenanceDialog'
+import { LinkEntityDialog } from '@/components/LinkEntityDialog'
 import { getSystems } from '@/lib/db/systems'
 import { getModels } from '@/lib/db/models'
 import { getProvenance } from '@/lib/db/provenance'
@@ -33,8 +34,8 @@ export function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
+    <div>
+      <header className="border-b bg-background">
         <div className="container mx-auto px-4 py-4">
           <h1 className="text-3xl font-bold">Systems & Models</h1>
           <p className="text-muted-foreground mt-1">
@@ -68,7 +69,7 @@ export function Home() {
                 </Card>
               ) : (
                 systems.map((system) => (
-                  <Card key={system.id} className="hover:shadow-md transition-shadow cursor-pointer">
+                  <Card key={system.id} className="hover:shadow-md transition-shadow">
                     <CardHeader>
                       <CardTitle className="text-lg">{system.title}</CardTitle>
                       <CardDescription>{system.description}</CardDescription>
@@ -96,6 +97,19 @@ export function Home() {
                         </span>
                       </div>
                     </CardContent>
+                    <CardFooter>
+                      <LinkEntityDialog
+                        fromType="system"
+                        fromId={system.id}
+                        fromTitle={system.title}
+                        onRelationshipCreated={loadData}
+                      >
+                        <Button variant="outline" size="sm" className="w-full">
+                          <Link2 className="w-3 h-3 mr-2" />
+                          Link
+                        </Button>
+                      </LinkEntityDialog>
+                    </CardFooter>
                   </Card>
                 ))
               )}
@@ -125,7 +139,7 @@ export function Home() {
                 </Card>
               ) : (
                 models.map((model) => (
-                  <Card key={model.id} className="hover:shadow-md transition-shadow cursor-pointer">
+                  <Card key={model.id} className="hover:shadow-md transition-shadow">
                     <CardHeader>
                       <CardTitle className="text-lg">{model.title}</CardTitle>
                       <CardDescription>{model.description}</CardDescription>
@@ -145,6 +159,19 @@ export function Home() {
                         </span>
                       </div>
                     </CardContent>
+                    <CardFooter>
+                      <LinkEntityDialog
+                        fromType="model"
+                        fromId={model.id}
+                        fromTitle={model.title}
+                        onRelationshipCreated={loadData}
+                      >
+                        <Button variant="outline" size="sm" className="w-full">
+                          <Link2 className="w-3 h-3 mr-2" />
+                          Link
+                        </Button>
+                      </LinkEntityDialog>
+                    </CardFooter>
                   </Card>
                 ))
               )}
@@ -174,7 +201,7 @@ export function Home() {
                 </Card>
               ) : (
                 provenance.map((prov) => (
-                  <Card key={prov.id} className="hover:shadow-md transition-shadow cursor-pointer">
+                  <Card key={prov.id} className="hover:shadow-md transition-shadow">
                     <CardHeader>
                       <CardTitle className="text-lg">{prov.title}</CardTitle>
                       <CardDescription>{prov.source}</CardDescription>
@@ -199,6 +226,19 @@ export function Home() {
                         )}
                       </div>
                     </CardContent>
+                    <CardFooter>
+                      <LinkEntityDialog
+                        fromType="provenance"
+                        fromId={prov.id}
+                        fromTitle={prov.title}
+                        onRelationshipCreated={loadData}
+                      >
+                        <Button variant="outline" size="sm" className="w-full">
+                          <Link2 className="w-3 h-3 mr-2" />
+                          Link
+                        </Button>
+                      </LinkEntityDialog>
+                    </CardFooter>
                   </Card>
                 ))
               )}
