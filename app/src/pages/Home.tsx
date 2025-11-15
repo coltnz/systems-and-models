@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Plus, Link2 } from 'lucide-react'
+import { Plus, Link2, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { CreateSystemDialog } from '@/components/CreateSystemDialog'
 import { CreateModelDialog } from '@/components/CreateModelDialog'
@@ -9,12 +10,14 @@ import { LinkEntityDialog } from '@/components/LinkEntityDialog'
 import { getSystems } from '@/lib/db/systems'
 import { getModels } from '@/lib/db/models'
 import { getProvenance } from '@/lib/db/provenance'
+import { searchEntities } from '@/lib/search'
 import type { System, Model, Provenance } from '@/types'
 
 export function Home() {
-  const [systems, setSystems] = useState<System[]>([])
-  const [models, setModels] = useState<Model[]>([])
-  const [provenance, setProvenance] = useState<Provenance[]>([])
+  const [allSystems, setAllSystems] = useState<System[]>([])
+  const [allModels, setAllModels] = useState<Model[]>([])
+  const [allProvenance, setAllProvenance] = useState<Provenance[]>([])
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     loadData()
@@ -22,16 +25,37 @@ export function Home() {
 
   const loadData = () => {
     try {
-      const allSystems = getSystems()
-      const allModels = getModels()
-      const allProvenance = getProvenance()
-      setSystems(allSystems)
-      setModels(allModels)
-      setProvenance(allProvenance)
+      setAllSystems(getSystems())
+      setAllModels(getModels())
+      setAllProvenance(getProvenance())
     } catch (error) {
       console.error('Error loading data:', error)
     }
   }
+
+  // Filter entities based on search query
+  const getFilteredEntities = () => {
+    if (!searchQuery || searchQuery.trim().length === 0) {
+      return {
+        systems: allSystems,
+        models: allModels,
+        provenance: allProvenance
+      }
+    }
+
+    const results = searchEntities(searchQuery, allSystems, allModels, allProvenance)
+    const matchingIds = new Set(results.map(r => r.entity.id))
+
+    return {
+      systems: allSystems.filter(s => matchingIds.has(s.id)),
+      models: allModels.filter(m => matchingIds.has(m.id)),
+      provenance: allProvenance.filter(p => matchingIds.has(p.id))
+    }
+  }
+
+  const { systems, models, provenance } = getFilteredEntities()
+  const totalResults = systems.length + models.length + provenance.length
+  const isSearching = searchQuery.trim().length > 0
 
   return (
     <div>
@@ -41,6 +65,23 @@ export function Home() {
           <p className="text-muted-foreground mt-1">
             Knowledge for the AI future: What to do (systems), what to know (models), and why (provenance)
           </p>
+
+          {/* Search Bar */}
+          <div className="mt-4 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search systems, models, and provenance..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+            {isSearching && (
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">
+                {totalResults} result{totalResults !== 1 ? 's' : ''}
+              </div>
+            )}
+          </div>
         </div>
       </header>
 

@@ -3,12 +3,14 @@ import CytoscapeComponent from 'react-cytoscapejs'
 import Cytoscape from 'cytoscape'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { ZoomIn, ZoomOut, Maximize2 } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { ZoomIn, ZoomOut, Maximize2, Search } from 'lucide-react'
 import { getSystems } from '@/lib/db/systems'
 import { getModels } from '@/lib/db/models'
 import { getProvenance } from '@/lib/db/provenance'
 import { getRelationships } from '@/lib/db/relationships'
 import { EditEntityDialog } from '@/components/EditEntityDialog'
+import { searchEntities } from '@/lib/search'
 import type { System, Model, Provenance, Relationship } from '@/types'
 
 // Zoom levels for semantic zoom
@@ -21,6 +23,7 @@ export function Graph() {
   const [relationships, setRelationships] = useState<Relationship[]>([])
   const [selectedNode, setSelectedNode] = useState<{ type: string; data: System | Model | Provenance } | null>(null)
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>(2)
+  const [searchQuery, setSearchQuery] = useState('')
   const [editDialog, setEditDialog] = useState<{
     open: boolean
     type: 'system' | 'model' | 'provenance'
@@ -60,6 +63,18 @@ export function Graph() {
     }
   }
 
+  // Get matching IDs from search
+  const getMatchingIds = (): Set<string> => {
+    if (!searchQuery || searchQuery.trim().length === 0) {
+      return new Set()
+    }
+    const results = searchEntities(searchQuery, systems, models, provenance)
+    return new Set(results.map(r => r.entity.id))
+  }
+
+  const matchingIds = getMatchingIds()
+  const isSearching = searchQuery.trim().length > 0
+
   // Build Cytoscape elements with progressive detail
   const elements: Cytoscape.ElementDefinition[] = [
     // System nodes
@@ -72,7 +87,8 @@ export function Graph() {
         type: 'system',
         status: system.status,
         fullData: system
-      }
+      },
+      classes: isSearching ? (matchingIds.has(system.id) ? 'matched' : 'dimmed') : ''
     })),
     // Model nodes
     ...models.map(model => ({
@@ -84,7 +100,8 @@ export function Graph() {
         type: 'model',
         modelType: model.type,
         fullData: model
-      }
+      },
+      classes: isSearching ? (matchingIds.has(model.id) ? 'matched' : 'dimmed') : ''
     })),
     // Provenance nodes
     ...provenance.map(prov => ({
@@ -96,7 +113,8 @@ export function Graph() {
         type: 'provenance',
         provType: prov.type,
         fullData: prov
-      }
+      },
+      classes: isSearching ? (matchingIds.has(prov.id) ? 'matched' : 'dimmed') : ''
     })),
     // Relationship edges
     ...relationships.map(rel => ({
@@ -211,6 +229,22 @@ export function Graph() {
           'border-width': '4px',
           'border-color': '#22c55e'
         }
+      },
+      // Matched nodes (search results)
+      {
+        selector: '.matched',
+        style: {
+          'border-width': '4px',
+          'border-color': '#eab308',
+          'box-shadow': '0 0 15px #eab308'
+        }
+      },
+      // Dimmed nodes (non-matches during search)
+      {
+        selector: '.dimmed',
+        style: {
+          'opacity': 0.3
+        }
       }
     ]
 
@@ -303,6 +337,23 @@ export function Graph() {
           <p className="text-muted-foreground mt-1">
             Visual representation of systems, models, and provenance
           </p>
+
+          {/* Search Bar */}
+          <div className="mt-4 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search and highlight nodes..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+            {isSearching && (
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">
+                {matchingIds.size} match{matchingIds.size !== 1 ? 'es' : ''}
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
