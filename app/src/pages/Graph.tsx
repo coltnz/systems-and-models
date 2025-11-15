@@ -8,6 +8,7 @@ import { getSystems } from '@/lib/db/systems'
 import { getModels } from '@/lib/db/models'
 import { getProvenance } from '@/lib/db/provenance'
 import { getRelationships } from '@/lib/db/relationships'
+import { EditEntityDialog } from '@/components/EditEntityDialog'
 import type { System, Model, Provenance, Relationship } from '@/types'
 
 // Zoom levels for semantic zoom
@@ -20,6 +21,11 @@ export function Graph() {
   const [relationships, setRelationships] = useState<Relationship[]>([])
   const [selectedNode, setSelectedNode] = useState<{ type: string; data: System | Model | Provenance } | null>(null)
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>(2)
+  const [editDialog, setEditDialog] = useState<{
+    open: boolean
+    type: 'system' | 'model' | 'provenance'
+    data: System | Model | Provenance
+  } | null>(null)
   const cyRef = useRef<Cytoscape.Core | null>(null)
 
   useEffect(() => {
@@ -246,6 +252,27 @@ export function Graph() {
     })
   }
 
+  const handleNodeDoubleTap = (event: Cytoscape.EventObject) => {
+    const node = event.target
+    const nodeData = node.data()
+
+    // Open edit dialog on double-click
+    setEditDialog({
+      open: true,
+      type: nodeData.type,
+      data: nodeData.fullData
+    })
+  }
+
+  const handleCloseEditDialog = () => {
+    setEditDialog(null)
+  }
+
+  const handleEntityUpdated = () => {
+    // Reload data after edit
+    loadData()
+  }
+
   const handleZoomIn = () => {
     if (cyRef.current) {
       cyRef.current.zoom(cyRef.current.zoom() * 1.2)
@@ -327,6 +354,7 @@ export function Graph() {
                     cy={(cy) => {
                       cyRef.current = cy
                       cy.on('tap', 'node', handleNodeTap)
+                      cy.on('dbltap', 'node', handleNodeDoubleTap)
                       // Listen for zoom events
                       cy.on('zoom', () => handleZoomChange(cy))
                       // Set initial zoom level
@@ -435,6 +463,17 @@ export function Graph() {
           </div>
         </div>
       </main>
+
+      {/* Edit Entity Dialog */}
+      {editDialog && (
+        <EditEntityDialog
+          open={editDialog.open}
+          onClose={handleCloseEditDialog}
+          entityType={editDialog.type}
+          entityData={editDialog.data}
+          onEntityUpdated={handleEntityUpdated}
+        />
+      )}
     </div>
   )
 }
