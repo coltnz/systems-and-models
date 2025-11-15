@@ -33,7 +33,7 @@ export function Home() {
         <div className="container mx-auto px-4 py-4">
           <h1 className="text-3xl font-bold">Systems & Models</h1>
           <p className="text-muted-foreground mt-1">
-            Track your practical knowledge systematically
+            Knowledge for the AI future: What to do (systems), what to know (models), and why (provenance)
           </p>
         </div>
       </header>
