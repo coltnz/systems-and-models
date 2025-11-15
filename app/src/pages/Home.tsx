@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { Plus, Link2, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -19,11 +19,7 @@ export function Home() {
   const [allProvenance, setAllProvenance] = useState<Provenance[]>([])
   const [searchQuery, setSearchQuery] = useState('')
 
-  useEffect(() => {
-    loadData()
-  }, [])
-
-  const loadData = () => {
+  const loadData = useCallback(() => {
     try {
       setAllSystems(getSystems())
       setAllModels(getModels())
@@ -31,10 +27,14 @@ export function Home() {
     } catch (error) {
       console.error('Error loading data:', error)
     }
-  }
+  }, [])
 
-  // Filter entities based on search query
-  const getFilteredEntities = () => {
+  useEffect(() => {
+    loadData()
+  }, [loadData])
+
+  // Memoize filtered entities - only recompute when data or search changes
+  const filteredEntities = useMemo(() => {
     if (!searchQuery || searchQuery.trim().length === 0) {
       return {
         systems: allSystems,
@@ -51,10 +51,10 @@ export function Home() {
       models: allModels.filter(m => matchingIds.has(m.id)),
       provenance: allProvenance.filter(p => matchingIds.has(p.id))
     }
-  }
+  }, [searchQuery, allSystems, allModels, allProvenance])
 
-  const { systems, models, provenance } = getFilteredEntities()
-  const totalResults = systems.length + models.length + provenance.length
+  const { systems, models, provenance } = filteredEntities
+  const totalResults = useMemo(() => systems.length + models.length + provenance.length, [systems, models, provenance])
   const isSearching = searchQuery.trim().length > 0
 
   return (
