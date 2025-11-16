@@ -111,9 +111,12 @@ export function Graph() {
         id: rel.id,
         source: rel.from_id,
         target: rel.to_id,
-        label: rel.relationship_type,
+        label: rel.tags.length > 0
+          ? `${rel.relationship_type} [${rel.tags.join(', ')}]`
+          : rel.relationship_type,
         relationshipType: rel.relationship_type,
-        strength: rel.strength
+        strength: rel.strength,
+        tags: rel.tags
       }
     }))
   ], [systems, models, provenance, relationships, isSearching, matchingIds])

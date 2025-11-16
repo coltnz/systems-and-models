@@ -1,5 +1,5 @@
 import type { Relationship } from '@/types'
-import { getDatabase, generateId, saveDatabaseToIndexedDB } from './index'
+import { getDatabase, generateId, serializeArray, deserializeArray, saveDatabaseToIndexedDB } from './index'
 
 export function createRelationship(relationship: Omit<Relationship, 'id' | 'created_at'>): Relationship {
   const db = getDatabase()
@@ -13,8 +13,8 @@ export function createRelationship(relationship: Omit<Relationship, 'id' | 'crea
   }
 
   db.run(
-    `INSERT INTO relationships (id, from_type, from_id, to_type, to_id, relationship_type, strength, metadata, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO relationships (id, from_type, from_id, to_type, to_id, relationship_type, strength, tags, metadata, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       newRelationship.id,
       newRelationship.from_type,
@@ -23,6 +23,7 @@ export function createRelationship(relationship: Omit<Relationship, 'id' | 'crea
       newRelationship.to_id,
       newRelationship.relationship_type,
       newRelationship.strength || null,
+      serializeArray(newRelationship.tags),
       newRelationship.metadata ? JSON.stringify(newRelationship.metadata) : null,
       newRelationship.created_at,
     ]
@@ -48,6 +49,7 @@ export function getRelationships(): Relationship[] {
       to_id: row.to_id as string,
       relationship_type: row.relationship_type as Relationship['relationship_type'],
       strength: row.strength as number | undefined,
+      tags: deserializeArray((row.tags as string) || ''),
       metadata: row.metadata ? JSON.parse(row.metadata as string) : undefined,
       created_at: row.created_at as number,
     })
@@ -78,6 +80,7 @@ export function getRelationshipsByEntity(entityType: Relationship['from_type'], 
       to_id: row.to_id as string,
       relationship_type: row.relationship_type as Relationship['relationship_type'],
       strength: row.strength as number | undefined,
+      tags: deserializeArray((row.tags as string) || ''),
       metadata: row.metadata ? JSON.parse(row.metadata as string) : undefined,
       created_at: row.created_at as number,
     })

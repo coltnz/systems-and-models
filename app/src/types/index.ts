@@ -52,6 +52,7 @@ export interface Relationship {
   to_id: string
   relationship_type: 'uses' | 'explains' | 'requires' | 'extends' | 'contradicts' | 'supports' | 'evidences'
   strength?: number
+  tags: string[]
   metadata?: Record<string, unknown>
   created_at: number
 }

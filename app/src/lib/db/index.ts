@@ -58,6 +58,7 @@ const SCHEMA = `
     to_id TEXT NOT NULL,
     relationship_type TEXT NOT NULL,
     strength INTEGER,
+    tags TEXT,
     metadata TEXT,
     created_at INTEGER NOT NULL,
     UNIQUE(from_type, from_id, to_type, to_id, relationship_type)
@@ -104,12 +105,31 @@ export async function initDatabase(): Promise<Database> {
 
   if (savedDb) {
     dbInstance = new SQL.Database(savedDb)
+    // Run migrations for existing databases
+    runMigrations(dbInstance)
   } else {
     dbInstance = new SQL.Database()
     dbInstance.run(SCHEMA)
   }
 
   return dbInstance
+}
+
+function runMigrations(db: Database): void {
+  // Check if tags column exists in relationships table
+  try {
+    const result = db.exec("PRAGMA table_info(relationships)")
+    if (result.length > 0) {
+      const columns = result[0].values.map(row => row[1] as string)
+      if (!columns.includes('tags')) {
+        // Add tags column if it doesn't exist
+        db.run("ALTER TABLE relationships ADD COLUMN tags TEXT")
+        console.log('Migration: Added tags column to relationships table')
+      }
+    }
+  } catch (error) {
+    console.error('Migration error:', error)
+  }
 }
 
 export function getDatabase(): Database {

@@ -37,11 +37,14 @@ export function LinkEntityDialog({
   const [toId, setToId] = useState('')
   const [relationshipType, setRelationshipType] = useState<Relationship['relationship_type']>('uses')
   const [strength, setStrength] = useState('')
+  const [tags, setTags] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!toId) return
+
+    const tagsArray = tags.split(',').map(t => t.trim()).filter(t => t.length > 0)
 
     createRelationship({
       from_type: fromType,
@@ -50,10 +53,12 @@ export function LinkEntityDialog({
       to_id: toId,
       relationship_type: relationshipType,
       strength: strength ? parseInt(strength, 10) : undefined,
+      tags: tagsArray,
     })
 
     setToId('')
     setStrength('')
+    setTags('')
     setOpen(false)
     onRelationshipCreated?.()
   }
@@ -165,6 +170,19 @@ export function LinkEntityDialog({
               />
               <p className="text-xs text-muted-foreground">
                 How strong is this relationship? Higher = stronger connection
+              </p>
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="tags">Tags (optional)</Label>
+              <Input
+                id="tags"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                placeholder="important, core, experimental"
+              />
+              <p className="text-xs text-muted-foreground">
+                Comma-separated tags to categorize this relationship
               </p>
             </div>
           </div>
