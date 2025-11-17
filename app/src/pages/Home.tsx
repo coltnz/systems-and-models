@@ -7,6 +7,7 @@ import { CreateSystemDialog } from '@/components/CreateSystemDialog'
 import { CreateModelDialog } from '@/components/CreateModelDialog'
 import { CreateProvenanceDialog } from '@/components/CreateProvenanceDialog'
 import { LinkEntityDialog } from '@/components/LinkEntityDialog'
+import { ImportDataDialog } from '@/components/ImportDataDialog'
 import { getSystems } from '@/lib/db/systems'
 import { getModels } from '@/lib/db/models'
 import { getProvenance } from '@/lib/db/provenance'
@@ -61,10 +62,15 @@ export function Home() {
     <div>
       <header className="border-b bg-background">
         <div className="container mx-auto px-4 py-4">
-          <h1 className="text-3xl font-bold">Systems & Models</h1>
-          <p className="text-muted-foreground mt-1">
-            Knowledge for the AI future: What to do (systems), what to know (models), and why (provenance)
-          </p>
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">Systems & Models</h1>
+              <p className="text-muted-foreground mt-1">
+                Knowledge for the AI future: What to do (systems), what to know (models), and why (provenance)
+              </p>
+            </div>
+            <ImportDataDialog onDataImported={loadData} />
+          </div>
 
           {/* Search Bar */}
           <div className="mt-4 relative">

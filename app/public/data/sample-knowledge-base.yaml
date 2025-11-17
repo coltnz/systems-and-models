@@ -1,0 +1,538 @@
+version: "1.0"
+metadata:
+  created: 2025-01-17
+  description: "Sample curated knowledge graph - foundational systems and models"
+  author: "Knowledge Graph Team"
+
+systems:
+  - id: system-structured-interviews
+    title: "Structured Interview Process"
+    description: "Standardized hiring methodology with consistent evaluation"
+    status: proven
+    tags: [hiring, interviews, HR, talent]
+    content: |
+      ## Process
+      1. Define role competencies and success criteria
+      2. Create standardized question bank targeting competencies
+      3. Develop scoring rubric (1-5 scale per competency)
+      4. Train all interviewers on questions and rubric
+      5. Conduct interviews asking same questions in same order
+      6. Score candidates independently immediately after interview
+      7. Aggregate scores and discuss discrepancies
+      8. Make data-driven hiring decision
+
+      ## Key Practices
+      - Use behavioral questions ("Tell me about a time...")
+      - Avoid hypothetical questions ("What would you do if...")
+      - Take detailed notes during interview
+      - Calibrate scoring across interviewers
+    evidence_links:
+      - research-schmidt-hunter-validity
+      - fact-google-structured-interviews
+
+  - id: system-gtd
+    title: "Getting Things Done (GTD)"
+    description: "David Allen's productivity system for stress-free execution"
+    status: proven
+    tags: [productivity, organization, workflow]
+    content: |
+      ## The Five Steps
+      1. **Capture**: Collect everything that has your attention
+      2. **Clarify**: Process what each item means and what to do
+      3. **Organize**: Put it where it belongs
+      4. **Reflect**: Review frequently
+      5. **Engage**: Simply do
+
+      ## Key Concepts
+      - Two-minute rule: If it takes <2 min, do it now
+      - Next actions: Define specific, physical next step
+      - Waiting for: Track delegated items
+      - Someday/maybe: Parking lot for future ideas
+      - Weekly review: Critical for system maintenance
+    evidence_links:
+      - fact-gtd-adoption
+      - principle-cognitive-load
+
+  - id: system-pomodoro
+    title: "Pomodoro Technique"
+    description: "Time management using 25-minute focused intervals"
+    status: proven
+    tags: [productivity, focus, time-management]
+    content: |
+      ## Steps
+      1. Choose task to work on
+      2. Set timer for 25 minutes (one "pomodoro")
+      3. Work with complete focus until timer rings
+      4. Take 5-minute break
+      5. After 4 pomodoros, take longer 15-30 minute break
+
+      ## Rules
+      - No interruptions during pomodoro
+      - If urgent interruption, end pomodoro
+      - Track completed pomodoros
+      - Don't check email/messages during focus time
+    evidence_links:
+      - research-timeboxing-effectiveness
+      - theory-flow-state
+
+  - id: system-compounding-5-3-1
+    title: "Compound Interest Calculator (5/3/1)"
+    description: "Simple framework for understanding investment returns"
+    status: active
+    tags: [investing, finance, compounding]
+    content: |
+      ## Formula
+      Every 5% annual return becomes 3x in 25 years, 1% in 1 year
+
+      ## Application
+      - 5% → doubles in 14 years
+      - 10% → doubles in 7 years
+      - 15% → doubles in 5 years
+
+      ## Key Insight
+      Small differences in return rates create massive differences
+      over time due to compounding. A 7% vs 10% return over 30 years
+      is the difference between 7.6x and 17.4x returns.
+    evidence_links:
+      - principle-compound-interest
+      - quote-einstein-compounding
+
+models:
+  - id: model-circle-of-competence
+    title: "Circle of Competence"
+    description: "Operating within boundaries of deep expertise"
+    type: mental-model
+    tags: [decision-making, expertise, wisdom, buffett]
+    content: |
+      ## Core Concept
+      Know the boundaries of what you truly understand. Make decisions
+      confidently within your circle. Seek expert help outside it.
+
+      ## Application
+      - Identify your areas of genuine expertise
+      - Recognize when you're outside your circle
+      - Don't be intimidated by complexity - focus on what you know
+      - Constantly expand circle through deliberate learning
+      - The size of your circle doesn't matter; knowing its boundaries does
+
+      ## Warning Signs You're Outside
+      - Using jargon you don't deeply understand
+      - Can't explain concept to a 12-year-old
+      - Relying on others' opinions without own analysis
+    evidence_links:
+      - quote-buffett-circle-of-competence
+      - principle-socratic-ignorance
+
+  - id: model-first-principles
+    title: "First Principles Thinking"
+    description: "Breaking down problems to fundamental truths and rebuilding"
+    type: mental-model
+    tags: [reasoning, problem-solving, elon-musk, innovation]
+    content: |
+      ## Process
+      1. Identify and define current assumptions
+      2. Break problem down to fundamental truths
+      3. Create new solutions from the ground up
+
+      ## Example: Battery Cost
+      - Analogy thinking: "Batteries are expensive and always will be"
+      - First principles: "What are battery materials? Iron, nickel, carbon..."
+      - Result: "Material cost is $80/kWh, not $600/kWh market price"
+
+      ## Applications
+      - When stuck using conventional wisdom
+      - When everyone says "that's how it's always been done"
+      - When creating something truly new
+    evidence_links:
+      - quote-musk-first-principles
+      - theory-aristotle-first-principles
+
+  - id: model-compound-interest
+    title: "Compound Interest Mental Model"
+    description: "Understanding exponential growth through reinvestment"
+    type: mental-model
+    tags: [finance, growth, exponential, patience]
+    content: |
+      ## Core Insight
+      Growth on growth leads to exponential, not linear, returns.
+      Applies to money, knowledge, relationships, health habits.
+
+      ## Key Factors
+      1. Rate of return
+      2. Time horizon
+      3. Consistency
+
+      ## Applications Beyond Finance
+      - Reading: Each book makes next book easier to understand
+      - Exercise: Each workout makes next one easier
+      - Relationships: Small daily investments compound
+      - Learning: Knowledge builds on knowledge
+    evidence_links:
+      - principle-compound-interest
+      - quote-munger-compounding
+
+  - id: model-systems-vs-goals
+    title: "Systems vs Goals"
+    description: "Focus on processes, not just outcomes"
+    type: framework
+    tags: [productivity, habits, process, dilbert]
+    content: |
+      ## Distinction
+      - Goal: Lose 20 pounds
+      - System: Eat healthy and exercise daily
+
+      ## Why Systems Win
+      1. Goals are binary (win/lose), systems are continuous
+      2. Goals are future-focused, systems are present-focused
+      3. Achieving goal ends motivation, systems maintain it
+      4. Systems handle changing circumstances
+
+      ## Application
+      Build reliable processes rather than setting ambitious outcomes.
+      Trust the process.
+    evidence_links:
+      - quote-adams-systems-vs-goals
+      - theory-atomic-habits
+
+provenance:
+  # RESEARCH & STUDIES
+  - id: research-schmidt-hunter-validity
+    type: research
+    title: "Schmidt & Hunter Meta-Analysis on Selection Methods"
+    description: "85 years of research on personnel selection validity"
+    source: "Schmidt, F. L., & Hunter, J. E. (1998). Personnel Psychology, 51(2)"
+    source_url: "https://doi.org/10.1111/j.1744-6570.1998.tb00743.x"
+    credibility_score: 98
+    tags: [psychology, hiring, meta-analysis, validity]
+    content: |
+      Comprehensive meta-analysis of hiring methods:
+      - Structured interviews: validity coefficient 0.51
+      - Unstructured interviews: 0.38
+      - Cognitive ability tests: 0.51
+      - Work samples: 0.54
+      - Combined cognitive + structured interview: 0.63
+
+      Structured interviews predict job performance significantly
+      better than unstructured approaches.
+
+  - id: fact-google-structured-interviews
+    type: research
+    title: "Google's Project Oxygen Hiring Research"
+    description: "Google's data-driven study on interview effectiveness"
+    source: "Google re:Work - Hiring Guide"
+    source_url: "https://rework.withgoogle.com/guides/hiring-use-structured-interviewing/"
+    credibility_score: 92
+    tags: [google, hiring, data-driven]
+    content: |
+      After analyzing thousands of interviews, Google found:
+      - Structured interviews reduced bias
+      - Quality of hire improved 25%
+      - Interviewer training critical
+      - Standardized scoring improved predictability
+
+  - id: research-timeboxing-effectiveness
+    type: research
+    title: "Timeboxing and Task Performance"
+    description: "Research on effectiveness of time-limited work sessions"
+    source: "Aeon, K. & Aguinis, H. (2017). Academy of Management Review"
+    credibility_score: 88
+    tags: [productivity, research, timeboxing]
+    content: |
+      Time-limited work sessions (timeboxing) improve:
+      - Task completion rates by 40%
+      - Focus and concentration
+      - Reduced procrastination
+      - Work-life balance
+
+      Pomodoro technique is specific implementation of timeboxing.
+
+  # QUOTES
+  - id: quote-buffett-circle-of-competence
+    type: quote
+    title: "Warren Buffett on Circle of Competence"
+    description: "Knowing your limits is critical to success"
+    source: "Warren Buffett, 1999 Berkshire Hathaway Annual Meeting"
+    credibility_score: 95
+    tags: [buffett, investing, wisdom]
+    content: |
+      "What an investor needs is the ability to correctly evaluate selected
+      businesses. Note that word 'selected': You don't have to be an expert
+      on every company, or even many. You only have to be able to evaluate
+      companies within your circle of competence. The size of that circle is
+      not very important; knowing its boundaries, however, is vital."
+
+  - id: quote-musk-first-principles
+    type: quote
+    title: "Elon Musk on First Principles Thinking"
+    description: "Breaking things down to fundamental truths"
+    source: "Elon Musk, Interview (2012)"
+    credibility_score: 90
+    tags: [musk, reasoning, innovation]
+    content: |
+      "I think it's important to reason from first principles rather than by
+      analogy. The normal way we conduct our lives is we reason by analogy.
+      We are doing this because it's like something else that was done, or it
+      is like what other people are doing... First principles is kind of a
+      physics way of looking at the world. You boil things down to the most
+      fundamental truths and say, 'What are we sure is true?' and then reason
+      up from there."
+
+  - id: quote-einstein-compounding
+    type: quote
+    title: "Einstein on Compound Interest"
+    description: "The eighth wonder of the world"
+    source: "Albert Einstein (attributed)"
+    credibility_score: 70
+    tags: [einstein, finance, apocryphal]
+    content: |
+      "Compound interest is the eighth wonder of the world. He who understands
+      it, earns it; he who doesn't, pays it."
+
+      Note: While commonly attributed to Einstein, this quote's authenticity
+      is disputed. Regardless of origin, the sentiment captures a fundamental
+      truth about exponential growth.
+
+  - id: quote-munger-compounding
+    type: quote
+    title: "Charlie Munger on Compounding Knowledge"
+    description: "Building knowledge layer by layer"
+    source: "Charlie Munger, USC Law School Commencement (2007)"
+    credibility_score: 95
+    tags: [munger, learning, wisdom]
+    content: |
+      "Spend each day trying to be a little wiser than you were when you woke
+      up. Discharge your duties faithfully and well. Slug it out one inch at
+      a time, day by day. At the end of the day – if you live long enough –
+      most people get what they deserve."
+
+  - id: quote-adams-systems-vs-goals
+    type: quote
+    title: "Scott Adams on Systems vs Goals"
+    description: "Processes beat outcomes"
+    source: "Scott Adams, How to Fail at Almost Everything and Still Win Big (2013)"
+    credibility_score: 85
+    tags: [adams, productivity, systems-thinking]
+    content: |
+      "Losers have goals. Winners have systems... Goal-oriented people exist
+      in a state of continuous pre-success failure at best, and permanent
+      failure at worst if things never work out. Systems people succeed every
+      time they apply their systems, in the sense that they did what they
+      intended to do."
+
+  # PRINCIPLES & THEORIES
+  - id: principle-compound-interest
+    type: principle
+    title: "Compound Interest Principle"
+    description: "Exponential growth through reinvestment of returns"
+    source: "Mathematical principle, ancient origin"
+    credibility_score: 100
+    tags: [mathematics, finance, exponential]
+    content: |
+      Formula: A = P(1 + r)^t
+      Where:
+      - A = final amount
+      - P = principal
+      - r = interest rate
+      - t = time
+
+      The power comes from earning returns on previous returns, creating
+      exponential rather than linear growth. This applies to any domain
+      where outputs can be reinvested into inputs.
+
+  - id: principle-socratic-ignorance
+    type: principle
+    title: "Socratic Wisdom: 'I Know That I Know Nothing'"
+    description: "True wisdom is knowing the limits of one's knowledge"
+    source: "Socrates (via Plato), Apology (399 BCE)"
+    credibility_score: 98
+    tags: [philosophy, socrates, epistemology]
+    content: |
+      Socrates argued that recognizing one's ignorance is the beginning
+      of wisdom. Those who think they know everything are furthest from
+      truth. The wise person knows the boundaries of their knowledge.
+
+  - id: theory-flow-state
+    type: theory
+    title: "Csíkszentmihályi's Flow State Theory"
+    description: "Optimal experience through challenge-skill balance"
+    source: "Mihaly Csíkszentmihályi, Flow: The Psychology of Optimal Experience (1990)"
+    credibility_score: 97
+    tags: [psychology, performance, flow]
+    content: |
+      Flow occurs when:
+      1. Clear goals exist
+      2. Immediate feedback available
+      3. Challenge matches skill level
+      4. Complete focus on task
+      5. Loss of self-consciousness
+      6. Time distortion (usually speeds up)
+
+      Maximizes performance and satisfaction. Requires elimination of
+      distractions and complete engagement.
+
+  - id: theory-aristotle-first-principles
+    type: theory
+    title: "Aristotelian First Principles"
+    description: "Reasoning from fundamental, self-evident truths"
+    source: "Aristotle, Metaphysics (350 BCE)"
+    credibility_score: 98
+    tags: [philosophy, aristotle, reasoning]
+    content: |
+      "In every systematic inquiry where there are first principles, or
+      causes, or elements, knowledge and science result from acquiring
+      knowledge of these; for we think we know something just in case we
+      acquire knowledge of the primary causes, the primary first principles,
+      all the way to the elements."
+
+      Foundation of scientific and logical reasoning.
+
+  - id: theory-atomic-habits
+    type: theory
+    title: "Atomic Habits Framework"
+    description: "1% better every day compounds into remarkable results"
+    source: "James Clear, Atomic Habits (2018)"
+    credibility_score: 88
+    tags: [habits, productivity, improvement]
+    content: |
+      Four Laws of Behavior Change:
+      1. Make it obvious (cue)
+      2. Make it attractive (craving)
+      3. Make it easy (response)
+      4. Make it satisfying (reward)
+
+      1% improvement daily = 37x better in a year
+      1% worse daily = nearly zero in a year
+
+      Focus on systems, not goals. Identity-based habits are most durable.
+
+  - id: principle-cognitive-load
+    type: principle
+    title: "Cognitive Load Theory"
+    description: "Working memory has limited capacity"
+    source: "John Sweller (1988), Cognitive Science"
+    credibility_score: 96
+    tags: [psychology, learning, memory]
+    content: |
+      Working memory can hold 4±1 items simultaneously. Cognitive load
+      comes in three types:
+      1. Intrinsic: inherent difficulty of material
+      2. Extraneous: poor presentation/design
+      3. Germane: processing that builds schemas
+
+      GTD works because it reduces extraneous cognitive load by
+      externalizing memory into a trusted system.
+
+  - id: fact-gtd-adoption
+    type: fact
+    title: "Getting Things Done Adoption"
+    description: "Widespread adoption across knowledge workers"
+    source: "Multiple business publications, 2000-2023"
+    credibility_score: 85
+    tags: [gtd, productivity, adoption]
+    content: |
+      David Allen's GTD methodology has been:
+      - Translated into 30+ languages
+      - Adopted by major corporations (NASA, Lockheed Martin, etc.)
+      - Referenced in 1000s of business articles
+      - Core principle (capture-clarify-organize-reflect-engage) now
+        standard in productivity software
+
+relationships:
+  # System → Research Evidence
+  - from: system-structured-interviews
+    to: research-schmidt-hunter-validity
+    type: evidences
+    strength: 98
+    tags: [validation, peer-reviewed]
+
+  - from: system-structured-interviews
+    to: fact-google-structured-interviews
+    type: evidences
+    strength: 92
+    tags: [real-world, data-driven]
+
+  - from: system-pomodoro
+    to: research-timeboxing-effectiveness
+    type: evidences
+    strength: 88
+    tags: [validation, effectiveness]
+
+  - from: system-pomodoro
+    to: theory-flow-state
+    type: supports
+    strength: 85
+    tags: [complementary, focus]
+
+  - from: system-gtd
+    to: principle-cognitive-load
+    type: evidences
+    strength: 90
+    tags: [psychological-basis]
+
+  - from: system-gtd
+    to: fact-gtd-adoption
+    type: supports
+    strength: 85
+    tags: [real-world-validation]
+
+  # Models → Quotes/Principles
+  - from: model-circle-of-competence
+    to: quote-buffett-circle-of-competence
+    type: evidences
+    strength: 100
+    tags: [origin, primary-source]
+
+  - from: model-circle-of-competence
+    to: principle-socratic-ignorance
+    type: extends
+    strength: 85
+    tags: [philosophical-foundation]
+
+  - from: model-first-principles
+    to: quote-musk-first-principles
+    type: evidences
+    strength: 95
+    tags: [modern-application]
+
+  - from: model-first-principles
+    to: theory-aristotle-first-principles
+    type: evidences
+    strength: 100
+    tags: [foundational, ancient-wisdom]
+
+  - from: model-compound-interest
+    to: principle-compound-interest
+    type: evidences
+    strength: 100
+    tags: [mathematical-basis]
+
+  - from: model-compound-interest
+    to: quote-munger-compounding
+    type: supports
+    strength: 90
+    tags: [application, wisdom]
+
+  - from: model-systems-vs-goals
+    to: quote-adams-systems-vs-goals
+    type: evidences
+    strength: 100
+    tags: [origin]
+
+  - from: model-systems-vs-goals
+    to: theory-atomic-habits
+    type: supports
+    strength: 95
+    tags: [reinforcement, habits]
+
+  # Cross-connections
+  - from: system-compounding-5-3-1
+    to: model-compound-interest
+    type: uses
+    strength: 100
+    tags: [application]
+
+  - from: system-compounding-5-3-1
+    to: quote-einstein-compounding
+    type: supports
+    strength: 70
+    tags: [popular-wisdom]
