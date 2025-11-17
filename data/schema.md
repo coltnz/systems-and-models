@@ -4,12 +4,29 @@
 
 This schema defines the YAML format for importing systems, models, provenance, and their relationships into the knowledge graph.
 
+## Permalinks
+
+Each entity in the knowledge graph has a stable, shareable permalink based on its ID:
+
+- **Systems**: `#/system/{id}` (e.g., `#/system/gtd`)
+- **Models**: `#/model/{id}` (e.g., `#/model/circle-of-competence`)
+- **Provenance**: `#/provenance/{id}` (e.g., `#/provenance/research-schmidt-hunter-validity`)
+
+Permalinks are:
+- **Shareable**: Copy and share direct links to specific entities
+- **Bookmarkable**: Save and return to specific models or systems
+- **Deep-linkable**: Reference specific knowledge in external docs
+- **Stable**: IDs should not change once published
+
+The full URL format is: `https://your-domain.com/#/type/id`
+
 ## Key Principles
 
 1. **Separation of Concerns**: Actions (systems), knowledge (models), and justifications (provenance) are separate entities
 2. **Clear References**: Every claim should reference provenance (quotes, theorems, principles, facts)
 3. **Actionability**: Systems must contain clear, executable steps
 4. **Traceability**: All relationships must be explicit and typed
+5. **Stable IDs**: Entity IDs serve as permalinks and should not change
 
 ## Entity Types
 

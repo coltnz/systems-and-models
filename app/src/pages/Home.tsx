@@ -8,6 +8,7 @@ import { CreateModelDialog } from '@/components/CreateModelDialog'
 import { CreateProvenanceDialog } from '@/components/CreateProvenanceDialog'
 import { LinkEntityDialog } from '@/components/LinkEntityDialog'
 import { ImportDataDialog } from '@/components/ImportDataDialog'
+import { SharePermalinkButton } from '@/components/SharePermalinkButton'
 import { getSystems } from '@/lib/db/systems'
 import { getModels } from '@/lib/db/models'
 import { getProvenance } from '@/lib/db/provenance'
@@ -144,14 +145,20 @@ export function Home() {
                         </span>
                       </div>
                     </CardContent>
-                    <CardFooter>
+                    <CardFooter className="gap-2">
+                      <SharePermalinkButton
+                        type="system"
+                        id={system.id}
+                        onShare={true}
+                        className="flex-1"
+                      />
                       <LinkEntityDialog
                         fromType="system"
                         fromId={system.id}
                         fromTitle={system.title}
                         onRelationshipCreated={loadData}
                       >
-                        <Button variant="outline" size="sm" className="w-full">
+                        <Button variant="outline" size="sm" className="flex-1">
                           <Link2 className="w-3 h-3 mr-2" />
                           Link
                         </Button>
@@ -206,14 +213,20 @@ export function Home() {
                         </span>
                       </div>
                     </CardContent>
-                    <CardFooter>
+                    <CardFooter className="gap-2">
+                      <SharePermalinkButton
+                        type="model"
+                        id={model.id}
+                        onShare={true}
+                        className="flex-1"
+                      />
                       <LinkEntityDialog
                         fromType="model"
                         fromId={model.id}
                         fromTitle={model.title}
                         onRelationshipCreated={loadData}
                       >
-                        <Button variant="outline" size="sm" className="w-full">
+                        <Button variant="outline" size="sm" className="flex-1">
                           <Link2 className="w-3 h-3 mr-2" />
                           Link
                         </Button>
@@ -273,14 +286,20 @@ export function Home() {
                         )}
                       </div>
                     </CardContent>
-                    <CardFooter>
+                    <CardFooter className="gap-2">
+                      <SharePermalinkButton
+                        type="provenance"
+                        id={prov.id}
+                        onShare={true}
+                        className="flex-1"
+                      />
                       <LinkEntityDialog
                         fromType="provenance"
                         fromId={prov.id}
                         fromTitle={prov.title}
                         onRelationshipCreated={loadData}
                       >
-                        <Button variant="outline" size="sm" className="w-full">
+                        <Button variant="outline" size="sm" className="flex-1">
                           <Link2 className="w-3 h-3 mr-2" />
                           Link
                         </Button>

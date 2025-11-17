@@ -1,16 +1,24 @@
 import { useEffect, useState } from 'react'
 import { Home } from './pages/Home'
 import { Graph } from './pages/Graph'
+import { Detail } from './pages/Detail'
 import { Button } from './components/ui/button'
 import { List, Network } from 'lucide-react'
 import { initDatabase } from './lib/db'
+import { parsePermalink, type EntityType } from './lib/permalink'
 
-type View = 'home' | 'graph'
+type View = 'home' | 'graph' | 'detail'
+
+interface DetailState {
+  type: EntityType
+  id: string
+}
 
 function App() {
   const [dbInitialized, setDbInitialized] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [currentView, setCurrentView] = useState<View>('home')
+  const [detailState, setDetailState] = useState<DetailState | null>(null)
 
   useEffect(() => {
     initDatabase()
@@ -23,6 +31,32 @@ function App() {
         setError('Failed to initialize database')
       })
   }, [])
+
+  // Handle hash-based routing for permalinks
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash
+      const permalink = parsePermalink(hash)
+
+      if (permalink) {
+        setDetailState({ type: permalink.type, id: permalink.id })
+        setCurrentView('detail')
+      }
+    }
+
+    // Check initial hash
+    handleHashChange()
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [])
+
+  const handleBackFromDetail = () => {
+    window.location.hash = ''
+    setCurrentView('home')
+    setDetailState(null)
+  }
 
   if (error) {
     return (
@@ -73,6 +107,13 @@ function App() {
       {/* Content */}
       {currentView === 'home' && <Home />}
       {currentView === 'graph' && <Graph />}
+      {currentView === 'detail' && detailState && (
+        <Detail
+          type={detailState.type}
+          id={detailState.id}
+          onBack={handleBackFromDetail}
+        />
+      )}
     </div>
   )
 }

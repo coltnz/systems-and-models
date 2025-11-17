@@ -90,6 +90,38 @@ export function getRelationshipsByEntity(entityType: Relationship['from_type'], 
   return relationships
 }
 
+// Convenience function that infers entity type from ID
+export function getRelationshipsByEntityId(entityId: string): Relationship[] {
+  const db = getDatabase()
+  const stmt = db.prepare(`
+    SELECT * FROM relationships
+    WHERE from_id = ? OR to_id = ?
+    ORDER BY created_at DESC
+  `)
+  stmt.bind([entityId, entityId])
+
+  const relationships: Relationship[] = []
+
+  while (stmt.step()) {
+    const row = stmt.getAsObject()
+    relationships.push({
+      id: row.id as string,
+      from_type: row.from_type as Relationship['from_type'],
+      from_id: row.from_id as string,
+      to_type: row.to_type as Relationship['to_type'],
+      to_id: row.to_id as string,
+      relationship_type: row.relationship_type as Relationship['relationship_type'],
+      strength: row.strength as number | undefined,
+      tags: deserializeArray((row.tags as string) || ''),
+      metadata: row.metadata ? JSON.parse(row.metadata as string) : undefined,
+      created_at: row.created_at as number,
+    })
+  }
+
+  stmt.free()
+  return relationships
+}
+
 export function deleteRelationship(id: string): boolean {
   const db = getDatabase()
 
