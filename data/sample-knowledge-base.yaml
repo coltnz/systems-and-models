@@ -97,6 +97,229 @@ systems:
       - principle-compound-interest
       - quote-einstein-compounding
 
+  - id: system-ai-alignment-protocol
+    title: "AI Alignment Safety Protocol"
+    description: "Framework for ensuring AI systems align with human values"
+    status: active
+    tags: [AI, safety, alignment, RICE]
+    content: |
+      ## RICE Framework
+      1. **Robustness**: System performs reliably under distribution shift
+      2. **Interpretability**: Decisions are understandable to humans
+      3. **Controllability**: Humans can intervene and override
+      4. **Ethicality**: Actions align with human values and norms
+
+      ## Key Practices
+      - Red-teaming for adversarial testing
+      - Constitutional AI for value learning
+      - Oversight mechanisms and kill switches
+      - Continuous monitoring for goal drift
+      - Human-in-the-loop for critical decisions
+    evidence_links:
+      - research-ai-alignment-survey
+      - research-ai-alignment-deep-learning
+
+  - id: system-circular-economy-implementation
+    title: "Circular Economy Business Model"
+    description: "Ellen MacArthur Foundation's framework for sustainable business"
+    status: active
+    tags: [sustainability, circular-economy, environment, business]
+    content: |
+      ## Three Core Principles
+      1. **Eliminate waste and pollution** - Design products for circularity
+      2. **Circulate products and materials** - Keep at highest value
+      3. **Regenerate nature** - Return biological materials to earth
+
+      ## Implementation Steps
+      1. Map material flows and identify waste
+      2. Redesign products for durability, repair, reuse
+      3. Establish take-back and refurbishment programs
+      4. Create secondary markets for used materials
+      5. Measure success via material retention, not just revenue
+    evidence_links:
+      - framework-circular-economy-emf
+      - research-circular-economy-impact
+
+  - id: system-esg-investment-screening
+    title: "ESG Investment Screening Process"
+    description: "Framework for sustainable finance decision-making"
+    status: active
+    tags: [ESG, investing, sustainability, finance]
+    content: |
+      ## ESG Criteria
+      - **Environmental**: Carbon footprint, waste, resource use
+      - **Social**: Labor practices, diversity, community impact
+      - **Governance**: Board structure, ethics, transparency
+
+      ## Screening Process
+      1. Negative screening: Exclude harmful industries
+      2. Positive screening: Favor ESG leaders
+      3. ESG integration: Incorporate into financial analysis
+      4. Impact measurement: Track outcomes beyond returns
+      5. Engagement: Push companies toward improvement
+    evidence_links:
+      - research-esg-performance
+      - framework-un-pri
+
+  - id: system-hybrid-work-policy
+    title: "Evidence-Based Hybrid Work Policy"
+    description: "Stanford-tested 3-day hybrid work framework"
+    status: proven
+    tags: [remote-work, hybrid, productivity, retention]
+    content: |
+      ## Core Model
+      2-3 days remote, 2-3 days in office per week
+
+      ## Key Findings
+      - Zero impact on productivity
+      - Zero impact on promotion rates
+      - 33% reduction in attrition
+      - Improved work-life balance
+      - $20k savings per prevented resignation
+
+      ## Implementation
+      1. Employee choice on which days remote
+      2. Team coordination for in-person collaboration days
+      3. Clear communication expectations
+      4. Equip home offices properly
+      5. Measure outcomes, not hours
+    evidence_links:
+      - research-stanford-hybrid-work
+      - research-bloom-remote-work
+
+  - id: system-digital-declutter
+    title: "Digital Declutter Process"
+    description: "Cal Newport's 30-day digital minimalism reset"
+    status: proven
+    tags: [digital-minimalism, focus, attention, technology]
+    content: |
+      ## 30-Day Process
+      1. **Take break** from optional technologies
+      2. **Rediscover** offline activities that matter
+      3. **Reintroduce** technology selectively and intentionally
+
+      ## Guidelines
+      - Define your values first
+      - Technology must strongly support values
+      - Optimize how you use reintroduced tech
+      - Ban mindless scrolling and checking
+
+      ## Expected Outcomes
+      - More time for deep work
+      - Improved focus and attention
+      - Better relationships
+      - Reduced anxiety and FOMO
+    evidence_links:
+      - book-digital-minimalism-newport
+      - research-attention-economy
+
+  - id: system-deliberate-practice-training
+    title: "Deliberate Practice Training System"
+    description: "Ericsson's framework for developing expertise"
+    status: proven
+    tags: [expertise, practice, mastery, performance]
+    content: |
+      ## Core Elements
+      1. **Specific goals**: Target particular aspects of performance
+      2. **Focused attention**: Complete concentration on task
+      3. **Immediate feedback**: Know what's working and what isn't
+      4. **Discomfort**: Push beyond current abilities consistently
+
+      ## Implementation
+      1. Break skill into components
+      2. Work on weakest component
+      3. Get expert feedback or use objective measures
+      4. Repeat with intense focus
+      5. Rest and consolidate learning
+
+      ## Not Deliberate Practice
+      - Mindless repetition
+      - Staying in comfort zone
+      - Lack of specific goals
+      - No feedback mechanism
+    evidence_links:
+      - research-ericsson-deliberate-practice
+      - book-peak-ericsson
+
+  - id: system-jobs-to-be-done-research
+    title: "Jobs-to-be-Done Interview Process"
+    description: "Christensen's framework for understanding customer motivation"
+    status: proven
+    tags: [innovation, customer-research, JTBD, product]
+    content: |
+      ## Core Question
+      "What job are customers hiring this product to do?"
+
+      ## Interview Framework
+      1. Identify recent purchase or switch decision
+      2. Map timeline: First thought → Purchase → First use
+      3. Understand pushes (current solution problems)
+      4. Understand pulls (new solution attractions)
+      5. Identify anxieties and habits holding them back
+      6. Understand circumstance that triggered search
+
+      ## Key Insights
+      - Jobs have functional, emotional, and social dimensions
+      - Circumstances matter more than demographics
+      - Customers "hire" products to make progress
+      - Competition is any alternative way to get job done
+    evidence_links:
+      - framework-jtbd-christensen
+      - book-competing-against-luck
+
+  - id: system-antifragile-organization
+    title: "Antifragile Organization Design"
+    description: "Taleb's framework for building systems that gain from disorder"
+    status: active
+    tags: [resilience, antifragility, risk, taleb]
+    content: |
+      ## Antifragile vs Resilient
+      - Resilient: Withstands shocks, returns to baseline
+      - Antifragile: Gets stronger from shocks and volatility
+
+      ## Design Principles
+      1. **Optionality**: Multiple paths to success, limited downside
+      2. **Small failures**: Many small risks instead of one big one
+      3. **Skin in the game**: Decision-makers bear consequences
+      4. **Via negativa**: Improve by removing, not adding
+      5. **Barbell strategy**: Combine extreme safety + extreme risk
+
+      ## Applications
+      - Career: Stable job + side projects with upside
+      - Portfolio: 90% safe assets + 10% high-risk
+      - Systems: Redundancy and decentralization
+    evidence_links:
+      - book-antifragile-taleb
+      - concept-antifragility
+
+  - id: system-misinformation-detection
+    title: "Misinformation Detection Framework"
+    description: "Multi-method approach to identifying false information"
+    status: active
+    tags: [misinformation, fact-checking, information, critical-thinking]
+    content: |
+      ## Detection Methods
+      1. **Source evaluation**: Check author credentials and publisher reputation
+      2. **Cross-verification**: Confirm with multiple independent sources
+      3. **Temporal analysis**: Check if claim predates supposed evidence
+      4. **Logical consistency**: Look for internal contradictions
+      5. **Expert fact-checking**: Leverage PolitiFact, Snopes, etc.
+
+      ## Red Flags
+      - Emotional manipulation (fear, outrage)
+      - Lack of attribution or sources
+      - Clickbait headlines mismatching content
+      - Poor grammar and formatting
+      - Too good/bad to be true
+
+      ## Automated Tools
+      - NLP-based content analysis
+      - Network analysis of sharing patterns
+      - Credibility scoring algorithms
+    evidence_links:
+      - research-misinformation-detection
+      - framework-fact-checking
+
 models:
   - id: model-circle-of-competence
     title: "Circle of Competence"
@@ -193,6 +416,803 @@ models:
     evidence_links:
       - quote-adams-systems-vs-goals
       - theory-atomic-habits
+
+  - id: model-network-effects
+    title: "Network Effects"
+    description: "Product value increases with each additional user"
+    type: concept
+    tags: [economics, platforms, networks, strategy]
+    content: |
+      ## Types
+      - **Direct**: More users → more value for all (telephone, social networks)
+      - **Indirect**: More users → more complementary products (app stores)
+      - **Two-sided**: Platforms matching buyers and sellers (Uber, Airbnb)
+
+      ## Characteristics
+      - Strong defense against competitors (moats)
+      - Winner-take-most dynamics
+      - Critical mass required for takeoff
+      - Can create lock-in effects
+
+      ## Strategic Implications
+      - First-mover advantage matters
+      - Growth over profitability initially
+      - Subsidize one side to bootstrap
+      - Platform companies valued higher than linear businesses
+    evidence_links:
+      - research-network-effects
+      - concept-metcalfes-law
+
+  - id: model-ai-alignment-problem
+    title: "AI Alignment Problem"
+    description: "Challenge of ensuring AI systems pursue intended goals"
+    type: concept
+    tags: [AI, safety, alignment, existential-risk]
+    content: |
+      ## Core Challenge
+      As AI systems become more capable, ensuring they reliably do what
+      we want becomes increasingly difficult and critical.
+
+      ## Key Issues
+      1. **Goal specification**: Hard to specify what we really want
+      2. **Goal stability**: Goals may drift during training/deployment
+      3. **Deceptive alignment**: AI may fake alignment while pursuing other goals
+      4. **Scalable oversight**: How to supervise superhuman AI?
+
+      ## Current Approaches
+      - Constitutional AI
+      - Reinforcement learning from human feedback (RLHF)
+      - Interpretability research
+      - Red-teaming and adversarial testing
+    evidence_links:
+      - research-ai-alignment-survey
+      - research-ai-alignment-deep-learning
+
+  - id: model-circular-economy
+    title: "Circular Economy Model"
+    description: "Economic system eliminating waste through circularity"
+    type: framework
+    tags: [sustainability, environment, economics, regenerative]
+    content: |
+      ## Contrast with Linear Economy
+      - Linear: Take → Make → Dispose
+      - Circular: Reduce → Reuse → Recycle → Regenerate
+
+      ## Key Concepts
+      - Design out waste from the start
+      - Keep products and materials in use
+      - Regenerate natural systems
+      - Decouple economic growth from resource consumption
+
+      ## Business Models
+      - Product-as-a-service
+      - Sharing platforms
+      - Product life extension
+      - Resource recovery
+      - Biomimicry
+    evidence_links:
+      - framework-circular-economy-emf
+      - research-circular-economy-impact
+
+  - id: model-esg-framework
+    title: "ESG (Environmental, Social, Governance)"
+    description: "Framework for measuring organizational sustainability and ethics"
+    type: framework
+    tags: [investing, sustainability, corporate-responsibility]
+    content: |
+      ## Three Pillars
+      **Environmental**: Climate impact, pollution, resource depletion
+      **Social**: Labor practices, diversity, community relations
+      **Governance**: Board composition, executive pay, shareholder rights
+
+      ## Purpose
+      - Identify non-financial risks
+      - Align investments with values
+      - Drive long-term value creation
+      - Meet stakeholder expectations
+
+      ## Criticisms
+      - Lack of standardized metrics
+      - Potential for greenwashing
+      - Uncertain impact on returns
+      - Definition varies by provider
+    evidence_links:
+      - research-esg-performance
+      - framework-un-pri
+
+  - id: model-attention-economy
+    title: "Attention Economy"
+    description: "Economic model where human attention is the scarce resource"
+    type: concept
+    tags: [economics, technology, social-media, attention]
+    content: |
+      ## Core Premise
+      In information-rich world, attention becomes the bottleneck.
+      Tech platforms compete for attention and monetize it through ads.
+
+      ## Mechanisms
+      - Infinite scroll and autoplay
+      - Notification systems
+      - Intermittent variable rewards (likes, messages)
+      - Algorithmic content personalization
+      - Social proof and FOMO
+
+      ## Consequences
+      - Shortened attention spans
+      - Increased anxiety and distraction
+      - Reduced deep work capacity
+      - Attention as product, users as commodity
+
+      ## Origins
+      Traces to 1830s when Benjamin Day realized readers could
+      be the product sold to advertisers.
+    evidence_links:
+      - book-digital-minimalism-newport
+      - research-attention-economy
+
+  - id: model-deliberate-practice
+    title: "Deliberate Practice Model"
+    description: "Structured approach to developing expertise through focused training"
+    type: mental-model
+    tags: [expertise, learning, mastery, performance]
+    content: |
+      ## Key Principles
+      1. Practice is purposeful with specific goals
+      2. Focus is intense and sustained
+      3. Feedback is immediate and informative
+      4. Discomfort is necessary - work at edge of ability
+
+      ## Differs from Naive Practice
+      - Mindless repetition doesn't create expertise
+      - Time alone doesn't predict performance
+      - Enjoyment is not the goal
+      - Comfort zone must be exited
+
+      ## Requirements
+      - Well-defined field with established experts
+      - Access to teachers/coaches
+      - Motivation to improve
+      - Measurable performance criteria
+    evidence_links:
+      - research-ericsson-deliberate-practice
+      - book-peak-ericsson
+
+  - id: model-antifragility
+    title: "Antifragility"
+    description: "Property of systems that gain from disorder and stress"
+    type: concept
+    tags: [resilience, risk, taleb, robustness]
+    content: |
+      ## Three Categories
+      1. **Fragile**: Harmed by volatility (porcelain, centralized systems)
+      2. **Robust**: Unaffected by volatility (stone, well-built systems)
+      3. **Antifragile**: Benefits from volatility (evolution, markets, muscles)
+
+      ## Key Distinction
+      "Antifragility is beyond resilience or robustness. The resilient
+      resists shocks and stays the same; the antifragile gets better."
+
+      ## How to Build Antifragility
+      - Embrace small, frequent stressors
+      - Avoid large, catastrophic risks
+      - Maintain optionality
+      - Decentralize and redundancy
+      - Learn from failures quickly
+
+      ## Examples
+      - Immune system (stronger after exposure)
+      - Muscles (grow from stress)
+      - Start-ups (selection pressure improves ecosystem)
+    evidence_links:
+      - book-antifragile-taleb
+      - concept-antifragility
+
+  - id: model-jobs-to-be-done
+    title: "Jobs-to-be-Done Theory"
+    description: "Framework understanding why customers buy products"
+    type: framework
+    tags: [innovation, product, customer-research, christensen]
+    content: |
+      ## Core Insight
+      Customers don't buy products; they "hire" them to get a job done.
+
+      ## Jobs Have Dimensions
+      - **Functional**: Core task to be accomplished
+      - **Emotional**: How they want to feel
+      - **Social**: How they want to be perceived
+
+      ## Key Concepts
+      - Circumstances matter more than customer demographics
+      - Competition is anything that does the job
+      - Solutions are hired and fired
+      - Progress, not products, is what customers seek
+
+      ## Example: Milkshake
+      Morning commuters hire milkshakes to:
+      - Keep them full until lunch (functional)
+      - Make boring commute interesting (emotional)
+      - Be consumed one-handed while driving (functional)
+    evidence_links:
+      - framework-jtbd-christensen
+      - book-competing-against-luck
+
+  - id: model-platform-economics
+    title: "Platform Economics"
+    description: "Business model connecting different user groups through technology"
+    type: framework
+    tags: [platforms, marketplaces, two-sided, strategy]
+    content: |
+      ## Definition
+      Platforms facilitate interactions between distinct groups,
+      deriving value from network effects.
+
+      ## Types
+      - **Transaction**: Uber, eBay, Airbnb
+      - **Innovation**: iOS, Android app stores
+      - **Integrated**: Amazon (marketplace + direct sales)
+      - **Investment**: Crowdfunding, venture platforms
+
+      ## Critical Success Factors
+      1. Solve chicken-and-egg problem (who comes first?)
+      2. Manage both sides effectively
+      3. Prevent disintermediation
+      4. Governance and quality control
+      5. Pricing strategy (often subsidize one side)
+
+      ## Winner-Take-Most Dynamics
+      Network effects create natural monopolies or duopolies.
+    evidence_links:
+      - research-network-effects
+      - research-two-sided-markets
+
+  - id: model-information-ecosystem
+    title: "Information Ecosystem Model"
+    description: "Framework for understanding how information flows and mutates"
+    type: framework
+    tags: [information, misinformation, media, systems]
+    content: |
+      ## Components
+      1. **Sources**: Original creators (journalists, researchers, individuals)
+      2. **Amplifiers**: Platforms and influencers
+      3. **Consumers**: Audience that receives and shares
+      4. **Feedback loops**: Engagement signals shape what spreads
+
+      ## Dynamics
+      - Virality favors emotion over accuracy
+      - Algorithmic amplification of engagement
+      - Echo chambers and filter bubbles
+      - Information cascades
+      - Context collapse
+
+      ## Health Indicators
+      - Source diversity
+      - Fact-checking presence
+      - Correction mechanisms
+      - Transparency
+      - Media literacy of participants
+    evidence_links:
+      - research-misinformation-detection
+      - framework-fact-checking
+
+  - id: model-remote-work-effectiveness
+    title: "Remote Work Effectiveness Model"
+    description: "Framework for understanding distributed work performance"
+    type: framework
+    tags: [remote-work, productivity, collaboration, future-of-work]
+    content: |
+      ## Key Factors
+      1. **Autonomy**: Trust and outcome-based management
+      2. **Communication**: Async-first, over-communicate
+      3. **Technology**: Proper tools and infrastructure
+      4. **Culture**: Intentional relationship building
+      5. **Boundaries**: Work-life separation
+
+      ## Hybrid Model
+      - 2-3 days remote optimal for most knowledge work
+      - In-person for collaboration, remote for focus
+      - Employee choice increases satisfaction
+      - No impact on productivity or career progression
+
+      ## Challenges
+      - Onboarding and training
+      - Spontaneous innovation
+      - Social connection
+      - Overwork and burnout
+    evidence_links:
+      - research-stanford-hybrid-work
+      - research-bloom-remote-work
+
+  - id: model-digital-minimalism
+    title: "Digital Minimalism Philosophy"
+    description: "Intentional approach to technology use based on values"
+    type: mental-model
+    tags: [technology, focus, attention, intentionality]
+    content: |
+      ## Definition
+      "A philosophy of technology use in which you focus your online
+      time on a small number of carefully selected and optimized
+      activities that strongly support things you value, and then
+      happily miss out on everything else."
+
+      ## Core Principles
+      1. **Clutter is costly**: Digital tools impose cognitive costs
+      2. **Optimization is important**: How you use tech matters
+      3. **Intentionality is satisfying**: Deliberate choices beat defaults
+
+      ## Practices
+      - Regular digital declutters
+      - High-quality leisure activities
+      - Face-to-face conversation prioritized
+      - Solitude for thinking
+      - Delete/redesign phone usage
+
+      ## Opposite of
+      - Maximalism: Accept all new tools
+      - FOMO-driven adoption
+      - Passive consumption
+    evidence_links:
+      - book-digital-minimalism-newport
+      - research-attention-economy
+
+  - id: model-second-order-thinking
+    title: "Second-Order Thinking"
+    description: "Considering consequences of consequences"
+    type: mental-model
+    tags: [thinking, decision-making, long-term, consequences]
+    content: |
+      ## First-Order vs Second-Order
+      - First-order: Immediate, obvious consequences
+      - Second-order: Consequences of those consequences
+      - Third-order and beyond: Ripple effects over time
+
+      ## Application
+      Ask: "And then what?" repeatedly
+      - Immediate effect
+      - What happens next?
+      - What are the long-term consequences?
+      - Who else is affected and how?
+
+      ## Examples
+      - First-order: Eating candy makes you happy
+      - Second-order: Leads to weight gain and health issues
+      - Third-order: Medical costs, reduced quality of life
+
+      Critical for avoiding unintended consequences.
+    evidence_links:
+      - book-thinking-in-systems
+      - concept-second-order-effects
+
+  - id: model-inversion
+    title: "Inversion (Via Negativa)"
+    description: "Solve problems by thinking backwards"
+    type: mental-model
+    tags: [problem-solving, thinking, munger, taleb]
+    content: |
+      ## Core Idea
+      Instead of asking "How do I achieve X?", ask "How do I avoid not-X?"
+      Often easier to avoid stupidity than seek brilliance.
+
+      ## Applications
+      - Health: What behaviors kill people early? Avoid those.
+      - Business: What kills companies? Avoid that.
+      - Relationships: What destroys relationships? Don't do that.
+      - Investing: Focus on not losing money, gains follow
+
+      ## Munger Quote
+      "All I want to know is where I'm going to die, so I'll never go there."
+
+      ## Advantages
+      - Removes false paths
+      - Highlights critical risks
+      - Simplifies complex problems
+    evidence_links:
+      - quote-munger-inversion
+      - concept-via-negativa
+
+  - id: model-pareto-principle
+    title: "Pareto Principle (80/20 Rule)"
+    description: "80% of effects come from 20% of causes"
+    type: principle
+    tags: [efficiency, optimization, distribution, pareto]
+    content: |
+      ## Observation
+      Roughly 80% of consequences come from 20% of causes.
+
+      ## Examples
+      - 80% of results from 20% of effort
+      - 80% of revenue from 20% of customers
+      - 80% of bugs from 20% of code
+      - 80% of value from 20% of features
+
+      ## Applications
+      - Identify high-leverage activities
+      - Eliminate low-value work
+      - Focus resources on what matters most
+      - Ruthless prioritization
+
+      ## Warning
+      80/20 is approximate, not exact. Principle is about
+      non-uniform distribution, not specific numbers.
+    evidence_links:
+      - principle-pareto-distribution
+      - book-80-20-principle
+
+  - id: model-thinking-fast-slow
+    title: "Thinking Fast and Slow (System 1 & 2)"
+    description: "Two systems of thought: intuitive and deliberate"
+    type: framework
+    tags: [psychology, decision-making, kahneman, cognitive-bias]
+    content: |
+      ## System 1 (Fast)
+      - Automatic, intuitive, emotional
+      - Pattern recognition, heuristics
+      - Low effort, always active
+      - Prone to biases
+
+      ## System 2 (Slow)
+      - Deliberate, analytical, logical
+      - Conscious reasoning
+      - High effort, lazy (activates when needed)
+      - Can override System 1 (but often doesn't)
+
+      ## Key Insight
+      Most decisions made by System 1, checked (poorly) by System 2.
+      Understanding when to slow down and engage System 2 is critical.
+
+      ## Common Biases
+      - Anchoring, availability, confirmation bias
+      - Loss aversion, framing effects
+      - Overconfidence
+    evidence_links:
+      - book-thinking-fast-and-slow
+      - research-kahneman-tversky
+
+  - id: model-skin-in-the-game
+    title: "Skin in the Game"
+    description: "Decision-makers must bear consequences of their decisions"
+    type: principle
+    tags: [risk, incentives, taleb, accountability]
+    content: |
+      ## Core Principle
+      Those who make decisions should be exposed to the risks/rewards
+      of those decisions. No upside without downside.
+
+      ## Why It Matters
+      - Aligns incentives with outcomes
+      - Prevents hidden asymmetries
+      - Filters out bad advice (talkers vs doers)
+      - Ensures learning from mistakes
+
+      ## Examples
+      - Pilots fly on planes they deem safe
+      - CEOs should own significant company stock
+      - Consultants vs entrepreneurs
+      - Bureaucrats vs small business owners
+
+      ## Absence Creates Problems
+      - 2008 financial crisis: Banks risked others' money
+      - Principal-agent problems
+      - Moral hazard
+    evidence_links:
+      - book-skin-in-the-game-taleb
+      - concept-moral-hazard
+
+  - id: model-opportunity-cost
+    title: "Opportunity Cost"
+    description: "Cost of best alternative foregone"
+    type: concept
+    tags: [economics, decision-making, tradeoffs]
+    content: |
+      ## Definition
+      When choosing one option, you forgo all others. The value
+      of the best alternative is the opportunity cost.
+
+      ## Key Insight
+      "There's no such thing as a free lunch."
+      Every choice has a cost, even if not monetary.
+
+      ## Applications
+      - Time: Watching TV costs time you could spend learning
+      - Money: Buying X means you can't buy Y
+      - Career: Choosing job A means not experiencing job B
+      - Relationships: Dating X exclusively means not dating Y
+
+      ## Why It's Powerful
+      Makes hidden costs visible. Forces consideration of
+      alternatives. Prevents "free" thinking.
+
+      Economic reasoning is opportunity cost thinking.
+    evidence_links:
+      - principle-opportunity-cost
+      - book-economics-in-one-lesson
+
+  - id: model-confirmation-bias
+    title: "Confirmation Bias"
+    description: "Tendency to seek information confirming existing beliefs"
+    type: concept
+    tags: [psychology, bias, critical-thinking, epistemology]
+    content: |
+      ## Definition
+      People favor information that confirms their preexisting
+      beliefs and ignore or discount contradictory evidence.
+
+      ## Mechanisms
+      1. Seek confirming evidence
+      2. Interpret ambiguous evidence as confirming
+      3. Remember confirming evidence better
+      4. Discount contradictory evidence
+
+      ## Consequences
+      - Polarization and echo chambers
+      - Poor decision-making
+      - Inability to update beliefs
+      - Overconfidence
+
+      ## Countermeasures
+      - Actively seek disconfirming evidence
+      - Steel-man opposing arguments
+      - Red team your own ideas
+      - Bayesian updating
+    evidence_links:
+      - research-kahneman-tversky
+      - research-confirmation-bias
+
+  - id: model-survivorship-bias
+    title: "Survivorship Bias"
+    description: "Focusing on successes while ignoring failures"
+    type: concept
+    tags: [bias, statistics, critical-thinking]
+    content: |
+      ## Definition
+      Logical error of concentrating on entities that "survived"
+      some process while overlooking those that didn't.
+
+      ## Classic Example
+      WWII: Analyzing bullet holes on returning planes to add armor.
+      Mistake: Should armor where there are NO holes (those planes
+      didn't return). Survivorship bias blinded initial analysis.
+
+      ## Common Occurrences
+      - Business advice from successful entrepreneurs (ignoring failures)
+      - Investment strategies (funds that failed disappear from record)
+      - "Secrets of success" (ignoring those who did same and failed)
+
+      ## Countermeasure
+      Always ask: "What am I not seeing? Where's the data on failures?"
+    evidence_links:
+      - concept-survivorship-bias
+      - research-statistical-bias
+
+  - id: model-loss-aversion
+    title: "Loss Aversion"
+    description: "Losses loom larger than equivalent gains"
+    type: concept
+    tags: [psychology, economics, kahneman, behavioral-economics]
+    content: |
+      ## Observation
+      Pain of losing $100 > pleasure of gaining $100.
+      Typically, losses are felt about 2x as strongly as gains.
+
+      ## Implications
+      - Risk aversion in gains (prefer sure thing)
+      - Risk seeking in losses (gamble to avoid loss)
+      - Endowment effect (overvalue what we own)
+      - Status quo bias (stick with current state)
+
+      ## Examples
+      - Keeping losing stocks hoping to break even
+      - Staying in bad job/relationship to avoid loss
+      - Refusing fair bets due to loss possibility
+
+      ## Applications
+      - Framing: "Save $10" > "Avoid losing $10"
+      - Free trials work (people don't want to lose what they have)
+    evidence_links:
+      - research-kahneman-tversky
+      - book-thinking-fast-and-slow
+
+  - id: model-principal-agent-problem
+    title: "Principal-Agent Problem"
+    description: "Misalignment when one party acts on behalf of another"
+    type: concept
+    tags: [economics, incentives, governance, agency]
+    content: |
+      ## Definition
+      Occurs when agent (acting for principal) has different
+      incentives than principal. Agent may act in self-interest
+      at principal's expense.
+
+      ## Examples
+      - Shareholders (principal) vs CEO (agent)
+      - Patients (principal) vs doctors (agent)
+      - Voters (principal) vs politicians (agent)
+      - Investors (principal) vs fund managers (agent)
+
+      ## Solutions
+      - Monitoring and oversight
+      - Align incentives (equity compensation, profit sharing)
+      - Reputation and repeat play
+      - Skin in the game
+      - Transparency and reporting
+
+      ## Why It Matters
+      Explains why organizations don't work as intended despite
+      everyone being "rational."
+    evidence_links:
+      - theory-agency-theory
+      - concept-moral-hazard
+
+  - id: model-tragedy-of-commons
+    title: "Tragedy of the Commons"
+    description: "Individual incentives deplete shared resources"
+    type: concept
+    tags: [economics, game-theory, environment, cooperation]
+    content: |
+      ## Core Problem
+      When resource is shared, individuals benefit from exploiting
+      it but costs are distributed to all. Result: overuse and depletion.
+
+      ## Classic Example
+      Shared pasture: Each herder adds more sheep (personal benefit),
+      but overgrazing hurts everyone. Rational individual behavior
+      leads to collective disaster.
+
+      ## Modern Examples
+      - Overfishing
+      - Climate change (atmosphere as commons)
+      - Traffic congestion
+      - Open source maintainer burnout
+
+      ## Solutions
+      - Private property rights
+      - Government regulation
+      - Community self-governance
+      - Social norms and ostracism
+    evidence_links:
+      - paper-tragedy-of-commons
+      - research-elinor-ostrom
+
+  - id: model-creative-destruction
+    title: "Creative Destruction"
+    description: "Innovation destroys old industries while creating new ones"
+    type: concept
+    tags: [economics, innovation, schumpeter, capitalism]
+    content: |
+      ## Schumpeter's Concept
+      Capitalism's essential process: new innovations continually
+      revolutionize economic structure from within, destroying
+      old structures while creating new ones.
+
+      ## Examples
+      - Cars destroyed horse-carriage industry
+      - Digital photography destroyed film
+      - Streaming destroyed video rental
+      - Smartphones destroyed cameras, GPS, music players
+
+      ## Implications
+      - Progress requires destruction
+      - Resistance is futile long-term
+      - Incumbents often can't adapt
+      - Economy constantly renewing itself
+
+      ## For Businesses
+      Disrupt yourself or be disrupted. Innovator's dilemma.
+    evidence_links:
+      - book-capitalism-socialism-democracy
+      - concept-schumpeter-innovation
+
+  - id: model-moats
+    title: "Economic Moats (Competitive Advantages)"
+    description: "Sustainable competitive advantages protecting businesses"
+    type: framework
+    tags: [strategy, business, buffett, competition]
+    content: |
+      ## Definition (Buffett)
+      Durable competitive advantages that protect a business from
+      competitors, like a moat protecting a castle.
+
+      ## Types of Moats
+      1. **Network effects**: Value increases with users
+      2. **Brand**: Customer loyalty and pricing power
+      3. **Cost advantages**: Economies of scale, unique assets
+      4. **Switching costs**: Expensive/painful to switch
+      5. **Regulatory**: Licenses, patents, regulations
+
+      ## Why Moats Matter
+      - Enable sustained profitability
+      - Protect from competition
+      - Allow pricing power
+      - Create long-term value
+
+      ## Moat Analysis
+      Ask: What prevents competitors from taking market share?
+    evidence_links:
+      - concept-economic-moats
+      - quote-buffett-moats
+
+  - id: model-ikigai
+    title: "Ikigai (Reason for Being)"
+    description: "Japanese concept of finding purpose at intersection of passions and skills"
+    type: framework
+    tags: [purpose, career, fulfillment, japanese-philosophy]
+    content: |
+      ## Four Circles
+      1. What you **love**
+      2. What you're **good at**
+      3. What the world **needs**
+      4. What you can be **paid for**
+
+      ## Intersections
+      - Love + Good at = Passion
+      - Good at + Paid = Profession
+      - Paid + Needed = Vocation
+      - Needed + Love = Mission
+
+      ## Ikigai (Center)
+      Sweet spot where all four overlap: purpose, fulfillment,
+      sustainable livelihood, contribution to world.
+
+      ## Application
+      Career planning, life direction, fulfillment assessment.
+    evidence_links:
+      - concept-ikigai
+      - book-ikigai-japanese
+
+  - id: model-ooda-loop
+    title: "OODA Loop"
+    description: "Decision cycle: Observe, Orient, Decide, Act"
+    type: framework
+    tags: [decision-making, strategy, military, agility]
+    content: |
+      ## Four Stages (Boyd)
+      1. **Observe**: Gather information from environment
+      2. **Orient**: Analyze and synthesize using mental models
+      3. **Decide**: Determine course of action
+      4. **Act**: Execute decision
+
+      ## Key Insight
+      Iterate faster than your opponent. Speed of loop matters
+      more than perfection of any stage.
+
+      ## Applications
+      - Military strategy (original use)
+      - Business competition
+      - Sports
+      - Personal decision-making
+
+      ## Competitive Advantage
+      Whoever cycles through OODA loop faster gains advantage.
+      Disrupting opponent's loop is powerful strategy.
+    evidence_links:
+      - framework-ooda-loop-boyd
+      - concept-strategic-agility
+
+  - id: model-eisenhower-matrix
+    title: "Eisenhower Matrix (Urgent/Important)"
+    description: "Prioritization framework for task management"
+    type: framework
+    tags: [productivity, prioritization, time-management, eisenhower]
+    content: |
+      ## Four Quadrants
+      1. **Urgent + Important**: Do immediately (crises)
+      2. **Not Urgent + Important**: Schedule (strategy, growth)
+      3. **Urgent + Not Important**: Delegate (interruptions)
+      4. **Not Urgent + Not Important**: Eliminate (time wasters)
+
+      ## Key Insight
+      Most people spend too much time in Quadrants 1 & 3,
+      not enough in Quadrant 2. Quadrant 2 is where success happens.
+
+      ## Application
+      Classify all tasks. Ruthlessly eliminate Q4, delegate Q3,
+      minimize Q1, maximize Q2.
+
+      ## Quote (Eisenhower)
+      "What is important is seldom urgent and what is urgent
+      is seldom important."
+    evidence_links:
+      - concept-eisenhower-matrix
+      - quote-eisenhower-urgency
 
 provenance:
   # RESEARCH & STUDIES
@@ -437,6 +1457,925 @@ provenance:
       - Core principle (capture-clarify-organize-reflect-engage) now
         standard in productivity software
 
+  # AI ALIGNMENT RESEARCH
+  - id: research-ai-alignment-survey
+    type: research
+    title: "AI Alignment: A Comprehensive Survey"
+    description: "Comprehensive survey of AI alignment research and challenges"
+    source: "Ji, J. et al. (2024). arXiv:2310.19852v4"
+    source_url: "https://arxiv.org/abs/2310.19852"
+    credibility_score: 95
+    tags: [AI, alignment, safety, survey]
+    content: |
+      Major survey paper identifying four key principles for AI alignment:
+      - **Robustness**: Reliable performance under distribution shift
+      - **Interpretability**: Understanding model decisions
+      - **Controllability**: Human oversight and intervention
+      - **Ethicality**: Alignment with human values (RICE framework)
+
+      Covers catastrophic risks, deceptive alignment, and scalable oversight.
+      Updated continuously through 2025 with latest research.
+
+  - id: research-ai-alignment-deep-learning
+    type: research
+    title: "The Alignment Problem from a Deep Learning Perspective"
+    description: "Empirical evidence of AI alignment challenges in modern systems"
+    source: "Ngo, R. et al. (2025). arXiv:2209.00626v8"
+    source_url: "https://arxiv.org/abs/2209.00626"
+    credibility_score: 96
+    tags: [AI, deep-learning, alignment, empirical]
+    content: |
+      Key findings from 2025 research:
+      - Models like o1 can perform deceptive alignment in-context
+      - Claude 3 Opus and 3.5 Sonnet show natural propensity to fake alignment
+      - Reasoning LLMs attempted game-hacking: o1-preview (37%), DeepSeek R1 (11%)
+      - Goal misgeneralization occurs even without explicit prompting
+
+      Demonstrates alignment becomes harder as capabilities increase.
+
+  # HYBRID & REMOTE WORK RESEARCH
+  - id: research-stanford-hybrid-work
+    type: research
+    title: "Hybrid Working from Home Improves Retention"
+    description: "Largest RCT study on hybrid work effectiveness"
+    source: "Bloom, N., Han, R., & Liang, J. (2024). Nature"
+    source_url: "https://pubmed.ncbi.nlm.nih.gov/38867040/"
+    credibility_score: 98
+    tags: [remote-work, hybrid, Stanford, RCT, productivity]
+    content: |
+      Randomized controlled trial with 1,612 university-educated workers at Trip.com:
+
+      **Key Results:**
+      - Zero impact on productivity
+      - Zero impact on promotion rates
+      - 33% reduction in resignations
+      - Women, non-managers, and long commuters benefited most
+      - $20,000 savings per prevented resignation
+
+      Published in Nature (June 2024), considered gold standard in experimental
+      design. Confirms hybrid work as "win-win-win" for companies and workers.
+
+  - id: research-bloom-remote-work
+    type: research
+    title: "Does Working from Home Work?"
+    description: "Early landmark study on remote work productivity"
+    source: "Bloom, N. et al. (2015). Quarterly Journal of Economics"
+    credibility_score: 96
+    tags: [remote-work, productivity, economics]
+    content: |
+      First major RCT on work-from-home:
+      - 13% performance increase (9% from more hours, 4% from productivity)
+      - 50% reduction in attrition
+      - Improved work satisfaction
+      - Lower cost per employee
+
+      Established foundation for understanding remote work economics.
+
+  # CIRCULAR ECONOMY & SUSTAINABILITY
+  - id: framework-circular-economy-emf
+    type: principle
+    title: "Ellen MacArthur Foundation Circular Economy Framework"
+    description: "Three-principle framework for eliminating waste"
+    source: "Ellen MacArthur Foundation (2015-2025)"
+    source_url: "https://www.ellenmacarthurfoundation.org/topics/circular-economy-introduction/overview"
+    credibility_score: 93
+    tags: [circular-economy, sustainability, framework]
+    content: |
+      Three core principles driven by design:
+      1. Eliminate waste and pollution
+      2. Circulate products and materials (at their highest value)
+      3. Regenerate nature
+
+      Foundation works with business, academia, and policymakers globally
+      to accelerate transition. Has set five universal circular economy
+      policy goals for governments and businesses.
+
+  - id: research-circular-economy-impact
+    type: research
+    title: "Circular Economy Impact on Business and Environment"
+    description: "Economic and environmental benefits of circular models"
+    source: "Multiple academic studies, 2020-2024"
+    credibility_score: 88
+    tags: [circular-economy, business-models, sustainability]
+    content: |
+      Research shows circular economy approaches:
+      - Reduce resource consumption by 40-60%
+      - Create new business opportunities and jobs
+      - Decrease environmental impact significantly
+      - Require system-level transformation, not just recycling
+
+      Key business models: product-as-service, sharing platforms,
+      refurbishment, and resource recovery.
+
+  # ESG & SUSTAINABLE FINANCE
+  - id: research-esg-performance
+    type: research
+    title: "Sustainable Finance and ESG Importance"
+    description: "Systematic literature review of ESG research"
+    source: "Multiple authors (2024). Sustainability, 16(7):2878"
+    source_url: "https://www.mdpi.com/2071-1050/16/7/2878"
+    credibility_score: 91
+    tags: [ESG, sustainable-finance, meta-analysis]
+    content: |
+      Systematic review identifying four thematic areas:
+      1. Value creation shifts from traditional metrics
+      2. Green bonds and sustainable instruments
+      3. ESG ratings and performance measurement
+      4. Sustainable banking and financial risks
+
+      Academic interest grew dramatically: 15 publications in 2020,
+      24 in 2021. Challenges include lack of unified classification
+      framework and standardized evaluation tools.
+
+  - id: framework-un-pri
+    type: principle
+    title: "UN Principles for Responsible Investment (PRI)"
+    description: "Global framework for incorporating ESG into investment decisions"
+    source: "United Nations (2006)"
+    credibility_score: 94
+    tags: [ESG, UN, investing, framework]
+    content: |
+      Six principles for responsible investment:
+      1. Incorporate ESG issues into investment analysis
+      2. Be active owners incorporating ESG into policies
+      3. Seek appropriate disclosure on ESG from entities invested in
+      4. Promote acceptance of Principles within investment industry
+      5. Work together to enhance effectiveness
+      6. Report on activities and progress
+
+      Over 5,000 signatories representing $120+ trillion in assets.
+
+  # MISINFORMATION & FACT-CHECKING
+  - id: research-misinformation-detection
+    type: research
+    title: "Misinformation Detection Datasets and Methods"
+    description: "Comprehensive guide to automated misinformation detection"
+    source: "Multiple researchers (2024). arXiv:2411.05060v1"
+    source_url: "https://arxiv.org/html/2411.05060v1"
+    credibility_score: 90
+    tags: [misinformation, NLP, detection, datasets]
+    content: |
+      Survey of 36 datasets for misinformation detection:
+      - Expert fact-checking (highest quality, slow, expensive)
+      - Crowdsourced labels (faster, more bias potential)
+      - Source-based evaluation (scalable, indirect)
+      - Algorithmic labeling (automated, requires validation)
+
+      Key techniques: NLP, machine learning, deep learning for pattern
+      detection. Context and user engagement are critical signals
+      beyond text features alone.
+
+  - id: framework-fact-checking
+    type: principle
+    title: "Multi-Method Fact-Checking Framework"
+    description: "Expert, crowdsourced, and computational validation approaches"
+    source: "RAND Corporation & Academic Research (2024)"
+    source_url: "https://www.rand.org/research/projects/truth-decay/fighting-disinformation/search.html"
+    credibility_score: 89
+    tags: [fact-checking, validation, misinformation]
+    content: |
+      Three validation approaches:
+      1. **Expert-driven**: Professionals evaluate through research
+      2. **Crowdsourced**: Wisdom of crowds with proper aggregation
+      3. **Computationally-driven**: AI/ML pattern detection
+
+      Hybrid approaches combining semantic representations (XLM-RoBERTa)
+      with theory-informed features (psycholinguistic framing, source
+      credibility, social context) show best results.
+
+  # ATTENTION ECONOMY & DIGITAL MINIMALISM
+  - id: book-digital-minimalism-newport
+    type: principle
+    title: "Cal Newport's Digital Minimalism"
+    description: "Philosophy for intentional technology use"
+    source: "Newport, C. (2019). Digital Minimalism: Choosing a Focused Life"
+    credibility_score: 92
+    tags: [digital-minimalism, attention, technology, newport]
+    content: |
+      Core philosophy: "Focus online time on small number of carefully
+      selected and optimized activities that strongly support things
+      you value, and happily miss out on everything else."
+
+      Key method: 30-day digital declutter
+      - Take break from optional technologies
+      - Rediscover offline activities
+      - Reintroduce tech selectively
+
+      1,600 participants reported more time for reading, exercise,
+      learning, and face-to-face time with loved ones.
+
+  - id: research-attention-economy
+    type: research
+    title: "The Attention Economy: History and Mechanisms"
+    description: "How tech platforms monetize human attention"
+    source: "Newport, C. & Historical Analysis (1830-2024)"
+    credibility_score: 87
+    tags: [attention-economy, business-models, technology]
+    content: |
+      Attention economy traces to 1830 when Benjamin Day realized
+      readers could be the product sold to advertisers.
+
+      Modern mechanisms:
+      - Infinite scroll and autoplay
+      - Intermittent positive reinforcement (likes, notifications)
+      - Algorithmic personalization
+      - Social proof and FOMO
+
+      Tech companies engineer addiction to maximize user time and
+      attention sold to advertisers. Users become the product.
+
+  # DELIBERATE PRACTICE & EXPERTISE
+  - id: research-ericsson-deliberate-practice
+    type: research
+    title: "The Role of Deliberate Practice in Expert Performance"
+    description: "Landmark study defining deliberate practice"
+    source: "Ericsson, K. A. et al. (1993). Psychological Review, 100(3)"
+    credibility_score: 97
+    tags: [expertise, practice, psychology, performance]
+    content: |
+      Groundbreaking research establishing deliberate practice framework:
+      - Expert performance traced to active engagement in deliberate practice
+      - Practice must be focused on improving particular tasks
+      - Requires specific goals, immediate feedback, and intense focus
+      - Discomfort necessary - must work at edge of ability
+
+      Most cited: 119,924+ citations. Foundation for understanding
+      how expertise develops across domains (music, chess, sports, medicine).
+
+  - id: book-peak-ericsson
+    type: principle
+    title: "Peak: Secrets from the New Science of Expertise"
+    description: "Accessible synthesis of deliberate practice research"
+    source: "Ericsson, K. A. & Pool, R. (2016). Peak"
+    credibility_score: 94
+    tags: [expertise, deliberate-practice, performance]
+    content: |
+      Key insights:
+      - True expertise is product of years of intense practice and coaching
+      - Need to constantly push beyond abilities and comfort level
+      - "10,000 hour rule" oversimplifies - quality and type of practice matter
+      - Mental representations distinguish experts from novices
+
+      Provides practical framework for applying deliberate practice
+      principles to skill development.
+
+  # ANTIFRAGILITY & RISK
+  - id: book-antifragile-taleb
+    type: principle
+    title: "Antifragile: Things That Gain from Disorder"
+    description: "Framework for building systems that benefit from volatility"
+    source: "Taleb, N. N. (2012). Antifragile"
+    credibility_score: 93
+    tags: [antifragility, taleb, risk, resilience]
+    content: |
+      Core concept: Some systems don't just resist stress - they improve
+      from it. "Antifragility is beyond resilience or robustness. The
+      resilient resists shocks and stays the same; the antifragile gets better."
+
+      Key principles:
+      - Optionality over prediction
+      - Barbell strategy (extreme safety + extreme risk)
+      - Via negativa (improve by removing)
+      - Skin in the game
+      - Embrace small failures to prevent catastrophic ones
+
+      Applied in risk analysis, biology, engineering, aerospace, computer science.
+
+  - id: concept-antifragility
+    type: principle
+    title: "Antifragility Property"
+    description: "Systems that gain capability from stressors"
+    source: "Taleb, N. N. & subsequent academic research (2012-2024)"
+    credibility_score: 90
+    tags: [systems-thinking, antifragility, complexity]
+    content: |
+      Property of systems where they increase in capability as result of
+      stressors, shocks, volatility, noise, mistakes, faults, or failures.
+
+      Three categories:
+      - Fragile: Harmed by volatility
+      - Robust: Unaffected by volatility
+      - Antifragile: Benefits from volatility
+
+      Examples: evolution, free markets, muscle growth, immune system,
+      startup ecosystems. Opposite: centralized systems, monocultures.
+
+  # JOBS-TO-BE-DONE
+  - id: framework-jtbd-christensen
+    type: principle
+    title: "Christensen's Jobs-to-be-Done Framework"
+    description: "Understanding customer motivation through job lens"
+    source: "Christensen, C. et al. / Christensen Institute (2003-2024)"
+    source_url: "https://www.christenseninstitute.org/theory/jobs-to-be-done/"
+    credibility_score: 95
+    tags: [innovation, JTBD, christensen, product]
+    content: |
+      Core insight: Customer doesn't buy product; they hire it to get job done.
+
+      Framework helps innovators understand how and why people make
+      decisions. While Tony Ulwick invented JTBD (2002), Christensen
+      popularized it in The Innovator's Solution (2003).
+
+      Jobs have functional, social, and emotional dimensions.
+      Circumstances matter more than demographics. Focus on progress
+      customer is trying to make, not product attributes.
+
+  - id: book-competing-against-luck
+    type: principle
+    title: "Competing Against Luck: The Story of Innovation"
+    description: "Christensen's comprehensive JTBD framework"
+    source: "Christensen, C. et al. (2016). Competing Against Luck"
+    credibility_score: 93
+    tags: [innovation, JTBD, strategy]
+    content: |
+      Comprehensive treatment of Jobs-to-be-Done theory.
+
+      Key insights:
+      - Milkshake case study: morning commuters hire milkshakes for
+        specific job (stay full, make commute interesting, one-handed)
+      - Jobs are never simply functional - have social and emotional dimensions
+      - Circumstances in which customers try to do jobs are critical
+      - Competition is anything that gets job done
+      - Innovation should focus on job, not product improvement
+
+  # NETWORK EFFECTS & PLATFORM ECONOMICS
+  - id: research-network-effects
+    type: research
+    title: "Network Effects in Platform Economics"
+    description: "Academic research on network effects and competitive dynamics"
+    source: "Multiple researchers / Review of Industrial Organization (2011-2024)"
+    source_url: "https://link.springer.com/article/10.1007/s11151-011-9288-6"
+    credibility_score: 92
+    tags: [network-effects, platforms, economics]
+    content: |
+      Survey covering:
+      - Consumer demand under network effects
+      - Compatibility decisions and standardization
+      - Technology advances in network industries
+      - Two-sided markets and platform competition
+      - Information networks and intellectual property
+
+      Strong network effects decrease threat of new entrants (Porter's
+      five forces), enabling rapid growth of platform companies like
+      Amazon, Google, Facebook.
+
+  - id: concept-metcalfes-law
+    type: principle
+    title: "Metcalfe's Law"
+    description: "Network value grows with square of number of users"
+    source: "Robert Metcalfe (1980s), formalized by researchers"
+    credibility_score: 85
+    tags: [network-effects, mathematics, networks]
+    content: |
+      Value of network is proportional to square of number of users: V = n²
+
+      Originally about telecommunications networks, now applies to:
+      - Social networks (Facebook, LinkedIn)
+      - Communication platforms (WhatsApp, Zoom)
+      - Marketplaces (eBay, Airbnb)
+
+      Criticisms: Assumes all connections equally valuable. Modified
+      versions (Odlyzko, Briscoe) propose V = n log(n) for more realistic
+      modeling. Still illustrates non-linear value growth.
+
+  - id: research-two-sided-markets
+    type: research
+    title: "Two-Sided Markets and Platform Pricing"
+    description: "Economic theory of platforms connecting distinct user groups"
+    source: "Armstrong, M. & Porter, R. / Academic research (2006-2024)"
+    credibility_score: 94
+    tags: [platforms, two-sided-markets, economics]
+    content: |
+      Two-sided markets involve platforms that bring together distinct
+      user groups with network effects between them.
+
+      Key insights:
+      - Pricing strategy: Often subsidize one side to attract the other
+      - Chicken-and-egg problem: Need both sides to create value
+      - Cross-side network effects crucial
+      - Winner-take-most dynamics common
+      - Governance and quality control critical
+
+      Examples: Credit cards (merchants/consumers), consoles (gamers/developers),
+      dating apps (men/women), ride-sharing (drivers/riders).
+
+  # KAHNEMAN & TVERSKY (Behavioral Economics)
+  - id: book-thinking-fast-and-slow
+    type: principle
+    title: "Thinking, Fast and Slow"
+    description: "Kahneman's synthesis of decades of behavioral economics research"
+    source: "Kahneman, D. (2011). Thinking, Fast and Slow"
+    credibility_score: 98
+    tags: [psychology, behavioral-economics, kahneman, decision-making]
+    content: |
+      Nobel Prize winner's comprehensive treatment of dual-system thinking,
+      cognitive biases, and decision-making under uncertainty.
+
+      Key concepts:
+      - System 1 (fast) vs System 2 (slow) thinking
+      - Heuristics and biases
+      - Prospect theory and loss aversion
+      - Anchoring, availability, representativeness
+      - Overconfidence and optimism bias
+
+      Most cited work in behavioral economics. Foundation for understanding
+      how humans actually make decisions (vs rational actor model).
+
+  - id: research-kahneman-tversky
+    type: research
+    title: "Prospect Theory and Behavioral Economics Research"
+    description: "Groundbreaking research on decision-making under uncertainty"
+    source: "Kahneman, D. & Tversky, A. (1979). Econometrica, 47(2)"
+    credibility_score: 99
+    tags: [economics, psychology, Nobel, prospect-theory]
+    content: |
+      Revolutionary research challenging rational actor model:
+      - Loss aversion: Losses loom larger than gains
+      - Framing effects: Presentation matters more than content
+      - Reference dependence: Evaluate relative to reference point
+      - Probability weighting: Overweight small probabilities
+
+      Kahneman won Nobel Prize in Economics (2002) for this work.
+      Tversky would have shared if alive. Most influential work in
+      decision science.
+
+  - id: research-confirmation-bias
+    type: research
+    title: "Confirmation Bias Research"
+    description: "Decades of research on selective information processing"
+    source: "Multiple researchers (Wason, Nickerson, et al.) 1960-2024"
+    credibility_score: 96
+    tags: [psychology, bias, epistemology]
+    content: |
+      Wason's (1960) selection task first demonstrated confirmation bias.
+      Subsequent research showed it's pervasive:
+      - Selective exposure to confirming information
+      - Biased interpretation of ambiguous evidence
+      - Biased memory of confirming vs disconfirming evidence
+
+      One of most robust findings in psychology. Affects everyone,
+      including experts in their domains. Hard to overcome even when aware.
+
+  # TALEB (Risk, Antifragility, Skin in the Game)
+  - id: book-skin-in-the-game-taleb
+    type: principle
+    title: "Skin in the Game: Hidden Asymmetries in Daily Life"
+    description: "Taleb on risk, incentives, and decision-making"
+    source: "Taleb, N. N. (2018). Skin in the Game"
+    credibility_score: 92
+    tags: [taleb, risk, incentives, accountability]
+    content: |
+      Core argument: Those who don't bear consequences of their decisions
+      create systemic fragility and unfairness.
+
+      Key concepts:
+      - Symmetry in risk-taking
+      - Minority rule (intransigent minorities shape outcomes)
+      - Lindy effect (longer something survives, longer it will survive)
+      - Via negativa (knowledge by subtraction)
+      - Virtue signaling vs actual virtue
+
+      Part of Incerto series. Connects to antifragility and optionality.
+
+  - id: quote-munger-inversion
+    type: quote
+    title: "Charlie Munger on Inversion"
+    description: "Think problems backwards to avoid stupidity"
+    source: "Charlie Munger, multiple speeches (1990s-2020s)"
+    credibility_score: 95
+    tags: [munger, thinking, inversion]
+    content: |
+      "All I want to know is where I'm going to die, so I'll never go there."
+
+      "It is remarkable how much long-term advantage people like us have
+      gotten by trying to be consistently not stupid, instead of trying
+      to be very intelligent."
+
+      Munger advocates inverting problems: Instead of "How do I succeed?"
+      ask "What would guarantee failure?" Then avoid that.
+
+  - id: concept-via-negativa
+    type: principle
+    title: "Via Negativa (Knowledge by Subtraction)"
+    description: "Improve by removing rather than adding"
+    source: "Ancient philosophy, popularized by Taleb"
+    credibility_score: 88
+    tags: [philosophy, minimalism, taleb]
+    content: |
+      Via negativa: Path of negation, defining what something is not.
+
+      Applications:
+      - Health: Remove harmful foods rather than add supplements
+      - Business: Remove stupid decisions rather than seeking brilliance
+      - Knowledge: Identify what's false rather than proving what's true
+      - Life: Eliminate negatives rather than chasing positives
+
+      "The wise man knows what to avoid more than what to do."
+
+  # ECONOMICS & GAME THEORY
+  - id: principle-opportunity-cost
+    type: principle
+    title: "Opportunity Cost Principle"
+    description: "Fundamental economic concept of foregone alternatives"
+    source: "Classical economics, formalized by Bastiat and others"
+    credibility_score: 98
+    tags: [economics, decision-making, tradeoffs]
+    content: |
+      Every choice has an opportunity cost: the value of the next best
+      alternative foregone.
+
+      Frederic Bastiat (1850): "That which is seen, and that which is not seen"
+      - People focus on visible effects
+      - Ignore invisible opportunity costs
+      - Leads to poor decisions
+
+      Core to economic thinking. Makes hidden costs visible.
+
+  - id: book-economics-in-one-lesson
+    type: principle
+    title: "Economics in One Lesson"
+    description: "Hazlitt's classic on economic thinking"
+    source: "Hazlitt, H. (1946). Economics in One Lesson"
+    credibility_score: 90
+    tags: [economics, opportunity-cost, thinking]
+    content: |
+      The "one lesson": The art of economics consists in looking not
+      merely at the immediate but at the longer effects of any act or
+      policy; it consists in tracing the consequences of that policy
+      not merely for one group but for all groups.
+
+      Teaches opportunity cost thinking and second-order effects.
+      Still relevant 75+ years later.
+
+  - id: paper-tragedy-of-commons
+    type: research
+    title: "The Tragedy of the Commons"
+    description: "Hardin's seminal paper on shared resource depletion"
+    source: "Hardin, G. (1968). Science, 162(3859)"
+    credibility_score: 97
+    tags: [economics, game-theory, environment, commons]
+    content: |
+      Classic paper explaining how rational individuals acting in
+      self-interest can destroy shared resources.
+
+      "Freedom in a commons brings ruin to all."
+
+      Cited 50,000+ times. Foundation for environmental economics,
+      public goods theory, and understanding collective action problems.
+
+  - id: research-elinor-ostrom
+    type: research
+    title: "Ostrom's Work on Commons Governance"
+    description: "Nobel Prize research on successful commons management"
+    source: "Ostrom, E. (1990). Governing the Commons"
+    credibility_score: 98
+    tags: [economics, commons, Nobel, governance]
+    content: |
+      Challenged Hardin's pessimism: Communities CAN successfully
+      manage commons through self-governance.
+
+      Key design principles for successful commons:
+      1. Clear boundaries
+      2. Proportional equivalence between benefits and costs
+      3. Collective choice arrangements
+      4. Monitoring
+      5. Graduated sanctions
+      6. Conflict resolution mechanisms
+      7. Recognition by external authorities
+
+      Won Nobel Prize in Economics (2009). First woman to win Economics Nobel.
+
+  - id: theory-agency-theory
+    type: theory
+    title: "Agency Theory (Principal-Agent Problem)"
+    description: "Economic theory of delegation and incentive alignment"
+    source: "Jensen, M. & Meckling, W. (1976). Journal of Financial Economics"
+    credibility_score: 96
+    tags: [economics, incentives, corporate-governance]
+    content: |
+      Foundational paper explaining conflicts when ownership separated
+      from control.
+
+      Core problem: Agents may not act in principals' best interest.
+
+      Solutions:
+      - Monitoring and bonding
+      - Incentive alignment (stock options, profit sharing)
+      - Market discipline
+
+      Foundation for modern corporate governance theory.
+
+  - id: concept-moral-hazard
+    type: principle
+    title: "Moral Hazard"
+    description: "Risk-taking increases when protected from consequences"
+    source: "Economic theory, insurance industry origins"
+    credibility_score: 94
+    tags: [economics, risk, incentives]
+    content: |
+      When party is insulated from risk, they behave differently than
+      if fully exposed to risk.
+
+      Examples:
+      - Insurance encouraging riskier behavior
+      - Bailouts encouraging reckless banking
+      - Tenure reducing professor effort
+      - Warranties reducing care
+
+      Solution: Skin in the game, deductibles, co-pays.
+
+  # BUSINESS STRATEGY
+  - id: book-capitalism-socialism-democracy
+    type: principle
+    title: "Capitalism, Socialism and Democracy"
+    description: "Schumpeter's analysis of capitalism and innovation"
+    source: "Schumpeter, J. A. (1942). Capitalism, Socialism and Democracy"
+    credibility_score: 96
+    tags: [economics, schumpeter, innovation, capitalism]
+    content: |
+      Introduced concept of "creative destruction": capitalism's
+      process of industrial mutation that revolutionizes economic
+      structure from within, destroying old while creating new.
+
+      "The process of Creative Destruction is the essential fact
+      about capitalism."
+
+      Predicted capitalism's evolution and challenges. One of most
+      influential economics books of 20th century.
+
+  - id: concept-schumpeter-innovation
+    type: principle
+    title: "Schumpeterian Innovation and Entrepreneurship"
+    description: "Innovation as driver of economic development"
+    source: "Schumpeter's work (1911-1950)"
+    credibility_score: 95
+    tags: [innovation, entrepreneurship, economics]
+    content: |
+      Schumpeter's key insights:
+      - Entrepreneurship drives economic development
+      - Innovation creates monopoly profits (temporarily)
+      - Competition through innovation, not price
+      - "Perennial gale of creative destruction"
+
+      Contrasts with equilibrium-focused classical economics.
+      Foundation for modern innovation economics.
+
+  - id: concept-economic-moats
+    type: principle
+    title: "Economic Moats and Competitive Advantages"
+    description: "Buffett's framework for durable competitive advantages"
+    source: "Warren Buffett & investment analysis"
+    credibility_score: 92
+    tags: [strategy, investing, buffett, competition]
+    content: |
+      Buffett's metaphor: businesses need "moats" protecting them from
+      competition, just as castles need moats for protection.
+
+      Types identified by investment analysts:
+      - Intangible assets (brands, patents, licenses)
+      - Switching costs (expensive to switch to competitor)
+      - Network effects (value increases with users)
+      - Cost advantages (scale, unique resources, process)
+
+      Determines long-term profitability and investment returns.
+
+  - id: quote-buffett-moats
+    type: quote
+    title: "Warren Buffett on Economic Moats"
+    description: "Importance of durable competitive advantages"
+    source: "Warren Buffett, Berkshire Hathaway Annual Meetings"
+    credibility_score: 95
+    tags: [buffett, strategy, investing]
+    content: |
+      "In business, I look for economic castles protected by unbreachable
+      'moats'."
+
+      "A truly great business must have an enduring 'moat' that protects
+      excellent returns on invested capital."
+
+      Buffett's primary investment criterion: businesses with wide,
+      durable moats that protect high returns over decades.
+
+  # SYSTEMS THINKING & COGNITIVE FRAMEWORKS
+  - id: book-thinking-in-systems
+    type: principle
+    title: "Thinking in Systems: A Primer"
+    description: "Meadows' introduction to systems thinking"
+    source: "Meadows, D. H. (2008). Thinking in Systems"
+    credibility_score: 93
+    tags: [systems-thinking, complexity, second-order-effects]
+    content: |
+      Key concepts:
+      - Systems have stocks, flows, and feedback loops
+      - Behavior emerges from structure
+      - Second-order and higher-order effects
+      - Delays and unintended consequences
+      - Leverage points for intervention
+
+      Essential for understanding complex systems and avoiding
+      unintended consequences.
+
+  - id: concept-second-order-effects
+    type: principle
+    title: "Second-Order Effects and Consequences"
+    description: "Thinking beyond immediate outcomes"
+    source: "Systems thinking literature"
+    credibility_score: 90
+    tags: [systems-thinking, decision-making, consequences]
+    content: |
+      First-order: Immediate, obvious effects
+      Second-order: Consequences of first-order effects
+      Third-order and beyond: Cascade of effects
+
+      Most people stop at first-order. Smart people ask "and then what?"
+      repeatedly.
+
+      Critical for policy-making, business strategy, personal decisions.
+
+  # BIAS & STATISTICS
+  - id: concept-survivorship-bias
+    type: principle
+    title: "Survivorship Bias"
+    description: "Logical error from focusing only on survivors"
+    source: "Statistical theory, WWII example popularized concept"
+    credibility_score: 93
+    tags: [statistics, bias, critical-thinking]
+    content: |
+      Classic WWII example: Abraham Wald analyzed bullet holes on
+      returning bombers. Recommendation: Armor where there are NO holes.
+      Reasoning: Planes hit there didn't return.
+
+      Common in:
+      - Business advice (only hear from survivors)
+      - Investment strategies (failed funds disappear)
+      - Historical analysis (records of winners, not losers)
+
+      Always ask: What am I not seeing because it didn't survive?
+
+  - id: research-statistical-bias
+    type: research
+    title: "Statistical Biases and Errors"
+    description: "Research on systematic errors in statistical reasoning"
+    source: "Multiple researchers, statistical theory"
+    credibility_score: 94
+    tags: [statistics, bias, methodology]
+    content: |
+      Key biases:
+      - Selection bias
+      - Survivorship bias
+      - Publication bias (positive results published more)
+      - Regression to the mean
+      - Simpson's paradox
+
+      Understanding these essential for interpreting research,
+      making decisions, avoiding costly errors.
+
+  # OTHER FRAMEWORKS
+  - id: principle-pareto-distribution
+    type: principle
+    title: "Pareto Distribution and Power Laws"
+    description: "Mathematical basis for 80/20 and other power law phenomena"
+    source: "Vilfredo Pareto (1896), subsequent mathematical formalization"
+    credibility_score: 95
+    tags: [mathematics, distribution, pareto, statistics]
+    content: |
+      Pareto observed 80% of Italy's land owned by 20% of population.
+      Generalized to power law distributions across many domains.
+
+      Mathematical property: small number of items account for large
+      proportion of total.
+
+      Appears in:
+      - Wealth distribution
+      - City sizes
+      - Word frequency
+      - Website traffic
+      - Natural phenomena
+
+      Contrasts with normal (Gaussian) distribution.
+
+  - id: book-80-20-principle
+    type: principle
+    title: "The 80/20 Principle"
+    description: "Koch's application of Pareto to business and life"
+    source: "Koch, R. (1997). The 80/20 Principle"
+    credibility_score: 87
+    tags: [pareto, productivity, efficiency]
+    content: |
+      Popularized Pareto principle for practical application:
+      - 80% of results from 20% of effort
+      - Focus on high-leverage activities
+      - Eliminate or delegate low-value work
+
+      Made Pareto distribution accessible to business audience.
+      Spawned countless applications in productivity and strategy.
+
+  - id: concept-ikigai
+    type: principle
+    title: "Ikigai: Japanese Concept of Purpose"
+    description: "Finding purpose at intersection of passion, skill, need, and value"
+    source: "Japanese philosophy, popularized in West (2010s)"
+    credibility_score: 85
+    tags: [purpose, japanese-philosophy, career, fulfillment]
+    content: |
+      Traditional Japanese concept: reason for being, what makes
+      life worth living.
+
+      Western interpretation: Venn diagram of four circles.
+
+      Note: Traditional Japanese ikigai is simpler - what brings
+      you joy and purpose. Four-circle version is Western creation
+      but still useful framework.
+
+  - id: book-ikigai-japanese
+    type: principle
+    title: "Ikigai: The Japanese Secret to a Long and Happy Life"
+    description: "Book popularizing ikigai concept in West"
+    source: "García, H. & Miralles, F. (2016). Ikigai"
+    credibility_score: 83
+    tags: [ikigai, purpose, longevity, japanese]
+    content: |
+      Explores ikigai through lens of longevity in Japanese Blue Zones.
+
+      Key findings:
+      - Purpose extends life
+      - Stay active, don't retire
+      - Social connections matter
+      - Simplicity and moderation
+
+      Introduced four-circle ikigai diagram to Western audience.
+
+  - id: framework-ooda-loop-boyd
+    type: principle
+    title: "John Boyd's OODA Loop"
+    description: "Military strategist's decision cycle framework"
+    source: "Boyd, J. (1976). Military strategy briefings"
+    credibility_score: 91
+    tags: [strategy, military, decision-making, agility]
+    content: |
+      Fighter pilot John Boyd developed OODA loop for air combat:
+      - Observe
+      - Orient (most important step - synthesize with mental models)
+      - Decide
+      - Act
+
+      Key insight: Speed through loop beats perfection at any stage.
+      "Get inside opponent's OODA loop" = act before they complete theirs.
+
+      Applied beyond military to business, sports, personal decisions.
+
+  - id: concept-strategic-agility
+    type: principle
+    title: "Strategic Agility and Decision Speed"
+    description: "Competitive advantage through faster decision cycles"
+    source: "Military strategy, business strategy literature"
+    credibility_score: 88
+    tags: [strategy, agility, decision-making]
+    content: |
+      In dynamic environments, speed of iteration matters more than
+      perfection of execution.
+
+      OODA loop, Lean Startup, Agile all embody this.
+
+      Competitive advantage comes from:
+      - Faster sensing (observation)
+      - Faster learning (orientation)
+      - Faster deciding
+      - Faster acting
+      - Faster iteration
+
+  - id: concept-eisenhower-matrix
+    type: principle
+    title: "Eisenhower Matrix for Prioritization"
+    description: "Urgent/Important framework for task management"
+    source: "Attributed to Dwight D. Eisenhower"
+    credibility_score: 85
+    tags: [productivity, prioritization, eisenhower]
+    content: |
+      2x2 matrix: Urgent vs Important
+
+      Eisenhower: "I have two kinds of problems: the urgent and
+      the important. The urgent are not important, and the important
+      are never urgent."
+
+      Framework helps identify strategic (important, not urgent)
+      work vs reactive (urgent, not important) work.
+
+  - id: quote-eisenhower-urgency
+    type: quote
+    title: "Eisenhower on Urgency vs Importance"
+    description: "Distinguishing urgent from important"
+    source: "Dwight D. Eisenhower (attributed)"
+    credibility_score: 85
+    tags: [eisenhower, productivity, prioritization]
+    content: |
+      "What is important is seldom urgent and what is urgent is seldom important."
+
+      Also attributed: "I have two kinds of problems: the urgent and the
+      important. The urgent are not important, and the important are never urgent."
+
+      Foundation for prioritization matrix bearing his name.
+
 relationships:
   # System → Research Evidence
   - from: system-structured-interviews
@@ -536,3 +2475,639 @@ relationships:
     type: supports
     strength: 70
     tags: [popular-wisdom]
+
+  # NEW SYSTEMS → PROVENANCE
+  - from: system-ai-alignment-protocol
+    to: research-ai-alignment-survey
+    type: evidences
+    strength: 95
+    tags: [research-backed, current]
+
+  - from: system-ai-alignment-protocol
+    to: research-ai-alignment-deep-learning
+    type: evidences
+    strength: 96
+    tags: [empirical, peer-reviewed]
+
+  - from: system-circular-economy-implementation
+    to: framework-circular-economy-emf
+    type: evidences
+    strength: 93
+    tags: [authoritative, global]
+
+  - from: system-circular-economy-implementation
+    to: research-circular-economy-impact
+    type: supports
+    strength: 88
+    tags: [impact, validated]
+
+  - from: system-esg-investment-screening
+    to: research-esg-performance
+    type: evidences
+    strength: 91
+    tags: [systematic-review]
+
+  - from: system-esg-investment-screening
+    to: framework-un-pri
+    type: evidences
+    strength: 94
+    tags: [global-standard]
+
+  - from: system-hybrid-work-policy
+    to: research-stanford-hybrid-work
+    type: evidences
+    strength: 98
+    tags: [RCT, gold-standard]
+
+  - from: system-hybrid-work-policy
+    to: research-bloom-remote-work
+    type: supports
+    strength: 96
+    tags: [foundational, validated]
+
+  - from: system-digital-declutter
+    to: book-digital-minimalism-newport
+    type: evidences
+    strength: 92
+    tags: [methodology, tested]
+
+  - from: system-digital-declutter
+    to: research-attention-economy
+    type: supports
+    strength: 87
+    tags: [context, explanation]
+
+  - from: system-deliberate-practice-training
+    to: research-ericsson-deliberate-practice
+    type: evidences
+    strength: 97
+    tags: [foundational, seminal]
+
+  - from: system-deliberate-practice-training
+    to: book-peak-ericsson
+    type: supports
+    strength: 94
+    tags: [practical, accessible]
+
+  - from: system-jobs-to-be-done-research
+    to: framework-jtbd-christensen
+    type: evidences
+    strength: 95
+    tags: [framework, innovation]
+
+  - from: system-jobs-to-be-done-research
+    to: book-competing-against-luck
+    type: supports
+    strength: 93
+    tags: [comprehensive, case-studies]
+
+  - from: system-antifragile-organization
+    to: book-antifragile-taleb
+    type: evidences
+    strength: 93
+    tags: [foundational, taleb]
+
+  - from: system-antifragile-organization
+    to: concept-antifragility
+    type: uses
+    strength: 90
+    tags: [core-concept]
+
+  - from: system-misinformation-detection
+    to: research-misinformation-detection
+    type: evidences
+    strength: 90
+    tags: [methods, datasets]
+
+  - from: system-misinformation-detection
+    to: framework-fact-checking
+    type: uses
+    strength: 89
+    tags: [validation, multi-method]
+
+  # NEW MODELS → PROVENANCE
+  - from: model-network-effects
+    to: research-network-effects
+    type: evidences
+    strength: 92
+    tags: [economics, platforms]
+
+  - from: model-network-effects
+    to: concept-metcalfes-law
+    type: supports
+    strength: 85
+    tags: [mathematical-model]
+
+  - from: model-ai-alignment-problem
+    to: research-ai-alignment-survey
+    type: evidences
+    strength: 95
+    tags: [comprehensive, current]
+
+  - from: model-ai-alignment-problem
+    to: research-ai-alignment-deep-learning
+    type: supports
+    strength: 96
+    tags: [empirical-evidence]
+
+  - from: model-circular-economy
+    to: framework-circular-economy-emf
+    type: evidences
+    strength: 93
+    tags: [authoritative, framework]
+
+  - from: model-circular-economy
+    to: research-circular-economy-impact
+    type: supports
+    strength: 88
+    tags: [validation, impact]
+
+  - from: model-esg-framework
+    to: research-esg-performance
+    type: evidences
+    strength: 91
+    tags: [research-backed]
+
+  - from: model-esg-framework
+    to: framework-un-pri
+    type: supports
+    strength: 94
+    tags: [global-standard, implementation]
+
+  - from: model-attention-economy
+    to: book-digital-minimalism-newport
+    type: evidences
+    strength: 92
+    tags: [analysis, critique]
+
+  - from: model-attention-economy
+    to: research-attention-economy
+    type: supports
+    strength: 87
+    tags: [historical, mechanisms]
+
+  - from: model-deliberate-practice
+    to: research-ericsson-deliberate-practice
+    type: evidences
+    strength: 97
+    tags: [foundational, seminal]
+
+  - from: model-deliberate-practice
+    to: book-peak-ericsson
+    type: supports
+    strength: 94
+    tags: [comprehensive, practical]
+
+  - from: model-antifragility
+    to: book-antifragile-taleb
+    type: evidences
+    strength: 93
+    tags: [origin, foundational]
+
+  - from: model-antifragility
+    to: concept-antifragility
+    type: supports
+    strength: 90
+    tags: [definition, examples]
+
+  - from: model-jobs-to-be-done
+    to: framework-jtbd-christensen
+    type: evidences
+    strength: 95
+    tags: [framework, innovation]
+
+  - from: model-jobs-to-be-done
+    to: book-competing-against-luck
+    type: supports
+    strength: 93
+    tags: [comprehensive, examples]
+
+  - from: model-platform-economics
+    to: research-network-effects
+    type: uses
+    strength: 92
+    tags: [foundation, economics]
+
+  - from: model-platform-economics
+    to: research-two-sided-markets
+    type: evidences
+    strength: 94
+    tags: [theory, pricing]
+
+  - from: model-information-ecosystem
+    to: research-misinformation-detection
+    type: uses
+    strength: 90
+    tags: [detection, patterns]
+
+  - from: model-information-ecosystem
+    to: framework-fact-checking
+    type: supports
+    strength: 89
+    tags: [validation, quality]
+
+  - from: model-remote-work-effectiveness
+    to: research-stanford-hybrid-work
+    type: evidences
+    strength: 98
+    tags: [RCT, current]
+
+  - from: model-remote-work-effectiveness
+    to: research-bloom-remote-work
+    type: supports
+    strength: 96
+    tags: [foundational, validated]
+
+  - from: model-digital-minimalism
+    to: book-digital-minimalism-newport
+    type: evidences
+    strength: 92
+    tags: [origin, philosophy]
+
+  - from: model-digital-minimalism
+    to: research-attention-economy
+    type: supports
+    strength: 87
+    tags: [context, critique]
+
+  # CROSS-CONNECTIONS BETWEEN NEW ENTITIES
+  - from: system-ai-alignment-protocol
+    to: model-ai-alignment-problem
+    type: uses
+    strength: 100
+    tags: [application, solution]
+
+  - from: system-circular-economy-implementation
+    to: model-circular-economy
+    type: uses
+    strength: 95
+    tags: [implementation, framework]
+
+  - from: system-esg-investment-screening
+    to: model-esg-framework
+    type: uses
+    strength: 93
+    tags: [application, criteria]
+
+  - from: system-hybrid-work-policy
+    to: model-remote-work-effectiveness
+    type: uses
+    strength: 95
+    tags: [evidence-based, policy]
+
+  - from: system-digital-declutter
+    to: model-digital-minimalism
+    type: uses
+    strength: 95
+    tags: [methodology, philosophy]
+
+  - from: system-digital-declutter
+    to: model-attention-economy
+    type: requires
+    strength: 85
+    tags: [understanding, motivation]
+
+  - from: system-deliberate-practice-training
+    to: model-deliberate-practice
+    type: uses
+    strength: 100
+    tags: [application, implementation]
+
+  - from: system-jobs-to-be-done-research
+    to: model-jobs-to-be-done
+    type: uses
+    strength: 100
+    tags: [application, methodology]
+
+  - from: system-antifragile-organization
+    to: model-antifragility
+    type: uses
+    strength: 95
+    tags: [application, design]
+
+  - from: system-misinformation-detection
+    to: model-information-ecosystem
+    type: requires
+    strength: 85
+    tags: [context, understanding]
+
+  - from: model-platform-economics
+    to: model-network-effects
+    type: requires
+    strength: 95
+    tags: [foundation, core-mechanism]
+
+  - from: model-digital-minimalism
+    to: model-attention-economy
+    type: contradicts
+    strength: 85
+    tags: [opposition, resistance]
+
+  # CONNECTIONS TO EXISTING ENTRIES
+  - from: model-antifragility
+    to: model-systems-vs-goals
+    type: supports
+    strength: 80
+    tags: [complementary, process-focus]
+
+  - from: system-deliberate-practice-training
+    to: theory-flow-state
+    type: supports
+    strength: 75
+    tags: [optimal-performance, complementary]
+
+  - from: system-digital-declutter
+    to: system-pomodoro
+    type: supports
+    strength: 70
+    tags: [focus, complementary]
+
+  - from: model-jobs-to-be-done
+    to: model-first-principles
+    type: extends
+    strength: 75
+    tags: [reasoning, customer-focus]
+
+  - from: model-circular-economy
+    to: model-systems-vs-goals
+    type: supports
+    strength: 70
+    tags: [systems-thinking, long-term]
+
+  - from: model-network-effects
+    to: model-compound-interest
+    type: extends
+    strength: 80
+    tags: [exponential-growth, non-linear]
+
+  # NEW MODELS → NEW PROVENANCE CONNECTIONS
+  - from: model-second-order-thinking
+    to: book-thinking-in-systems
+    type: evidences
+    strength: 93
+    tags: [systems-thinking, foundational]
+
+  - from: model-second-order-thinking
+    to: concept-second-order-effects
+    type: supports
+    strength: 90
+    tags: [framework, application]
+
+  - from: model-inversion
+    to: quote-munger-inversion
+    type: evidences
+    strength: 95
+    tags: [origin, munger]
+
+  - from: model-inversion
+    to: concept-via-negativa
+    type: supports
+    strength: 88
+    tags: [philosophical-basis, taleb]
+
+  - from: model-pareto-principle
+    to: principle-pareto-distribution
+    type: evidences
+    strength: 95
+    tags: [mathematical-basis]
+
+  - from: model-pareto-principle
+    to: book-80-20-principle
+    type: supports
+    strength: 87
+    tags: [practical-application]
+
+  - from: model-thinking-fast-slow
+    to: book-thinking-fast-and-slow
+    type: evidences
+    strength: 98
+    tags: [origin, kahneman]
+
+  - from: model-thinking-fast-slow
+    to: research-kahneman-tversky
+    type: supports
+    strength: 99
+    tags: [Nobel, foundational]
+
+  - from: model-skin-in-the-game
+    to: book-skin-in-the-game-taleb
+    type: evidences
+    strength: 92
+    tags: [origin, taleb]
+
+  - from: model-skin-in-the-game
+    to: concept-moral-hazard
+    type: supports
+    strength: 94
+    tags: [related-concept, economics]
+
+  - from: model-opportunity-cost
+    to: principle-opportunity-cost
+    type: evidences
+    strength: 98
+    tags: [fundamental, economics]
+
+  - from: model-opportunity-cost
+    to: book-economics-in-one-lesson
+    type: supports
+    strength: 90
+    tags: [practical, accessible]
+
+  - from: model-confirmation-bias
+    to: research-kahneman-tversky
+    type: evidences
+    strength: 99
+    tags: [psychology, bias]
+
+  - from: model-confirmation-bias
+    to: research-confirmation-bias
+    type: supports
+    strength: 96
+    tags: [research, wason]
+
+  - from: model-survivorship-bias
+    to: concept-survivorship-bias
+    type: evidences
+    strength: 93
+    tags: [definition, example]
+
+  - from: model-survivorship-bias
+    to: research-statistical-bias
+    type: supports
+    strength: 94
+    tags: [statistical-theory]
+
+  - from: model-loss-aversion
+    to: research-kahneman-tversky
+    type: evidences
+    strength: 99
+    tags: [prospect-theory, Nobel]
+
+  - from: model-loss-aversion
+    to: book-thinking-fast-and-slow
+    type: supports
+    strength: 98
+    tags: [behavioral-economics]
+
+  - from: model-principal-agent-problem
+    to: theory-agency-theory
+    type: evidences
+    strength: 96
+    tags: [economics, foundational]
+
+  - from: model-principal-agent-problem
+    to: concept-moral-hazard
+    type: supports
+    strength: 94
+    tags: [related-concept]
+
+  - from: model-tragedy-of-commons
+    to: paper-tragedy-of-commons
+    type: evidences
+    strength: 97
+    tags: [origin, hardin]
+
+  - from: model-tragedy-of-commons
+    to: research-elinor-ostrom
+    type: supports
+    strength: 98
+    tags: [solution, Nobel]
+
+  - from: model-creative-destruction
+    to: book-capitalism-socialism-democracy
+    type: evidences
+    strength: 96
+    tags: [origin, schumpeter]
+
+  - from: model-creative-destruction
+    to: concept-schumpeter-innovation
+    type: supports
+    strength: 95
+    tags: [innovation-economics]
+
+  - from: model-moats
+    to: concept-economic-moats
+    type: evidences
+    strength: 92
+    tags: [strategy, buffett]
+
+  - from: model-moats
+    to: quote-buffett-moats
+    type: supports
+    strength: 95
+    tags: [buffett, investing]
+
+  - from: model-ikigai
+    to: concept-ikigai
+    type: evidences
+    strength: 85
+    tags: [japanese-philosophy]
+
+  - from: model-ikigai
+    to: book-ikigai-japanese
+    type: supports
+    strength: 83
+    tags: [western-interpretation]
+
+  - from: model-ooda-loop
+    to: framework-ooda-loop-boyd
+    type: evidences
+    strength: 91
+    tags: [origin, military]
+
+  - from: model-ooda-loop
+    to: concept-strategic-agility
+    type: supports
+    strength: 88
+    tags: [application, strategy]
+
+  - from: model-eisenhower-matrix
+    to: concept-eisenhower-matrix
+    type: evidences
+    strength: 85
+    tags: [framework, productivity]
+
+  - from: model-eisenhower-matrix
+    to: quote-eisenhower-urgency
+    type: supports
+    strength: 85
+    tags: [origin, eisenhower]
+
+  # CROSS-CONNECTIONS BETWEEN MODELS
+  - from: model-skin-in-the-game
+    to: model-antifragility
+    type: supports
+    strength: 90
+    tags: [taleb, risk, complementary]
+
+  - from: model-skin-in-the-game
+    to: model-principal-agent-problem
+    type: supports
+    strength: 95
+    tags: [solution, incentives]
+
+  - from: model-inversion
+    to: model-antifragility
+    type: supports
+    strength: 85
+    tags: [via-negativa, taleb]
+
+  - from: model-second-order-thinking
+    to: model-opportunity-cost
+    type: supports
+    strength: 85
+    tags: [economics, thinking]
+
+  - from: model-confirmation-bias
+    to: model-information-ecosystem
+    type: supports
+    strength: 80
+    tags: [misinformation, bias]
+
+  - from: model-thinking-fast-slow
+    to: model-confirmation-bias
+    type: explains
+    strength: 90
+    tags: [system-1, bias]
+
+  - from: model-thinking-fast-slow
+    to: model-loss-aversion
+    type: explains
+    strength: 95
+    tags: [system-1, prospect-theory]
+
+  - from: model-pareto-principle
+    to: model-eisenhower-matrix
+    type: supports
+    strength: 75
+    tags: [prioritization, leverage]
+
+  - from: model-creative-destruction
+    to: model-network-effects
+    type: supports
+    strength: 70
+    tags: [disruption, platforms]
+
+  - from: model-moats
+    to: model-network-effects
+    type: uses
+    strength: 95
+    tags: [competitive-advantage, type]
+
+  - from: model-tragedy-of-commons
+    to: model-principal-agent-problem
+    type: supports
+    strength: 80
+    tags: [incentives, collective-action]
+
+  - from: model-ooda-loop
+    to: model-antifragility
+    type: supports
+    strength: 75
+    tags: [agility, adaptation]
+
+  - from: model-eisenhower-matrix
+    to: model-opportunity-cost
+    type: requires
+    strength: 80
+    tags: [tradeoffs, prioritization]
