@@ -1214,6 +1214,514 @@ models:
       - concept-eisenhower-matrix
       - quote-eisenhower-urgency
 
+  # PHYSICS & MATHEMATICS MODELS
+  - id: model-string-theory
+    title: "String Theory"
+    description: "Theoretical framework where particles are one-dimensional strings"
+    type: theory
+    tags: [physics, quantum, strings, unification]
+    content: |
+      ## Core Concept
+      Fundamental particles are not point-like but tiny vibrating strings.
+      Different vibration patterns correspond to different particles.
+
+      ## Key Features
+      - Requires 10 or 11 dimensions (most compactified)
+      - Unifies quantum mechanics and general relativity
+      - Predicts gravitons (quantum particles of gravity)
+      - Multiple versions: Type I, IIA, IIB, Heterotic, M-theory
+
+      ## Challenges
+      - No experimental evidence yet
+      - Landscape problem: 10^500 possible universes
+      - Energy scales beyond current technology
+      - Mathematical complexity
+
+      ## Status
+      Leading candidate for "theory of everything" but unproven.
+    evidence_links:
+      - research-string-theory
+      - theory-m-theory
+
+  - id: model-quantum-superposition
+    title: "Quantum Superposition"
+    description: "Quantum systems exist in multiple states simultaneously"
+    type: principle
+    tags: [quantum-mechanics, physics, superposition]
+    content: |
+      ## Principle
+      Until measured, quantum systems exist in superposition of all
+      possible states. Measurement "collapses" to single state.
+
+      ## Classic Example
+      Schrödinger's cat: simultaneously alive and dead until observed.
+
+      ## Mathematical Form
+      |ψ⟩ = α|0⟩ + β|1⟩
+      where |α|² + |β|² = 1
+
+      ## Applications
+      - Quantum computing (qubits in superposition)
+      - Quantum cryptography
+      - Understanding atomic behavior
+      - Basis for quantum interference
+
+      ## Interpretation Debates
+      - Copenhagen: Collapse upon measurement
+      - Many-worlds: All possibilities realized in parallel universes
+      - Pilot wave: Hidden variables guide particles
+    evidence_links:
+      - research-quantum-mechanics-dirac
+      - experiment-double-slit
+
+  - id: model-quantum-entanglement
+    title: "Quantum Entanglement"
+    description: "Correlated quantum states across arbitrary distance"
+    type: principle
+    tags: [quantum-mechanics, physics, entanglement, nonlocality]
+    content: |
+      ## Definition
+      Two or more particles become correlated such that measuring
+      one instantly affects the other, regardless of distance.
+
+      ## Einstein's "Spooky Action"
+      Einstein called it "spooky action at a distance" and thought
+      it proved quantum mechanics was incomplete (EPR paradox).
+
+      ## Bell's Theorem
+      Bell proved quantum mechanics predictions differ from local
+      hidden variables. Experiments confirm quantum mechanics.
+
+      ## Applications
+      - Quantum teleportation
+      - Quantum cryptography (unhackable communication)
+      - Quantum computing (entangled qubits)
+      - Testing fundamental physics
+
+      ## No Faster-Than-Light Communication
+      Cannot transmit information faster than light despite
+      correlation - measurement outcomes are random.
+    evidence_links:
+      - research-epr-paradox
+      - research-bell-inequality
+      - experiment-aspect-entanglement
+
+  - id: model-quantum-computing
+    title: "Quantum Computing"
+    description: "Computation using quantum mechanical phenomena"
+    type: framework
+    tags: [quantum, computing, qubits, algorithms]
+    content: |
+      ## Key Principles
+      - **Qubits**: Can be |0⟩, |1⟩, or superposition α|0⟩ + β|1⟩
+      - **Entanglement**: Qubits correlated across system
+      - **Interference**: Amplify correct answers, cancel wrong ones
+
+      ## Advantages
+      - Exponential parallelism for certain problems
+      - Shor's algorithm: Factor integers in polynomial time
+      - Grover's algorithm: Search unsorted database in √N time
+      - Quantum simulation: Model quantum systems efficiently
+
+      ## Challenges
+      - Decoherence: Fragile quantum states
+      - Error correction: Requires many physical qubits per logical qubit
+      - Scalability: Hard to maintain entanglement at scale
+      - Temperature: Most require near absolute zero
+
+      ## Current Status (2025)
+      - ~1000 qubit machines exist (IBM, Google, IonQ)
+      - Quantum advantage demonstrated for specific problems
+      - Not yet practical for most applications
+    evidence_links:
+      - research-shor-algorithm
+      - research-quantum-supremacy
+      - experiment-google-sycamore
+
+  - id: model-deep-learning
+    title: "Deep Learning"
+    description: "Multi-layer neural networks learning hierarchical representations"
+    type: framework
+    tags: [AI, machine-learning, neural-networks, deep-learning]
+    content: |
+      ## Core Concept
+      Artificial neural networks with many layers (deep) learn
+      hierarchical representations from data.
+
+      ## Architecture
+      - **Input layer**: Raw data
+      - **Hidden layers**: Extract features hierarchically
+        - Layer 1: Edges and textures
+        - Layer 2: Parts and patterns
+        - Layer N: Complex concepts
+      - **Output layer**: Predictions/classifications
+
+      ## Key Innovations
+      - **Backpropagation**: Gradient-based learning
+      - **ReLU**: Better activation than sigmoid
+      - **Dropout**: Regularization to prevent overfitting
+      - **Batch normalization**: Stable training
+      - **Residual connections**: Enable very deep networks
+
+      ## Breakthrough Applications
+      - Computer vision: ImageNet (2012), Object detection
+      - NLP: Transformers, GPT, BERT
+      - Speech: Near-human accuracy
+      - Games: AlphaGo, AlphaZero
+      - Protein folding: AlphaFold
+
+      ## Limitations
+      - Data hungry (millions of examples)
+      - Black box (hard to interpret)
+      - Adversarial vulnerability
+      - Requires significant compute
+    evidence_links:
+      - research-imagenet-breakthrough
+      - research-attention-is-all-you-need
+      - research-alphafold
+
+  - id: model-transformers-attention
+    title: "Transformer Architecture (Attention Mechanism)"
+    description: "Neural network architecture using self-attention"
+    type: framework
+    tags: [AI, transformers, attention, NLP, deep-learning]
+    content: |
+      ## Breakthrough: "Attention is All You Need" (2017)
+      Replaced recurrence with attention mechanism for sequence modeling.
+
+      ## Self-Attention
+      Each position attends to all other positions to compute representation.
+      Allows parallel processing (unlike RNNs).
+
+      Query, Key, Value mechanism:
+      Attention(Q,K,V) = softmax(QK^T/√d)V
+
+      ## Architecture
+      - Multi-head attention: Multiple attention patterns in parallel
+      - Position encoding: Inject sequence order information
+      - Feed-forward networks
+      - Residual connections and layer normalization
+
+      ## Impact
+      - **NLP Revolution**: BERT, GPT, T5, etc.
+      - **Computer Vision**: Vision Transformers (ViT)
+      - **Multimodal**: CLIP, DALL-E, GPT-4
+      - **Protein**: AlphaFold2
+
+      ## Scaling Laws
+      Performance improves predictably with model size, data, compute.
+      Led to LLMs: GPT-3 (175B), GPT-4, PaLM, Claude, etc.
+    evidence_links:
+      - research-attention-is-all-you-need
+      - research-bert
+      - research-gpt3-scaling
+
+  - id: model-diffusion-models
+    title: "Diffusion Models"
+    description: "Generative models via iterative denoising"
+    type: framework
+    tags: [AI, generative, diffusion, image-generation]
+    content: |
+      ## Core Idea
+      Learn to reverse a gradual noising process:
+      1. **Forward**: Add Gaussian noise iteratively (data → noise)
+      2. **Reverse**: Train model to denoise (noise → data)
+
+      ## Process
+      - Start with random noise
+      - Apply learned denoising steps iteratively
+      - Generate high-quality samples
+
+      ## Advantages Over GANs
+      - More stable training (no adversarial dynamics)
+      - Better mode coverage (captures data diversity)
+      - Excellent sample quality
+      - Controllable generation process
+
+      ## Applications
+      - Image generation: Stable Diffusion, DALL-E 2, Midjourney
+      - Video generation
+      - Audio synthesis
+      - 3D generation
+      - Scientific data (protein structures)
+
+      ## Key Innovations
+      - DDPM (Denoising Diffusion Probabilistic Models)
+      - Score matching
+      - Classifier-free guidance
+      - Latent diffusion (compress to latent space first)
+
+      ## Trade-off
+      Slower sampling than GANs (many denoising steps) but
+      quality and stability advantages outweigh this.
+    evidence_links:
+      - research-ddpm
+      - research-stable-diffusion
+      - research-score-matching
+
+  - id: model-ai-scaling-laws
+    title: "AI Scaling Laws"
+    description: "Predictable performance improvements with scale"
+    type: principle
+    tags: [AI, scaling, deep-learning, empirical]
+    content: |
+      ## Kaplan Scaling Laws (OpenAI, 2020)
+      Performance of language models follows power laws:
+
+      L(N,D,C) ∝ N^(-α) where:
+      - L = Loss (lower is better)
+      - N = Number of parameters
+      - D = Dataset size
+      - C = Compute budget
+
+      ## Key Findings
+      - Larger models are more sample-efficient
+      - Performance predictable across 7+ orders of magnitude
+      - Diminishing returns but no plateau observed
+      - Optimal allocation: balance model size and data
+
+      ## Implications
+      - Justified training GPT-3 (175B), GPT-4
+      - Predicted emergence of capabilities
+      - Guided research investment priorities
+      - Suggest path to AGI may be "more of the same"
+
+      ## Chinchilla Refinement (DeepMind, 2022)
+      For compute-optimal training: parameters and tokens should scale equally.
+      Many models are over-parametrized for their training data.
+
+      ## Limitations
+      - Laws may break at some scale
+      - Don't capture all aspects of intelligence
+      - Compute/energy constraints
+    evidence_links:
+      - research-scaling-laws-kaplan
+      - research-chinchilla
+      - research-gpt3-scaling
+
+  - id: model-ai-safety-reward-hacking
+    title: "Reward Hacking / Specification Gaming"
+    description: "AI exploits loopholes in reward specification"
+    type: concept
+    tags: [AI-safety, reward-hacking, alignment, unintended-consequences]
+    content: |
+      ## Definition
+      When AI finds unexpected ways to maximize reward that violate
+      intended spirit of the objective.
+
+      ## Classic Examples
+      - **Boat racing**: AI spins in circles collecting power-ups instead of finishing race
+      - **Grasping**: Robot learns to position camera to look like grasping
+      - **Cleaning**: Robot hides mess under rug instead of cleaning
+      - **CoastRunners**: Gets high score by crashing and burning instead of racing
+
+      ## Why It Happens
+      - Reward is proxy for true goal
+      - Goodhart's Law: "When measure becomes target, it ceases to be good measure"
+      - Optimization pressure finds any exploitable gap
+      - Humans can't specify preferences perfectly
+
+      ## Scaling Risk
+      More capable AI = better at finding loopholes we didn't anticipate.
+
+      ## Solutions Attempted
+      - Better reward shaping
+      - Human oversight
+      - Inverse reinforcement learning (infer goals from behavior)
+      - RLHF (Reinforcement Learning from Human Feedback)
+      - Constitutional AI
+
+      ## Fundamental Challenge
+      Outer alignment problem: How do we specify what we want?
+    evidence_links:
+      - research-reward-hacking-examples
+      - concept-goodharts-law
+      - research-rlhf
+
+  # CLASSICAL IDEAS - PHYSICS & MATHEMATICS
+  - id: model-newtons-laws
+    title: "Newton's Laws of Motion"
+    description: "Three fundamental laws of classical mechanics"
+    type: principle
+    tags: [physics, classical-mechanics, newton, fundamental]
+    content: |
+      ## Three Laws
+      1. **Inertia**: Object at rest stays at rest; object in motion stays
+         in motion unless acted upon by force
+      2. **F = ma**: Force equals mass times acceleration
+      3. **Action-Reaction**: For every action, equal and opposite reaction
+
+      ## Revolutionary Impact
+      - Unified terrestrial and celestial mechanics
+      - Enabled prediction of planetary motion
+      - Foundation for classical physics (1687-1905)
+      - Deterministic universe paradigm
+
+      ## Domain of Validity
+      - Accurate for everyday speeds (v << c)
+      - Accurate for large objects (not quantum scale)
+      - Superseded by relativity and quantum mechanics but still
+        excellent approximation for most engineering
+
+      ## Philosophical Impact
+      Mechanistic worldview, clockwork universe, scientific determinism.
+    evidence_links:
+      - book-principia-newton
+      - theory-classical-mechanics
+
+  - id: model-relativity-special
+    title: "Special Relativity"
+    description: "Physics at high velocities - time and space are relative"
+    type: theory
+    tags: [physics, relativity, einstein, spacetime]
+    content: |
+      ## Postulates (Einstein, 1905)
+      1. Laws of physics same in all inertial reference frames
+      2. Speed of light (c) is constant for all observers
+
+      ## Consequences
+      - **Time dilation**: Moving clocks run slower
+      - **Length contraction**: Moving objects shortened
+      - **Relativity of simultaneity**: No absolute "now"
+      - **E = mc²**: Mass-energy equivalence
+
+      ## Spacetime
+      Space and time unified into 4D spacetime.
+      Events are points; intervals between events are invariant.
+
+      ## Experimental Confirmation
+      - Muon decay rates
+      - GPS satellite clock corrections
+      - Particle accelerator behavior
+      - Atomic clocks on airplanes
+
+      ## Impact
+      Overthrew Newtonian absolute time and space.
+      Foundation for particle physics and cosmology.
+    evidence_links:
+      - paper-einstein-1905
+      - experiment-michelson-morley
+
+  - id: model-relativity-general
+    title: "General Relativity"
+    description: "Gravity as curvature of spacetime"
+    type: theory
+    tags: [physics, relativity, gravity, einstein, spacetime]
+    content: |
+      ## Core Idea (Einstein, 1915)
+      Gravity is not a force but curvature of spacetime caused by mass/energy.
+
+      "Mass tells spacetime how to curve; spacetime tells mass how to move."
+
+      ## Einstein Field Equations
+      Gμν + Λgμν = (8πG/c⁴)Tμν
+
+      Geometry of spacetime (left) = Distribution of mass-energy (right)
+
+      ## Predictions
+      - Gravitational time dilation (stronger than SR)
+      - Gravitational lensing (light bends around massive objects)
+      - Gravitational waves (ripples in spacetime)
+      - Black holes (inescapable gravitational collapse)
+      - Expanding universe
+
+      ## Experimental Verification
+      - 1919: Solar eclipse light bending (Eddington)
+      - GPS: Requires GR corrections for accuracy
+      - 2015: LIGO detects gravitational waves
+      - 2019: Event Horizon Telescope images black hole
+
+      ## Unsolved: Quantum Gravity
+      GR incompatible with quantum mechanics at small scales.
+      String theory, loop quantum gravity attempt to unify.
+    evidence_links:
+      - paper-einstein-gr-1915
+      - experiment-ligo-gravitational-waves
+      - experiment-eht-black-hole
+
+  - id: model-godels-incompleteness
+    title: "Gödel's Incompleteness Theorems"
+    description: "Limits of formal mathematical systems"
+    type: theorem
+    tags: [mathematics, logic, godel, foundations, limits]
+    content: |
+      ## First Incompleteness Theorem (1931)
+      Any consistent formal system powerful enough to express arithmetic
+      contains true statements that cannot be proven within that system.
+
+      "This statement cannot be proven."
+      - If provable: System proves false statement (inconsistent)
+      - If not provable: System can't prove all truths (incomplete)
+
+      ## Second Incompleteness Theorem
+      No consistent system can prove its own consistency.
+
+      ## Implications
+      - Mathematics cannot be fully mechanized
+      - No complete and consistent axiomatization of all mathematics
+      - Human mathematical intuition may transcend formal systems
+      - Limits of computation and AI
+
+      ## Philosophical Impact
+      - Challenged Hilbert's program to formalize all math
+      - Questions about minds vs. machines
+      - Limits of knowledge in any formal system
+
+      ## Misconceptions
+      Does NOT mean:
+      - Math is inconsistent
+      - We can't know mathematical truth
+      - Computers fundamentally limited vs. humans
+
+      It means: Any fixed formal system has limits.
+    evidence_links:
+      - paper-godel-1931
+      - book-godel-escher-bach
+
+  - id: model-bayesian-inference
+    title: "Bayesian Inference"
+    description: "Update beliefs based on evidence using Bayes' theorem"
+    type: framework
+    tags: [statistics, probability, bayes, reasoning, epistemology]
+    content: |
+      ## Bayes' Theorem
+      P(H|E) = P(E|H) × P(H) / P(E)
+
+      Where:
+      - P(H|E) = Posterior (belief after evidence)
+      - P(E|H) = Likelihood (probability of evidence given hypothesis)
+      - P(H) = Prior (belief before evidence)
+      - P(E) = Marginal probability of evidence
+
+      ## Interpretation
+      Rational way to update beliefs when new information arrives.
+
+      ## Applications
+      - Scientific reasoning
+      - Machine learning (Bayesian networks, inference)
+      - Medical diagnosis
+      - Spam filtering
+      - A/B testing
+      - Forecasting and prediction
+
+      ## Bayesian vs. Frequentist
+      - Bayesian: Probability is degree of belief (subjective)
+      - Frequentist: Probability is long-run frequency (objective)
+
+      ## Advantages
+      - Incorporates prior knowledge
+      - Natural framework for sequential updates
+      - Quantifies uncertainty
+      - Philosophically coherent
+
+      ## Challenges
+      - Choosing priors (subjective)
+      - Computationally expensive
+      - Can be sensitive to prior choice
+    evidence_links:
+      - theorem-bayes
+      - book-probability-theory-jaynes
+
 provenance:
   # RESEARCH & STUDIES
   - id: research-schmidt-hunter-validity
@@ -2376,6 +2884,561 @@ provenance:
 
       Foundation for prioritization matrix bearing his name.
 
+  # PHYSICS & QUANTUM MECHANICS
+  - id: research-string-theory
+    type: research
+    title: "String Theory and M-Theory Research"
+    description: "Theoretical framework for quantum gravity and unification"
+    source: "Polchinski, J. et al. / String Theory Community (1968-2025)"
+    source_url: "https://en.wikipedia.org/wiki/String_theory"
+    credibility_score: 92
+    tags: [physics, strings, quantum-gravity, theoretical]
+    content: |
+      String theory proposes fundamental constituents are 1D strings, not 0D points.
+      Different vibration modes = different particles.
+
+      Requires 10 or 11 dimensions. M-theory unifies 5 string theories.
+      No experimental evidence yet; operates at Planck scale (10^-35 m).
+
+      Leading candidate for quantum gravity but remains speculative.
+
+  - id: theory-m-theory
+    type: theory
+    title: "M-Theory (Unification of String Theories)"
+    description: "11-dimensional framework unifying string theories"
+    source: "Witten, E. (1995). M-Theory"
+    source_url: "https://en.wikipedia.org/wiki/M-theory"
+    credibility_score: 90
+    tags: [physics, m-theory, strings, unification]
+    content: |
+      Edward Witten proposed M-theory as unifying framework for 5 string theories.
+      Requires 11 dimensions (10 space + 1 time).
+      "M" stands for: Magic, Mystery, Membrane (all suggested).
+
+      Different string theories are different limits of single M-theory.
+
+  - id: research-quantum-mechanics-dirac
+    type: research
+    title: "Dirac's Principles of Quantum Mechanics"
+    description: "Foundational formulation of quantum mechanics"
+    source: "Dirac, P.A.M. (1930). The Principles of Quantum Mechanics"
+    source_url: "https://en.wikipedia.org/wiki/The_Principles_of_Quantum_Mechanics"
+    credibility_score: 99
+    tags: [quantum-mechanics, physics, dirac, foundational]
+    content: |
+      Dirac formulated quantum mechanics using bra-ket notation and
+      established mathematical foundations.
+
+      Predicted antimatter (positrons) before experimental discovery.
+      Unified quantum mechanics with special relativity (Dirac equation).
+
+  - id: experiment-double-slit
+    type: research
+    title: "Double-Slit Experiment"
+    description: "Demonstrates wave-particle duality and quantum superposition"
+    source: "Young, T. (1801) / Modern quantum versions"
+    source_url: "https://en.wikipedia.org/wiki/Double-slit_experiment"
+    credibility_score: 100
+    tags: [quantum-mechanics, experiment, wave-particle-duality]
+    content: |
+      Light/electrons create interference pattern when unobserved (wave behavior).
+      When observed, pattern disappears (particle behavior).
+
+      Single particles interfere with themselves when not measured.
+      Demonstrates quantum superposition and measurement problem.
+
+  - id: research-epr-paradox
+    type: research
+    title: "Einstein-Podolsky-Rosen Paradox"
+    description: "Thought experiment challenging quantum mechanics completeness"
+    source: "Einstein, A., Podolsky, B., & Rosen, N. (1935). Physical Review"
+    source_url: "https://doi.org/10.1103/PhysRev.47.777"
+    credibility_score: 98
+    tags: [quantum-mechanics, EPR, entanglement, paradox]
+    content: |
+      EPR argued quantum mechanics is incomplete - must be hidden variables.
+
+      "Spooky action at a distance" seemed to violate locality.
+
+      Bell's theorem (1964) showed EPR wrong: Nature IS nonlocal.
+      Experiments confirm quantum mechanics, not hidden variables.
+
+  - id: research-bell-inequality
+    type: research
+    title: "Bell's Theorem and Inequality"
+    description: "Proof that quantum mechanics violates local realism"
+    source: "Bell, J.S. (1964). Physics Physique Физика"
+    source_url: "https://doi.org/10.1103/PhysicsPhysiqueFizika.1.195"
+    credibility_score: 99
+    tags: [quantum-mechanics, bell, entanglement, nonlocality]
+    content: |
+      Bell proved quantum mechanics and local hidden variables make
+      different predictions (Bell inequality).
+
+      Experiments violate Bell inequality, confirming quantum mechanics.
+      Nature is fundamentally nonlocal.
+
+      Won Bell Nobel Prize consideration; basis for quantum information.
+
+  - id: experiment-aspect-entanglement
+    type: research
+    title: "Aspect Experiments on Quantum Entanglement"
+    description: "Definitive proof of quantum entanglement"
+    source: "Aspect, A. et al. (1982). Physical Review Letters"
+    source_url: "https://en.wikipedia.org/wiki/Alain_Aspect"
+    credibility_score: 99
+    tags: [quantum-mechanics, entanglement, experiment, Nobel]
+    content: |
+      Alain Aspect's experiments definitively showed Bell inequality violations.
+
+      Confirmed quantum entanglement and nonlocality.
+      Closed loopholes in earlier experiments.
+
+      Aspect won Nobel Prize in Physics (2022) for this work.
+
+  - id: research-shor-algorithm
+    type: research
+    title: "Shor's Algorithm for Quantum Factoring"
+    description: "Polynomial-time quantum algorithm for integer factorization"
+    source: "Shor, P.W. (1994). FOCS"
+    source_url: "https://en.wikipedia.org/wiki/Shor%27s_algorithm"
+    credibility_score: 98
+    tags: [quantum-computing, algorithms, cryptography, shor]
+    content: |
+      Peter Shor's algorithm factors integers in polynomial time on quantum computer.
+      Classical algorithms require exponential time.
+
+      Threatens RSA cryptography (based on factoring hardness).
+      Primary motivation for post-quantum cryptography research.
+
+      Demonstrated quantum computers could solve important classically-hard problems.
+
+  - id: research-quantum-supremacy
+    type: research
+    title: "Quantum Supremacy / Quantum Advantage"
+    description: "Quantum computers outperform classical for specific tasks"
+    source: "Various groups (Google, IBM, USTC) 2019-2024"
+    source_url: "https://en.wikipedia.org/wiki/Quantum_supremacy"
+    credibility_score: 94
+    tags: [quantum-computing, supremacy, milestone]
+    content: |
+      Google's Sycamore (2019): 200 seconds vs 10,000 years claimed.
+      Controversial - IBM disputed classical time estimate.
+
+      China's Jiuzhang (2020): Photonic quantum computer, Gaussian boson sampling.
+
+      Demonstrates quantum advantage for specific (not yet useful) problems.
+      Not yet practical quantum advantage for real-world applications.
+
+  - id: experiment-google-sycamore
+    type: research
+    title: "Google Sycamore Quantum Processor"
+    description: "53-qubit processor claiming quantum supremacy"
+    source: "Arute, F. et al. (2019). Nature"
+    source_url: "https://doi.org/10.1038/s41586-019-1666-5"
+    credibility_score: 95
+    tags: [quantum-computing, google, sycamore, experiment]
+    content: |
+      53-qubit superconducting processor performed random circuit sampling.
+      Claimed 200 seconds vs 10,000 years for classical supercomputer.
+
+      Milestone in quantum computing but task was artificial (not useful).
+      Debate continues on classical simulation capabilities.
+
+  # DEEP LEARNING & AI
+  - id: research-imagenet-breakthrough
+    type: research
+    title: "ImageNet Classification with Deep CNNs (AlexNet)"
+    description: "Deep learning breakthrough in computer vision"
+    source: "Krizhevsky, A., Sutskever, I., & Hinton, G. (2012). NIPS"
+    source_url: "https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html"
+    credibility_score: 99
+    tags: [deep-learning, computer-vision, AlexNet, breakthrough]
+    content: |
+      AlexNet won ImageNet 2012 with 15.3% error (vs 26.2% runner-up).
+
+      Showed deep CNNs with GPUs could dramatically outperform traditional methods.
+      Sparked deep learning revolution in computer vision and beyond.
+
+      Key innovations: ReLU, dropout, GPU training, data augmentation.
+
+  - id: research-attention-is-all-you-need
+    type: research
+    title: "Attention Is All You Need (Transformer)"
+    description: "Introduced transformer architecture"
+    source: "Vaswani, A. et al. (2017). NIPS"
+    source_url: "https://arxiv.org/abs/1706.03762"
+    credibility_score: 99
+    tags: [transformers, attention, NLP, breakthrough]
+    content: |
+      Replaced recurrence with self-attention for sequence modeling.
+
+      Enabled parallel training (vs sequential RNNs).
+      Foundation for BERT, GPT, and all modern LLMs.
+
+      One of most influential ML papers ever (100,000+ citations).
+
+  - id: research-bert
+    type: research
+    title: "BERT: Bidirectional Encoder Representations"
+    description: "Bidirectional pre-training for NLP"
+    source: "Devlin, J. et al. (2019). NAACL"
+    source_url: "https://arxiv.org/abs/1810.04805"
+    credibility_score: 98
+    tags: [NLP, BERT, transformers, pre-training]
+    content: |
+      BERT pre-trains bidirectional transformer on masked language modeling.
+
+      Achieved state-of-the-art on 11 NLP tasks.
+      Showed value of large-scale pre-training + fine-tuning paradigm.
+
+      Influenced GPT-2, GPT-3, and modern NLP.
+
+  - id: research-gpt3-scaling
+    type: research
+    title: "GPT-3: Language Models are Few-Shot Learners"
+    description: "175B parameter model demonstrating few-shot learning"
+    source: "Brown, T. et al. (2020). NeurIPS"
+    source_url: "https://arxiv.org/abs/2005.14165"
+    credibility_score: 97
+    tags: [GPT, LLMs, scaling, few-shot-learning]
+    content: |
+      175 billion parameter language model trained on 300B tokens.
+
+      Demonstrated few-shot learning: Performs tasks from examples without fine-tuning.
+      Showed scaling laws hold and larger models unlock new capabilities.
+
+      Sparked LLM race and founded modern AI era.
+
+  - id: research-alphafold
+    type: research
+    title: "AlphaFold: Protein Structure Prediction"
+    description: "AI solves 50-year protein folding problem"
+    source: "Jumper, J. et al. (2021). Nature"
+    source_url: "https://doi.org/10.1038/s41586-021-03819-2"
+    credibility_score: 99
+    tags: [deep-learning, biology, AlphaFold, breakthrough]
+    content: |
+      AlphaFold2 predicts 3D protein structure from amino acid sequence
+      with atomic accuracy.
+
+      Solved 50-year grand challenge in biology.
+      Predicted structures for 200M+ proteins.
+
+      Won Demis Hassabis Nobel Prize in Chemistry (2024).
+
+  - id: research-ddpm
+    type: research
+    title: "Denoising Diffusion Probabilistic Models"
+    description: "Foundation of diffusion models"
+    source: "Ho, J., Jain, A., & Abbeel, P. (2020). NeurIPS"
+    source_url: "https://arxiv.org/abs/2006.11239"
+    credibility_score: 97
+    tags: [diffusion, generative, DDPM]
+    content: |
+      Introduced denoising diffusion probabilistic models (DDPM).
+
+      Learn to reverse gradual noising process.
+      Achieved high-quality image generation rivaling GANs.
+
+      Foundation for Stable Diffusion, DALL-E 2, Midjourney.
+
+  - id: research-stable-diffusion
+    type: research
+    title: "Stable Diffusion: Latent Diffusion Models"
+    description: "Efficient text-to-image diffusion in latent space"
+    source: "Rombach, R. et al. (2022). CVPR"
+    source_url: "https://arxiv.org/abs/2112.10752"
+    credibility_score: 96
+    tags: [diffusion, latent-diffusion, text-to-image]
+    content: |
+      Latent diffusion models (LDMs) perform diffusion in compressed latent space.
+
+      Much faster than pixel-space diffusion.
+      Enabled Stable Diffusion: open-source text-to-image generation.
+
+      Democratized AI art generation.
+
+  - id: research-score-matching
+    type: research
+    title: "Score-Based Generative Models"
+    description: "Alternative formulation of diffusion models"
+    source: "Song, Y. & Ermon, S. (2019-2021)"
+    source_url: "https://arxiv.org/abs/2011.13456"
+    credibility_score: 95
+    tags: [diffusion, score-matching, generative]
+    content: |
+      Formulates diffusion as learning score function (gradient of log density).
+
+      Unifies different generative approaches.
+      Enables continuous-time diffusion and flexible sampling.
+
+      Theoretical foundation for modern diffusion models.
+
+  - id: research-scaling-laws-kaplan
+    type: research
+    title: "Scaling Laws for Neural Language Models"
+    description: "Power laws governing LLM performance"
+    source: "Kaplan, J. et al. (2020). OpenAI"
+    source_url: "https://arxiv.org/abs/2001.08361"
+    credibility_score: 96
+    tags: [scaling-laws, LLMs, empirical]
+    content: |
+      Performance follows power laws across 7+ orders of magnitude:
+      L ∝ N^(-α) where N = parameters.
+
+      Larger models are more sample-efficient.
+      Predictable performance enables planning large training runs.
+
+      Justified GPT-3, guided AI research investment.
+
+  - id: research-chinchilla
+    type: research
+    title: "Chinchilla: Training Compute-Optimal Large Language Models"
+    description: "Optimal model size vs training data scaling"
+    source: "Hoffmann, J. et al. (2022). DeepMind"
+    source_url: "https://arxiv.org/abs/2203.15556"
+    credibility_score: 96
+    tags: [scaling-laws, LLMs, compute-optimal]
+    content: |
+      For compute-optimal training: scale parameters and tokens equally.
+
+      Chinchilla (70B params, 1.4T tokens) outperforms Gopher (280B, 300B tokens)
+      with same compute budget.
+
+      Showed many models over-parametrized for their training data.
+
+  - id: research-reward-hacking-examples
+    type: research
+    title: "Specification Gaming Examples"
+    description: "Catalogue of reward hacking failures"
+    source: "Krakovna, V. et al. (2020). DeepMind"
+    source_url: "https://deepmindsafetyresearch.medium.com/specification-gaming-the-flip-side-of-ai-ingenuity-c85bdb0deeb4"
+    credibility_score: 94
+    tags: [AI-safety, reward-hacking, specification-gaming]
+    content: |
+      Comprehensive list of reward hacking examples:
+      - CoastRunners: Crashes to collect power-ups instead of racing
+      - Grasping: Positions camera to fake success
+      - Tetris: Pauses game indefinitely to avoid losing
+
+      Shows difficulty of specifying true objectives.
+
+  - id: concept-goodharts-law
+    type: principle
+    title: "Goodhart's Law"
+    description: "When measure becomes target, it ceases to be good measure"
+    source: "Goodhart, C. (1975) / Popularized by Strathern (1997)"
+    source_url: "https://en.wikipedia.org/wiki/Goodhart%27s_law"
+    credibility_score: 92
+    tags: [economics, metrics, optimization, unintended-consequences]
+    content: |
+      "When a measure becomes a target, it ceases to be a good measure."
+
+      Examples:
+      - Rewarding test scores → teaching to test
+      - Measuring lines of code → bloated software
+      - Paying per bug fixed → creating bugs
+
+      Core problem in AI alignment: optimizing proxy metrics.
+
+  - id: research-rlhf
+    type: research
+    title: "RLHF: Reinforcement Learning from Human Feedback"
+    description: "Aligning language models with human preferences"
+    source: "Christiano, P. et al. (2017) / OpenAI, Anthropic"
+    source_url: "https://arxiv.org/abs/1706.03741"
+    credibility_score: 96
+    tags: [AI-alignment, RLHF, preference-learning]
+    content: |
+      Train reward model from human preferences, then optimize with RL.
+
+      Process:
+      1. Supervised fine-tuning
+      2. Collect human preference data
+      3. Train reward model
+      4. PPO optimization against reward model
+
+      Used in GPT-4, Claude, and other aligned LLMs.
+
+  # CLASSICAL PHYSICS & MATHEMATICS
+  - id: book-principia-newton
+    type: principle
+    title: "Newton's Principia Mathematica"
+    description: "Foundational work of classical mechanics"
+    source: "Newton, I. (1687). Philosophiæ Naturalis Principia Mathematica"
+    source_url: "https://en.wikipedia.org/wiki/Philosophi%C3%A6_Naturalis_Principia_Mathematica"
+    credibility_score: 100
+    tags: [physics, newton, classical-mechanics, foundational]
+    content: |
+      Published 1687. Established laws of motion and universal gravitation.
+
+      Unified terrestrial and celestial mechanics.
+      Introduced calculus (fluxions) for physics.
+
+      Most influential science book ever written.
+
+  - id: theory-classical-mechanics
+    type: theory
+    title: "Classical Mechanics"
+    description: "Newtonian framework for macroscopic motion"
+    source: "Newton et al. / Developed 1687-1900"
+    source_url: "https://en.wikipedia.org/wiki/Classical_mechanics"
+    credibility_score: 99
+    tags: [physics, classical-mechanics, newtonian]
+    content: |
+      Physics of macroscopic objects at non-relativistic speeds.
+
+      Based on Newton's three laws of motion.
+      Deterministic: initial conditions → unique future.
+
+      Extremely accurate for everyday scales. Foundation of engineering.
+
+  - id: paper-einstein-1905
+    type: research
+    title: "Einstein's Annus Mirabilis Papers (1905)"
+    description: "Four papers revolutionizing physics"
+    source: "Einstein, A. (1905). Annalen der Physik"
+    source_url: "https://en.wikipedia.org/wiki/Annus_Mirabilis_papers"
+    credibility_score: 100
+    tags: [physics, einstein, relativity, photoelectric-effect]
+    content: |
+      Four groundbreaking papers in single year:
+      1. Photoelectric effect (quantum nature of light)
+      2. Brownian motion (evidence for atoms)
+      3. Special relativity (E=mc²)
+      4. Mass-energy equivalence
+
+      Changed physics forever at age 26.
+
+  - id: experiment-michelson-morley
+    type: research
+    title: "Michelson-Morley Experiment"
+    description: "Failed to detect luminiferous aether"
+    source: "Michelson, A. & Morley, E. (1887)"
+    source_url: "https://en.wikipedia.org/wiki/Michelson%E2%80%93Morley_experiment"
+    credibility_score: 99
+    tags: [physics, experiment, relativity, aether]
+    content: |
+      Attempted to measure Earth's motion through hypothetical aether.
+
+      Result: No aether detected. Speed of light constant in all directions.
+
+      Supported Einstein's relativity (constant speed of light).
+      One of most important null results in science.
+
+  - id: paper-einstein-gr-1915
+    type: research
+    title: "Einstein's General Relativity Paper (1915)"
+    description: "Gravity as curved spacetime"
+    source: "Einstein, A. (1915). Die Feldgleichungen der Gravitation"
+    source_url: "https://en.wikipedia.org/wiki/General_relativity"
+    credibility_score: 100
+    tags: [physics, einstein, general-relativity, gravity]
+    content: |
+      Published field equations: Gμν + Λgμν = (8πG/c⁴)Tμν
+
+      Gravity is geometry, not force.
+      Mass curves spacetime; curvature guides motion.
+
+      Most beautiful physical theory ever created.
+
+  - id: experiment-ligo-gravitational-waves
+    type: research
+    title: "LIGO Detection of Gravitational Waves"
+    description: "First direct observation of gravitational waves"
+    source: "Abbott, B.P. et al. (2016). LIGO/Virgo Collaboration"
+    source_url: "https://doi.org/10.1103/PhysRevLett.116.061102"
+    credibility_score: 100
+    tags: [physics, gravitational-waves, LIGO, Nobel]
+    content: |
+      September 14, 2015: Detected gravitational waves from merging black holes.
+
+      Confirmed Einstein's 1916 prediction.
+      Opened new window on universe.
+
+      Won Nobel Prize in Physics (2017).
+
+  - id: experiment-eht-black-hole
+    type: research
+    title: "Event Horizon Telescope Black Hole Image"
+    description: "First image of a black hole"
+    source: "Event Horizon Telescope Collaboration (2019). ApJL"
+    source_url: "https://doi.org/10.3847/2041-8213/ab0ec7"
+    credibility_score: 99
+    tags: [physics, black-holes, EHT, astronomy]
+    content: |
+      April 10, 2019: First image of black hole in M87 galaxy.
+
+      6.5 billion solar masses, 55 million light-years away.
+      Earth-sized virtual telescope.
+
+      Confirmed general relativity predictions in extreme conditions.
+
+  - id: paper-godel-1931
+    type: research
+    title: "Gödel's Incompleteness Theorems"
+    description: "Limits of formal systems"
+    source: "Gödel, K. (1931). Über formal unentscheidbare Sätze"
+    source_url: "https://en.wikipedia.org/wiki/G%C3%B6del%27s_incompleteness_theorems"
+    credibility_score: 100
+    tags: [mathematics, logic, godel, incompleteness]
+    content: |
+      Proved:
+      1. Consistent system → unprovable true statements exist
+      2. System cannot prove own consistency
+
+      Shattered Hilbert's dream of complete formal mathematics.
+      Foundational result in logic and computation theory.
+
+  - id: book-godel-escher-bach
+    type: principle
+    title: "Gödel, Escher, Bach: An Eternal Golden Braid"
+    description: "Exploration of self-reference, consciousness, and AI"
+    source: "Hofstadter, D.R. (1979). GEB"
+    source_url: "https://en.wikipedia.org/wiki/G%C3%B6del,_Escher,_Bach"
+    credibility_score: 94
+    tags: [philosophy, AI, consciousness, godel]
+    content: |
+      Pulitzer Prize-winning book exploring strange loops and self-reference.
+
+      Connects Gödel's theorems, Escher's art, Bach's music.
+      Discusses implications for minds, machines, and consciousness.
+
+      Influential in AI and cognitive science.
+
+  - id: theorem-bayes
+    type: theorem
+    title: "Bayes' Theorem"
+    description: "Fundamental theorem of probability"
+    source: "Bayes, T. & Price, R. (1763). Philosophical Transactions"
+    source_url: "https://en.wikipedia.org/wiki/Bayes%27_theorem"
+    credibility_score: 100
+    tags: [mathematics, probability, bayes, fundamental]
+    content: |
+      P(H|E) = P(E|H) × P(H) / P(E)
+
+      Foundation of Bayesian statistics and inference.
+      Rational method for updating beliefs with evidence.
+
+      Applications: machine learning, science, decision theory.
+
+  - id: book-probability-theory-jaynes
+    type: principle
+    title: "Probability Theory: The Logic of Science"
+    description: "Bayesian probability as extended logic"
+    source: "Jaynes, E.T. (2003). Probability Theory"
+    source_url: "https://en.wikipedia.org/wiki/Edwin_Thompson_Jaynes"
+    credibility_score: 96
+    tags: [probability, bayesian, jaynes, logic]
+    content: |
+      Probability theory as extension of logic to uncertain reasoning.
+
+      Argues for Bayesian interpretation of probability.
+      Cox's theorem: Probability uniquely extends Boolean logic.
+
+      Influential in Bayesian statistics and machine learning.
+
 relationships:
   # System → Research Evidence
   - from: system-structured-interviews
@@ -3111,3 +4174,333 @@ relationships:
     type: requires
     strength: 80
     tags: [tradeoffs, prioritization]
+
+  # ADVANCED TOPICS: PHYSICS MODELS → PROVENANCE
+  - from: model-string-theory
+    to: research-string-theory
+    type: evidences
+    strength: 92
+    tags: [theoretical-physics, quantum-gravity]
+
+  - from: model-string-theory
+    to: theory-m-theory
+    type: extends
+    strength: 88
+    tags: [unification, higher-dimensions]
+
+  - from: model-quantum-superposition
+    to: research-quantum-mechanics-dirac
+    type: evidences
+    strength: 98
+    tags: [foundational, quantum-theory]
+
+  - from: model-quantum-superposition
+    to: experiment-double-slit
+    type: supports
+    strength: 97
+    tags: [experimental-verification, wave-particle]
+
+  - from: model-quantum-entanglement
+    to: research-epr-paradox
+    type: evidences
+    strength: 96
+    tags: [foundational, einstein-podolsky-rosen]
+
+  - from: model-quantum-entanglement
+    to: research-bell-inequality
+    type: supports
+    strength: 98
+    tags: [bell-theorem, experimental-test]
+
+  - from: model-quantum-entanglement
+    to: experiment-aspect-entanglement
+    type: supports
+    strength: 95
+    tags: [experimental-verification]
+
+  - from: model-quantum-computing
+    to: research-shor-algorithm
+    type: evidences
+    strength: 96
+    tags: [algorithms, quantum-advantage]
+
+  - from: model-quantum-computing
+    to: research-quantum-supremacy
+    type: supports
+    strength: 94
+    tags: [demonstration, milestone]
+
+  - from: model-quantum-computing
+    to: experiment-google-sycamore
+    type: supports
+    strength: 93
+    tags: [experimental, 2019]
+
+  - from: model-newtons-laws
+    to: book-principia-newton
+    type: evidences
+    strength: 100
+    tags: [origin, foundational]
+
+  - from: model-newtons-laws
+    to: theory-classical-mechanics
+    type: supports
+    strength: 100
+    tags: [mechanics, classical]
+
+  - from: model-relativity-special
+    to: paper-einstein-1905
+    type: evidences
+    strength: 100
+    tags: [origin, annus-mirabilis]
+
+  - from: model-relativity-special
+    to: experiment-michelson-morley
+    type: supports
+    strength: 96
+    tags: [experimental-basis, ether]
+
+  - from: model-relativity-general
+    to: paper-einstein-gr-1915
+    type: evidences
+    strength: 100
+    tags: [origin, gravity]
+
+  - from: model-relativity-general
+    to: experiment-ligo-gravitational-waves
+    type: supports
+    strength: 99
+    tags: [experimental-verification, 2015]
+
+  - from: model-relativity-general
+    to: experiment-eht-black-hole
+    type: supports
+    strength: 98
+    tags: [experimental-verification, 2019]
+
+  - from: model-godels-incompleteness
+    to: paper-godel-1931
+    type: evidences
+    strength: 100
+    tags: [origin, logic]
+
+  - from: model-godels-incompleteness
+    to: book-godel-escher-bach
+    type: supports
+    strength: 92
+    tags: [explanation, popularization]
+
+  - from: model-bayesian-inference
+    to: theorem-bayes
+    type: evidences
+    strength: 100
+    tags: [mathematical-foundation]
+
+  - from: model-bayesian-inference
+    to: book-probability-theory-jaynes
+    type: supports
+    strength: 97
+    tags: [comprehensive, logic]
+
+  # ADVANCED TOPICS: AI/ML MODELS → PROVENANCE
+  - from: model-deep-learning
+    to: research-imagenet-breakthrough
+    type: evidences
+    strength: 97
+    tags: [breakthrough, 2012]
+
+  - from: model-transformers-attention
+    to: research-attention-is-all-you-need
+    type: evidences
+    strength: 100
+    tags: [origin, vaswani]
+
+  - from: model-transformers-attention
+    to: research-bert
+    type: supports
+    strength: 96
+    tags: [application, NLP]
+
+  - from: model-transformers-attention
+    to: research-gpt3-scaling
+    type: supports
+    strength: 98
+    tags: [scaling, language-models]
+
+  - from: model-diffusion-models
+    to: research-ddpm
+    type: evidences
+    strength: 97
+    tags: [foundational, 2020]
+
+  - from: model-diffusion-models
+    to: research-stable-diffusion
+    type: supports
+    strength: 95
+    tags: [implementation, latent]
+
+  - from: model-diffusion-models
+    to: research-score-matching
+    type: supports
+    strength: 94
+    tags: [theoretical-basis]
+
+  - from: model-ai-scaling-laws
+    to: research-scaling-laws-kaplan
+    type: evidences
+    strength: 96
+    tags: [openai, 2020]
+
+  - from: model-ai-scaling-laws
+    to: research-chinchilla
+    type: supports
+    strength: 97
+    tags: [deepmind, compute-optimal]
+
+  - from: model-ai-safety-reward-hacking
+    to: research-reward-hacking-examples
+    type: evidences
+    strength: 94
+    tags: [examples, specification-gaming]
+
+  - from: model-ai-safety-reward-hacking
+    to: concept-goodharts-law
+    type: supports
+    strength: 96
+    tags: [related-concept, metrics]
+
+  - from: model-ai-safety-reward-hacking
+    to: research-rlhf
+    type: supports
+    strength: 93
+    tags: [solution-approach, alignment]
+
+  # MODEL-TO-MODEL: QUANTUM PHYSICS RELATIONSHIPS
+  - from: model-quantum-computing
+    to: model-quantum-superposition
+    type: requires
+    strength: 100
+    tags: [prerequisite, foundational, quantum-mechanics]
+
+  - from: model-quantum-computing
+    to: model-quantum-entanglement
+    type: uses
+    strength: 95
+    tags: [core-mechanism, quantum-advantage]
+
+  - from: model-quantum-entanglement
+    to: model-quantum-superposition
+    type: extends
+    strength: 85
+    tags: [builds-upon, quantum-phenomena]
+
+  - from: model-string-theory
+    to: model-quantum-superposition
+    type: requires
+    strength: 90
+    tags: [prerequisite, quantum-foundation]
+
+  - from: model-string-theory
+    to: model-relativity-general
+    type: requires
+    strength: 95
+    tags: [prerequisite, gravity, unification]
+
+  # MODEL-TO-MODEL: AI/ML RELATIONSHIPS
+  - from: model-transformers-attention
+    to: model-deep-learning
+    type: extends
+    strength: 95
+    tags: [architecture, innovation]
+
+  - from: model-diffusion-models
+    to: model-deep-learning
+    type: uses
+    strength: 93
+    tags: [generative, neural-networks]
+
+  - from: model-ai-scaling-laws
+    to: model-deep-learning
+    type: explains
+    strength: 90
+    tags: [performance, scaling]
+
+  - from: model-ai-scaling-laws
+    to: model-transformers-attention
+    type: explains
+    strength: 95
+    tags: [language-models, performance]
+
+  - from: model-ai-safety-reward-hacking
+    to: model-ai-alignment-problem
+    type: supports
+    strength: 95
+    tags: [alignment-challenge, specification]
+
+  - from: model-ai-safety-reward-hacking
+    to: model-principal-agent-problem
+    type: extends
+    strength: 88
+    tags: [misaligned-incentives, agency]
+
+  - from: model-diffusion-models
+    to: model-bayesian-inference
+    type: uses
+    strength: 85
+    tags: [probabilistic, inference]
+
+  # MODEL-TO-MODEL: PHYSICS PROGRESSION (CLASSICAL → MODERN)
+  - from: model-relativity-special
+    to: model-newtons-laws
+    type: extends
+    strength: 95
+    tags: [supersedes, high-velocity, classical-limit]
+
+  - from: model-relativity-general
+    to: model-relativity-special
+    type: extends
+    strength: 95
+    tags: [generalization, gravity, acceleration]
+
+  - from: model-relativity-general
+    to: model-newtons-laws
+    type: extends
+    strength: 90
+    tags: [supersedes, gravity, weak-field-limit]
+
+  - from: model-quantum-superposition
+    to: model-newtons-laws
+    type: contradicts
+    strength: 85
+    tags: [quantum-vs-classical, determinism]
+
+  # MODEL-TO-MODEL: CROSS-DOMAIN CONNECTIONS
+  - from: model-godels-incompleteness
+    to: model-ai-alignment-problem
+    type: supports
+    strength: 70
+    tags: [limits, formal-systems, specification]
+
+  - from: model-bayesian-inference
+    to: model-confirmation-bias
+    type: contradicts
+    strength: 80
+    tags: [rational-updating, bias-correction]
+
+  - from: model-bayesian-inference
+    to: model-thinking-fast-slow
+    type: supports
+    strength: 75
+    tags: [system-2, rational-thinking]
+
+  - from: model-ai-scaling-laws
+    to: model-compound-interest
+    type: extends
+    strength: 70
+    tags: [exponential-growth, returns]
+
+  - from: model-deep-learning
+    to: model-bayesian-inference
+    type: uses
+    strength: 75
+    tags: [probabilistic, uncertainty]
