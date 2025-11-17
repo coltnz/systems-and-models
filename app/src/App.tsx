@@ -4,6 +4,7 @@ import { Graph } from './pages/Graph'
 import { Button } from './components/ui/button'
 import { List, Network } from 'lucide-react'
 import { initDatabase } from './lib/db'
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 
 type View = 'home' | 'graph'
 
@@ -11,6 +12,22 @@ function App() {
   const [dbInitialized, setDbInitialized] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [currentView, setCurrentView] = useState<View>('home')
+
+  // Global keyboard shortcuts
+  useKeyboardShortcuts([
+    {
+      key: 'h',
+      alt: true,
+      handler: () => setCurrentView('home'),
+      description: 'Switch to List View',
+    },
+    {
+      key: 'g',
+      alt: true,
+      handler: () => setCurrentView('graph'),
+      description: 'Switch to Graph View',
+    },
+  ], dbInitialized)
 
   useEffect(() => {
     initDatabase()

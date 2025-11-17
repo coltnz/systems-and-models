@@ -115,7 +115,12 @@ export function EditEntityDialog({ open, onClose, entityType, entityData, onEnti
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} onKeyDown={(e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault()
+            handleSubmit(e as unknown as React.FormEvent)
+          }
+        }}>
           <div className="space-y-4 py-4">
             {/* Title */}
             <div>

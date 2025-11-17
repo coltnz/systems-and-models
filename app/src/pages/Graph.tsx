@@ -12,6 +12,7 @@ import { getRelationships } from '@/lib/db/relationships'
 import { EditEntityDialog } from '@/components/EditEntityDialog'
 import { searchEntities } from '@/lib/search'
 import { getGraphStylesheet, calculateZoomLevel, type ZoomLevel } from '@/lib/graph-styles'
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import type { System, Model, Provenance, Relationship } from '@/types'
 
 export function Graph() {
@@ -28,6 +29,73 @@ export function Graph() {
     data: System | Model | Provenance
   } | null>(null)
   const cyRef = useRef<Cytoscape.Core | null>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  // Navigate to nearest node in direction
+  const navigateNode = useCallback((direction: 'up' | 'down' | 'left' | 'right') => {
+    if (!cyRef.current) return
+
+    const nodes = cyRef.current.nodes()
+    if (nodes.length === 0) return
+
+    let targetNode
+    if (selectedNode) {
+      // Find currently selected node
+      const currentNode = nodes.find(n => n.data('id') === selectedNode.data.id)
+      if (currentNode) {
+        // Find nearest node in direction
+        const currentPos = currentNode.position()
+        let minDistance = Infinity
+
+        nodes.forEach(node => {
+          if (node.id() === currentNode.id()) return
+          const pos = node.position()
+          let distance = 0
+          let isInDirection = false
+
+          switch (direction) {
+            case 'up':
+              isInDirection = pos.y < currentPos.y
+              distance = Math.sqrt(Math.pow(pos.x - currentPos.x, 2) + Math.pow(pos.y - currentPos.y, 2))
+              break
+            case 'down':
+              isInDirection = pos.y > currentPos.y
+              distance = Math.sqrt(Math.pow(pos.x - currentPos.x, 2) + Math.pow(pos.y - currentPos.y, 2))
+              break
+            case 'left':
+              isInDirection = pos.x < currentPos.x
+              distance = Math.sqrt(Math.pow(pos.x - currentPos.x, 2) + Math.pow(pos.y - currentPos.y, 2))
+              break
+            case 'right':
+              isInDirection = pos.x > currentPos.x
+              distance = Math.sqrt(Math.pow(pos.x - currentPos.x, 2) + Math.pow(pos.y - currentPos.y, 2))
+              break
+          }
+
+          if (isInDirection && distance < minDistance) {
+            minDistance = distance
+            targetNode = node
+          }
+        })
+      }
+    } else {
+      // No selection, select first node
+      targetNode = nodes[0]
+    }
+
+    if (targetNode) {
+      const nodeData = targetNode.data()
+      setSelectedNode({
+        type: nodeData.type,
+        data: nodeData.fullData
+      })
+      // Center on selected node
+      cyRef.current.animate({
+        center: { eles: targetNode },
+        zoom: cyRef.current.zoom()
+      }, { duration: 300 })
+    }
+  }, [selectedNode])
 
   const loadData = useCallback(() => {
     try {
@@ -195,6 +263,78 @@ export function Graph() {
 
   const totalNodes = useMemo(() => systems.length + models.length + provenance.length, [systems, models, provenance])
 
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
+    {
+      key: '/',
+      ctrl: true,
+      handler: () => searchInputRef.current?.focus(),
+      description: 'Focus search',
+    },
+    {
+      key: '+',
+      handler: handleZoomIn,
+      description: 'Zoom in',
+    },
+    {
+      key: '=',
+      handler: handleZoomIn,
+      description: 'Zoom in',
+    },
+    {
+      key: '-',
+      handler: handleZoomOut,
+      description: 'Zoom out',
+    },
+    {
+      key: '0',
+      handler: handleFit,
+      description: 'Fit view',
+    },
+    {
+      key: 'ArrowUp',
+      handler: () => navigateNode('up'),
+      description: 'Navigate up',
+    },
+    {
+      key: 'ArrowDown',
+      handler: () => navigateNode('down'),
+      description: 'Navigate down',
+    },
+    {
+      key: 'ArrowLeft',
+      handler: () => navigateNode('left'),
+      description: 'Navigate left',
+    },
+    {
+      key: 'ArrowRight',
+      handler: () => navigateNode('right'),
+      description: 'Navigate right',
+    },
+    {
+      key: 'Enter',
+      handler: () => {
+        if (selectedNode) {
+          setEditDialog({
+            open: true,
+            type: selectedNode.type as 'system' | 'model' | 'provenance',
+            data: selectedNode.data
+          })
+        }
+      },
+      description: 'Edit selected node',
+    },
+    {
+      key: 'Escape',
+      handler: () => {
+        setSelectedNode(null)
+        setSearchQuery('')
+      },
+      description: 'Deselect node / Clear search',
+      preventDefault: false,
+    },
+  ], totalNodes > 0)
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
@@ -208,6 +348,7 @@ export function Graph() {
           <div className="mt-4 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
+              ref={searchInputRef}
               type="text"
               placeholder="Search and highlight nodes..."
               value={searchQuery}

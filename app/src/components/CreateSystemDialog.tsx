@@ -18,10 +18,14 @@ import type { System } from '@/types'
 interface CreateSystemDialogProps {
   onSystemCreated?: () => void
   children?: React.ReactNode
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
-export function CreateSystemDialog({ onSystemCreated, children }: CreateSystemDialogProps) {
-  const [open, setOpen] = useState(false)
+export function CreateSystemDialog({ onSystemCreated, children, open: controlledOpen, onOpenChange }: CreateSystemDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false)
+  const open = controlledOpen ?? internalOpen
+  const setOpen = onOpenChange ?? setInternalOpen
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -71,7 +75,12 @@ export function CreateSystemDialog({ onSystemCreated, children }: CreateSystemDi
             Add a new system to track your practical knowledge.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} onKeyDown={(e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault()
+            handleSubmit(e as unknown as React.FormEvent)
+          }
+        }}>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="title">Title *</Label>
