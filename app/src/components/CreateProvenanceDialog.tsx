@@ -18,10 +18,14 @@ import type { Provenance } from '@/types'
 interface CreateProvenanceDialogProps {
   onProvenanceCreated?: () => void
   children?: React.ReactNode
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
-export function CreateProvenanceDialog({ onProvenanceCreated, children }: CreateProvenanceDialogProps) {
-  const [open, setOpen] = useState(false)
+export function CreateProvenanceDialog({ onProvenanceCreated, children, open: controlledOpen, onOpenChange }: CreateProvenanceDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false)
+  const open = controlledOpen ?? internalOpen
+  const setOpen = onOpenChange ?? setInternalOpen
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -83,7 +87,12 @@ export function CreateProvenanceDialog({ onProvenanceCreated, children }: Create
             Add evidence, theory, quote, or principle to support your knowledge.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} onKeyDown={(e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault()
+            handleSubmit(e as unknown as React.FormEvent)
+          }
+        }}>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="type">Provenance Type *</Label>

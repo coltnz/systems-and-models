@@ -18,10 +18,14 @@ import type { Model } from '@/types'
 interface CreateModelDialogProps {
   onModelCreated?: () => void
   children?: React.ReactNode
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
-export function CreateModelDialog({ onModelCreated, children }: CreateModelDialogProps) {
-  const [open, setOpen] = useState(false)
+export function CreateModelDialog({ onModelCreated, children, open: controlledOpen, onOpenChange }: CreateModelDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false)
+  const open = controlledOpen ?? internalOpen
+  const setOpen = onOpenChange ?? setInternalOpen
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -70,7 +74,12 @@ export function CreateModelDialog({ onModelCreated, children }: CreateModelDialo
             Add a new mental model or concept to your knowledge base.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} onKeyDown={(e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault()
+            handleSubmit(e as unknown as React.FormEvent)
+          }
+        }}>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="title">Title *</Label>
