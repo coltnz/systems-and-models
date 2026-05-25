@@ -39,16 +39,20 @@ foundation. Three structural reasons:
 
 The world moved *toward* the thesis, but moved the goalposts too.
 
-- **MCP (Model Context Protocol) became the de-facto plug standard.** This is the
-  mechanism for "plug in everywhere / be a lingua franca." Don't invent the plug — ship an
-  **MCP server** so any agent can read and write the graph. That's the wedge.
+- **MCP (Model Context Protocol) emerged as the leading way to connect tools/data to
+  LLMs.** This is the eventual mechanism for "plug in everywhere / lingua franca" — but
+  it's a *distribution/interface* play that pays off **after** the artifact is useful, not
+  the wedge itself. Build the valuable artifact first; expose it over MCP second.
 - **GraphRAG went mainstream.** "Use a structured knowledge graph to make LLM answers
   grounded and traceable" is now a published, recognized technique. The core bet — *graphs
   make AI knowledge trustworthy* — is validated. Flip side: no longer contrarian.
-- **Cheap/local embeddings + WebGPU.** Semantic search (local or near-free API) is now
-  trivial. The thing doc 07 called "a research problem" is a weekend.
-- **Transcription is a free commodity.** YouTube/podcast → clean timestamped transcript is
-  solved. "Turn videos/podcasts into these" is buildable end-to-end today.
+- **Cheap/local embeddings + WebGPU.** Basic semantic search (local or near-free API) is
+  now easy. But the hard part isn't embeddings — *trusted, source-anchored, versioned,
+  graph-aware retrieval* is still product-grade work. Don't mistake the easy 20% for the job.
+- **Transcription is largely a commodity — for text.** YouTube/podcast → rough transcript
+  is cheap. Accurate **timestamps, speaker turns, slides/diagrams, rights, and quote-level
+  citation accuracy** are not solved, and are exactly what provenance needs. Buildable,
+  not free.
 - **"Deep research" agents** already synthesize sources with citations. Competitor *and*
   opening: they produce **disposable prose with links**, not a reusable, typed, queryable
   artifact.
@@ -94,8 +98,9 @@ Two genuinely different products hide in the vision; the old docs never forced t
   procedural/conceptual knowledge. Blue ocean, on-thesis with lingua-franca / marketplace,
   harder to demo.
 
-**Leaning recommendation (not yet decided): bet on B, entered through one concrete
-A-shaped wedge:**
+**Leaning recommendation (not yet decided): build an A-shaped *product* that produces a
+B-shaped *artifact*** — a genuinely useful learning/editor tool first, with a portable
+verified graph format underneath. Enter through one concrete wedge:
 
 > **Drop in a YouTube video, podcast, or paper → get back a verified graph of its Systems
 > and Models, every claim anchored to a clickable timestamp/quote. Then ask an AI tutor
@@ -107,7 +112,8 @@ That single feature:
 - Produces a **shareable artifact** (the per-source graph) that seeds the registry.
 - Demonstrates **trust / anti-hallucination** viscerally (the tutor can't invent; it cites
   the clip).
-- Is the **producer** side of lingua-franca; the MCP server is the **consumer** side.
+- Is the **producer** side of the lingua-franca play; an MCP server (later) is the
+  consumer side. Artifact first, interface second.
 
 This is the "process to make things concrete": **Ingest → Extract (AI) → Curate (human) →
 Connect → Verify.** That loop *is* the product.
@@ -126,8 +132,8 @@ Connect → Verify.** That loop *is* the product.
   corroboration count.
 - **AI tutor / Q&A grounded in the graph** (GraphRAG): answers cite nodes; "I don't have a
   source for that" is a first-class answer.
-- **MCP server** exposing read (`query_systems`, `get_provenance`) and write
-  (`propose_node`) — the lingua-franca wedge.
+- **MCP server** (later) exposing read (`query_systems`, `get_provenance`) and write
+  (`propose_node`) — the distribution/interface layer, *after* the artifact earns its keep.
 - **Registry, not marketplace** (v1): publish/import graphs by URL, attribution baked in.
 - **Real backend** (Postgres + pgvector, or Turso/libSQL if we love SQLite) for
   multi-device, multi-author, embeddings — replacing the in-browser blob.
@@ -150,7 +156,13 @@ navigate the conversation graph. It is **not** a storage layer. Two real links:
    hairball problem (§1) applies the moment the graph is the whole corpus rather than one
    conversation.
 
-There may be a shared graph-rendering / physics-nav component worth reusing across both.
+3. **Event-log / fork / diff model for derivation lineage.** This is the strongest reuse,
+   stronger than the nav UX. A pack is the end of a chain — transcript → machine extraction
+   → human edit → published pack — and that chain is exactly the event-log + fork + diff
+   structure `asof` already models. Provenance isn't only *which source*, it's *how this
+   atom was derived and by whom*. Lift that lineage model rather than reinventing it.
+
+There may also be a shared graph-rendering / physics-nav component worth reusing across both.
 
 ---
 
@@ -158,8 +170,9 @@ There may be a shared graph-rendering / physics-nav component worth reusing acro
 
 - **Idea:** still good, better-validated than 2025; needs the vague "AI future" framing
   replaced with the concrete ingest→verify→tutor loop.
-- **Tech landscape:** moved in our favor (MCP, GraphRAG, cheap embeddings, free
-  transcription) — the hard parts got easy.
+- **Tech landscape:** moved in our favor (MCP, GraphRAG, cheap embeddings, commodity
+  transcription) — the *plumbing* got easy. The hard, defensible work (anchored extraction,
+  trusted graph-aware retrieval, the trust workflow) is still the job.
 - **Implementation:** rebuild. The current app is a model-validation demo; its three core
   choices (browser sql.js, force-graph-as-home, fake credibility scores) are all wrong for
   the new vision.
@@ -175,3 +188,9 @@ There may be a shared graph-rendering / physics-nav component worth reusing acro
 5. Editor stack: ProseMirror vs. Tiptap vs. Lexical for typed-block authoring.
 6. Provenance trust model: corroboration count, verifiability flags — how computed, if at
    all (vs. just showing the anchor and letting the human judge).
+
+---
+
+**Next:** `docs/10-wedge-spec-source-to-learning-pack.md` converts this memo into a
+buildable vertical slice (data model, anchor/locator model, derivation lineage, pack
+format, trust workflow, copyright stance, evaluation, and a thin v1).
