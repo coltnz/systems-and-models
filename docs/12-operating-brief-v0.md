@@ -65,3 +65,7 @@ Product editor UI, backend/DB choice, the learning layer (exercises/misconceptio
 practice), marketplace, MCP, multi-source, embeddings, C2PA, the full ontology. None of it
 is worth building until the gate says extraction beats the alternative **and** someone will
 curate.
+
+Monetization is further out still: the creator/sell-packs go-to-market lives in
+`docs/13-creator-monetization-after-it-exists.md` and is gated on this probe passing *and* a
+working single-creator pipeline. It must not pull scope into the probe.
