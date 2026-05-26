@@ -84,80 +84,74 @@ Confirmed by inspection (file:line), not assumed:
   package identity broken at the root.
 - `db/index.ts` — sql.js WASM fetched from a CDN, breaking the offline claim.
 
-## 5. Minimum probe schema (v0 — only what §6 needs)
+## 5. Minimum probe schema (v0)
 
-```
-SourceAsset { id, uri, media_type, title, creator, license, access(owned|open|restricted),
-              content_hash }
+The contract is **encoded, not described**: `spec/learning-pack.schema.json` (JSON Schema
+2020-12), with a validated example at `spec/examples/`. Shape:
 
-SourceAnchor { id, source_asset_id,
-               selector{ kind(text_quote|timestamp_range|page_range), start, end },
-               excerpt, extraction_method(asr|native|human),
-               verifiable: bool }                      # COMPUTED: excerpt re-derives from selector
+- **Atoms:** `system | model | claim` only. Each references anchors as `{anchor_id,
+  support_state}`.
+- **Anchors:** `verifiable` is *computed* (excerpt re-derives from its selector);
+  `support_state` (`supports | partially | does_not_support | disputed`) is the *reviewed*
+  judgment that the excerpt backs *that* claim. Verifiable is necessary, not sufficient
+  (review 1).
+- **Relationships are grounded too** (review B's catch): edges carry `review_state`,
+  optional `anchor_ids` + `support_state`; the tutor traverses only `reviewed` edges, and
+  `relationship_precision` is in eval. Hallucinated `requires`/`contradicts` edges are fake
+  structure in a *graph* product.
+- **DerivationRun logs `cost {tokens_in, tokens_out, usd}`** (review A — was dropped) so the
+  probe reports `usd_per_published_atom` — half of "is it worth it."
 
-Atom { id, kind(system|model|claim),                   # nothing else for the probe
-       title, summary, body,
-       steps?[]                                         # systems only
-       review_state(generated|edited|reviewed|rejected|published),
-       authored_by(ai|human|mixed),
-       anchors: [{ anchor_id, support_state(supports|partially|does_not_support|disputed) }],
-       derivation_id, version }
+Publish invariant: a `published` atom needs ≥1 anchor with `support_state = supports` (not
+merely `verifiable`) and `review_state ∈ {reviewed, published}`; only `reviewed` edges are
+traversable. (Both enforced by the validator; the example pack passes.)
 
-Relationship { id, from_atom_id, to_atom_id,
-               predicate(uses|requires|explains|supports|contradicts),
-               review_state }
-
-DerivationRun { id, op(ingest|extract|edit|publish), input_ids[], output_ids[],
-                actor(ai|human), model_name?, model_snapshot?, prompt_hash?,
-                schema_version, created_at }
-
-LearningPack { id, title, version, license, schema_version,
-               sources[], atoms[], relationships[], derivations[],
-               eval{ anchor_precision, claim_support_accuracy,
-                     extraction_precision, extraction_recall,
-                     grounding_accuracy, refusal_correctness,
-                     median_minutes_per_published_atom, accept_edit_reject_ratio } }
-```
-
-Publish invariant: a `published` atom needs ≥1 anchor with `support_state = supports`
-(not merely `verifiable`) and `review_state ∈ {reviewed, published}`.
+Honest note (review A): `support_state` *relocated* the subjective trust call to the right
+place (per atom-anchor) — it did not remove it. `claim_support_accuracy` therefore needs its
+own gold standard, compounding the gold-set burden in §6.
 
 **Deferred until the gate says build more:** `exercise/misconception/term/example` kinds,
 `assesses/remediates/example_of` predicates, `learning_level`, C2PA, embeddings, aggregate
 review summaries, any backend.
 
-## 6. The probe — two tracks, run in parallel
+## 6. The probe — two tracks, gated (not merely parallel)
 
-The v1 single-track build-the-pipeline move was the supply-side reflex this doc warns
-against. Split it:
+v1 ran the tracks in parallel; review A caught the confound — Track A measures *realized*
+pipeline output, but a Track B run on a hand-polished pack tests a *different* artifact, so
+"they liked it" wouldn't mean "they like what the pipeline makes." Gate them.
 
-**Track A — supply / extraction quality (the CLI).**
-`one source → CLI extract (structured output) → validated pack v0 → anchors with
-support_state → grounded tutor (cite-or-refuse) → eval numbers`.
-The gate is **not** edit rate alone (gameable — accepting slop minimizes it). It is the
-gold-set composite below.
+**Track A — supply / extraction quality (CLI).**
+`one source → CLI extract → validated pack v0 → anchors with support_state → grounded tutor
+(cite-or-refuse) → eval numbers.`
 
-- **Build the gold set first:** a domain-competent reviewer hand-authors the "true" atom set
-  for one 20–40 min segment. This defines "usable atom" and makes the metrics falsifiable.
-- **Metrics & provisional kill thresholds (commit the numbers *before* the run):**
-  - extraction precision / recall vs gold set — *kill if precision < ~0.6 or recall < ~0.5*
-  - claim-support accuracy (anchor actually supports the atom) — *kill if < ~0.8*
-  - anchor precision (excerpt re-derives) — *kill if < ~0.95* (cheap, should be near-perfect)
-  - grounding accuracy / refusal correctness (tutor proof surface) — *kill if grounding < ~0.95*
-  - median minutes per published atom + accept/edit/reject ratio (effort, *interpreted
-    against the gold set*, not alone)
-  - (placeholders — the point is they are set and committed before building, not that these
-    exact values are right.)
+- **Gold set first, ≥2 annotators on a subset** — a single annotator just re-imports the
+  `credibility_score` subjectivity; report inter-rater agreement (review A).
+- **Baseline arm** — run NotebookLM (or a naive single-prompt, no-anchor extraction) on the
+  *same* source. The gate that matters is "**better than the free alternative**," not an
+  absolute number (review A).
+- **Pre-registered provisional thresholds** (commit before the run; provisional, not
+  sacred — review C): extraction precision/recall, claim-support accuracy, anchor precision,
+  grounding accuracy, **refusal correctness on a fixed ≥20-question out-of-scope set (its own
+  threshold ≈0.9)** (review B), relationship precision, and — read *against the gold set and
+  the baseline*, never alone — median minutes and usd per published atom.
 
-**Track B — demand + curation-burden moat (concierge, behavioral, cheaper than A).**
-Hand- or AI-build 1–2 packs on topics a *real target user* cares about; put them in front
-of 3–5 real learners/creators. Measure **behavior, not opinions**: do they open the source
-from an anchor, fix/reject any atoms, return, share it, and would they have built it
-themselves? This is the only cheap test of §1.1 and §1.3.
+**Track B — demand + curation-burden moat (concierge, behavioral).** Two sub-steps, because
+the hand-built version can only *kill*, not *confirm*:
 
-**Decision:** go/no-go against the committed thresholds *and* whether Track B shows anyone
-will curate. A great edit rate with no one willing to curate is still a no-go.
+- **B0 — kill gate (early, hand-built).** Put 1–2 hand/AI-built packs before 3–5 *named*
+  learners/creators on a real review surface (not raw JSON — see doc 12). If even friendly
+  users won't engage, the idea is dead (valid disconfirmation). Engagement here is **not** a
+  green light: politeness bias, n≈4, idealized artifact.
+- **B1 — weak confirm (after A passes).** Put Track A's *actual* output before users and
+  watch behavior on the real artifact. The only honest positive signal — and it exists only
+  if A clears its gate.
+
+**Decision:** go only if A **beats the baseline** on the committed thresholds **and** B1
+shows someone will curate the *real* output. A great edit rate with no willing curator is a
+no-go — or a reshape to a *creator* tool (the A-vs-B fork in §1.1, still owed after the
+probe; the probe surfaces it, it doesn't take it).
 
 ---
 
-The immediately-executable version of all this is `docs/12-operating-brief-v0.md`.
+Executable version: `docs/12-operating-brief-v0.md`. Encoded contract:
+`spec/learning-pack.schema.json` (+ validated example).

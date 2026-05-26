@@ -1,0 +1,164 @@
+{
+  "id": "pack-spaced-repetition-demo",
+  "title": "Spaced Repetition (demo gold-set pack)",
+  "version": "0.1.0",
+  "schema_version": "0",
+  "license": "CC-BY-4.0",
+  "sources": [
+    {
+      "id": "src-talk-1",
+      "uri": "https://example.org/cc-talk-spaced-repetition",
+      "media_type": "video",
+      "title": "Why We Forget, and How Spacing Fixes It",
+      "creator": "Example Creator",
+      "license": "CC-BY-4.0",
+      "access": "open",
+      "content_hash": "sha256:PLACEHOLDER"
+    }
+  ],
+  "anchors": [
+    {
+      "id": "anc-spacing",
+      "source_asset_id": "src-talk-1",
+      "selector": { "kind": "timestamp_range", "start": "184000", "end": "212000" },
+      "excerpt": "...when you space the same five repetitions across days instead of cramming them into one sitting, recall a week later is dramatically higher.",
+      "extraction_method": "asr",
+      "verifiable": true
+    },
+    {
+      "id": "anc-schedule",
+      "source_asset_id": "src-talk-1",
+      "selector": { "kind": "timestamp_range", "start": "330000", "end": "372000" },
+      "excerpt": "...break it into single facts, see it today, again tomorrow, and then keep pushing the gap out each time you get it right.",
+      "extraction_method": "asr",
+      "verifiable": true
+    },
+    {
+      "id": "anc-edge",
+      "source_asset_id": "src-talk-1",
+      "selector": { "kind": "timestamp_range", "start": "405000", "end": "421000" },
+      "excerpt": "...the trick is to review right before you'd forget it.",
+      "extraction_method": "asr",
+      "verifiable": true
+    }
+  ],
+  "atoms": [
+    {
+      "id": "atom-spacing-effect",
+      "kind": "model",
+      "title": "The spacing effect",
+      "summary": "Memory retention improves when study is distributed over time rather than massed.",
+      "body": "Distributing repetitions across increasing intervals produces stronger long-term retention than the same number of repetitions packed together. Boundary: holds for durable factual/conceptual recall; less relevant for one-off or purely procedural motor tasks.",
+      "review_state": "published",
+      "authored_by": "mixed",
+      "anchors": [{ "anchor_id": "anc-spacing", "support_state": "supports" }],
+      "derivation_id": "der-edit",
+      "version": 2
+    },
+    {
+      "id": "atom-schedule-reviews",
+      "kind": "system",
+      "title": "Schedule reviews on expanding intervals",
+      "summary": "A procedure for spacing reviews of a fact set.",
+      "body": "Operational procedure derived from the spacing effect.",
+      "steps": [
+        { "text": "Split material into atomic items (one fact per item).", "anchor_id": "anc-schedule" },
+        { "text": "Review a new item the same day, then after 1 day." },
+        { "text": "On each successful recall, multiply the next interval (e.g. x2-2.5)." },
+        { "text": "On a failed recall, reset the interval to 1 day." }
+      ],
+      "review_state": "published",
+      "authored_by": "ai",
+      "anchors": [{ "anchor_id": "anc-schedule", "support_state": "supports" }],
+      "derivation_id": "der-extract",
+      "version": 1
+    },
+    {
+      "id": "atom-claim-just-before-forgetting",
+      "kind": "claim",
+      "title": "Reviewing just before forgetting maximizes retention",
+      "summary": "Asserts an optimal review timing at the edge of forgetting.",
+      "body": "The talk states reviews are most efficient when timed just before the item would be forgotten. Flagged 'partially': the source asserts it but offers no measurement of the forgetting point, so the operationalization is weaker than the claim.",
+      "review_state": "reviewed",
+      "authored_by": "ai",
+      "anchors": [{ "anchor_id": "anc-edge", "support_state": "partially" }],
+      "derivation_id": "der-extract",
+      "version": 1
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel-system-requires-model",
+      "from_atom_id": "atom-schedule-reviews",
+      "to_atom_id": "atom-spacing-effect",
+      "predicate": "requires",
+      "review_state": "reviewed"
+    },
+    {
+      "id": "rel-claim-supports-model",
+      "from_atom_id": "atom-claim-just-before-forgetting",
+      "to_atom_id": "atom-spacing-effect",
+      "predicate": "supports",
+      "review_state": "reviewed",
+      "anchor_ids": ["anc-edge"],
+      "support_state": "partially"
+    }
+  ],
+  "derivations": [
+    {
+      "id": "der-ingest",
+      "op": "ingest",
+      "input_ids": ["src-talk-1"],
+      "output_ids": ["anc-spacing", "anc-schedule", "anc-edge"],
+      "actor": "ai",
+      "model_name": "asr-model",
+      "schema_version": "0",
+      "created_at": "2026-05-26T10:00:00Z"
+    },
+    {
+      "id": "der-extract",
+      "op": "extract",
+      "input_ids": ["src-talk-1"],
+      "output_ids": ["atom-spacing-effect", "atom-schedule-reviews", "atom-claim-just-before-forgetting"],
+      "actor": "ai",
+      "model_name": "extraction-model",
+      "model_snapshot": "PLACEHOLDER",
+      "prompt_hash": "sha256:PLACEHOLDER",
+      "schema_version": "0",
+      "cost": { "tokens_in": 18000, "tokens_out": 2400, "usd": 0.11 },
+      "created_at": "2026-05-26T10:05:00Z"
+    },
+    {
+      "id": "der-edit",
+      "op": "edit",
+      "input_ids": ["atom-spacing-effect"],
+      "output_ids": ["atom-spacing-effect"],
+      "actor": "human",
+      "schema_version": "0",
+      "created_at": "2026-05-26T10:30:00Z"
+    },
+    {
+      "id": "der-publish",
+      "op": "publish",
+      "input_ids": ["atom-spacing-effect", "atom-schedule-reviews"],
+      "output_ids": ["pack-spaced-repetition-demo"],
+      "actor": "human",
+      "schema_version": "0",
+      "created_at": "2026-05-26T10:45:00Z"
+    }
+  ],
+  "eval": {
+    "anchor_precision": 1.0,
+    "claim_support_accuracy": 0.67,
+    "relationship_precision": 1.0,
+    "extraction_precision": 0.75,
+    "extraction_recall": 0.6,
+    "grounding_accuracy": 1.0,
+    "refusal_correctness": 0.9,
+    "median_minutes_per_published_atom": 4.5,
+    "usd_per_published_atom": 0.06,
+    "accept_edit_reject": { "accept": 1, "edit": 1, "reject": 1 },
+    "gold_set": { "annotators": 2, "inter_rater_agreement": 0.78 },
+    "baseline": { "name": "NotebookLM", "notes": "Same talk; baseline produced prose summary + citations but no typed atoms, no support_state, no traversable edges." }
+  }
+}
