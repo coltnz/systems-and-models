@@ -1,5 +1,10 @@
 # Wedge Spec: Source → Learning Pack
 
+> **Superseded in part by `docs/11-best-of-breed-synthesis.md`.** The synthesis adopts a
+> unified atom model (and corrects the object model below) after reconciling with the Codex
+> pass. Read 11 for the settled object model and phasing; this doc remains useful for the
+> anchor/locator detail, drift detection, copyright table, and evaluation metrics.
+
 Concrete follow-on to `docs/09-revisit-2026.md`. Where 09 is the executive memo, this is
 the buildable slice: one vertical demo, end to end. Incorporates the PR #1 review.
 
