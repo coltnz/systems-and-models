@@ -1,4 +1,4 @@
-import type { System, Event } from '@/types'
+import type { System } from '@/types'
 import { getDatabase, generateId, serializeArray, deserializeArray, saveDatabaseToIndexedDB } from './index'
 
 function recordEvent(entityType: 'system', entityId: string, eventType: 'created' | 'updated' | 'deleted', data: System): void {
