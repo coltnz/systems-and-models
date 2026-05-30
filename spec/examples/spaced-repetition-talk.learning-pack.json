@@ -62,7 +62,7 @@
       "summary": "A procedure for spacing reviews of a fact set.",
       "body": "Operational procedure derived from the spacing effect.",
       "steps": [
-        { "text": "Split material into atomic items (one fact per item).", "anchor_id": "anc-schedule" },
+        { "text": "Split material into atomic items (one fact per item)." },
         { "text": "Review a new item the same day, then after 1 day." },
         { "text": "On each successful recall, multiply the next interval (e.g. x2-2.5)." },
         { "text": "On a failed recall, reset the interval to 1 day." }
@@ -157,7 +157,7 @@
     "refusal_correctness": 0.9,
     "median_minutes_per_published_atom": 4.5,
     "usd_per_published_atom": 0.06,
-    "accept_edit_reject": { "accept": 1, "edit": 1, "reject": 1 },
+    "accept_edit_reject": { "accept": 1, "edit": 1, "reject": 0 },
     "gold_set": { "annotators": 2, "inter_rater_agreement": 0.78 },
     "baseline": { "name": "NotebookLM", "notes": "Same talk; baseline produced prose summary + citations but no typed atoms, no support_state, no traversable edges." }
   }

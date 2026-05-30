@@ -64,12 +64,12 @@
         "body": { "type": "string", "description": "markdown" },
         "steps": {
           "type": "array",
-          "description": "systems only; ordered steps, each may carry its own anchor",
+          "description": "systems only; ordered steps. Per-step anchoring is deferred; rely on the atom's anchors for v0.",
           "items": {
             "type": "object",
             "additionalProperties": false,
             "required": ["text"],
-            "properties": { "text": { "type": "string" }, "anchor_id": { "$ref": "#/$defs/id" } }
+            "properties": { "text": { "type": "string" } }
           }
         },
         "review_state": { "$ref": "#/$defs/reviewState" },
@@ -93,7 +93,7 @@
     "Relationship": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Edges are first-class structure and can be hallucinated. Only review_state=reviewed edges may be traversed by the tutor; edge quality is measured (relationship_precision).",
+      "description": "Edges are first-class structure and can be hallucinated. Only review_state=reviewed edges may be traversed by the tutor; edge quality is measured (relationship_precision). If anchor_ids is present, support_state is required (the trust call cannot be skipped).",
       "required": ["id", "from_atom_id", "to_atom_id", "predicate", "review_state"],
       "properties": {
         "id": { "$ref": "#/$defs/id" },
@@ -101,9 +101,10 @@
         "to_atom_id": { "$ref": "#/$defs/id" },
         "predicate": { "type": "string", "enum": ["uses", "requires", "explains", "supports", "contradicts"] },
         "review_state": { "$ref": "#/$defs/reviewState" },
-        "anchor_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "description": "optional: source spans where the source itself asserts this relation" },
+        "anchor_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "description": "optional: source spans where the source itself asserts this relation. If set, support_state is required." },
         "support_state": { "$ref": "#/$defs/supportState" }
-      }
+      },
+      "dependentRequired": { "anchor_ids": ["support_state"] }
     },
     "DerivationRun": {
       "type": "object",
@@ -137,26 +138,30 @@
       "description": "Probe results. anchor_precision/grounding/refusal are automatable; the rest need the gold set. Compared against a baseline arm, not only absolute thresholds.",
       "additionalProperties": false,
       "properties": {
-        "anchor_precision": { "type": "number" },
-        "claim_support_accuracy": { "type": "number" },
-        "relationship_precision": { "type": "number" },
-        "extraction_precision": { "type": "number" },
-        "extraction_recall": { "type": "number" },
-        "grounding_accuracy": { "type": "number" },
-        "refusal_correctness": { "type": "number" },
-        "median_minutes_per_published_atom": { "type": "number" },
-        "usd_per_published_atom": { "type": "number" },
+        "anchor_precision":        { "type": "number", "minimum": 0, "maximum": 1 },
+        "claim_support_accuracy":  { "type": "number", "minimum": 0, "maximum": 1 },
+        "relationship_precision":  { "type": "number", "minimum": 0, "maximum": 1 },
+        "extraction_precision":    { "type": "number", "minimum": 0, "maximum": 1 },
+        "extraction_recall":       { "type": "number", "minimum": 0, "maximum": 1 },
+        "grounding_accuracy":      { "type": "number", "minimum": 0, "maximum": 1 },
+        "refusal_correctness":     { "type": "number", "minimum": 0, "maximum": 1 },
+        "median_minutes_per_published_atom": { "type": "number", "minimum": 0 },
+        "usd_per_published_atom":  { "type": "number", "minimum": 0 },
         "accept_edit_reject": {
           "type": "object",
           "additionalProperties": false,
-          "properties": { "accept": { "type": "integer" }, "edit": { "type": "integer" }, "reject": { "type": "integer" } }
+          "properties": {
+            "accept": { "type": "integer", "minimum": 0 },
+            "edit":   { "type": "integer", "minimum": 0 },
+            "reject": { "type": "integer", "minimum": 0 }
+          }
         },
         "gold_set": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
             "annotators": { "type": "integer", "minimum": 1 },
-            "inter_rater_agreement": { "type": "number", "description": "on the subset double-annotated; guards against single-annotator taste" }
+            "inter_rater_agreement": { "type": "number", "minimum": 0, "maximum": 1, "description": "on the subset double-annotated; guards against single-annotator taste" }
           }
         },
         "baseline": {
