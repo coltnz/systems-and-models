@@ -39,7 +39,7 @@ contracts, logs, or public APIs.
 
 | Concept | Definition | Implementation note |
 |---|---|---|
-| Systems & Models | Local-first knowledge tool for capturing what to do, what to know, and why to trust it. | Current app lives in `app/`; product strategy is documented in `docs/09-2026-revisit-ai-learning-strategy.md`. |
+| Systems & Models | Local-first knowledge tool for capturing what to do, what to know, and why to trust it. | Current app lives in `app/`; strategy and architecture notes live under `docs/`. |
 | System | Actionable process, methodology, workflow, habit, protocol, or checklist. | Stored in `systems`; status is `draft`, `active`, `archived`, or `proven`. |
 | Model | Explanatory concept, framework, principle, or mental model. | Stored in `models`; type is `mental-model`, `concept`, `framework`, or `principle`. |
 | Provenance | Evidence and source-backed justification for a system or model. | Stored in `provenance`; type is `theory`, `quote`, `fact`, `principle`, `corollary`, or `research`. |
