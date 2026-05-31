@@ -2,6 +2,9 @@
 
 A knowledge management platform for tracking practical systems (how-to processes) and mental models (conceptual frameworks) with full version history and evolution tracking.
 
+For canonical product and implementation vocabulary, see
+[../docs/domain-language.md](../docs/domain-language.md).
+
 ## Features Implemented
 
 ### ✅ Core Functionality
