@@ -43,7 +43,7 @@ contracts, logs, or public APIs.
 | System | Actionable process, methodology, workflow, habit, protocol, or checklist. | Stored in `systems`; status is `draft`, `active`, `archived`, or `proven`. |
 | Model | Explanatory concept, framework, principle, or mental model. | Stored in `models`; type is `mental-model`, `concept`, `framework`, or `principle`. |
 | Provenance | Evidence and source-backed justification for a system or model. | Stored in `provenance`; type is `theory`, `quote`, `fact`, `principle`, `corollary`, or `research`. |
-| Relationship | Directed, typed connection between two entities. | Stored in `relationships` with `from_type`, `from_id`, `to_type`, `to_id`, `relationship_type`, optional `strength`, and tags. |
+| Relationship | Directed, typed connection between two entities. | Stored in `relationships` with `from_type`, `from_id`, `to_type`, `to_id`, `relationship_type`, optional `strength`, `metadata`, and tags. |
 | Learning Graph | Reviewable graph of practical knowledge, explanatory models, evidence, and learning artifacts. | Product concept; current UI renders a knowledge graph with Cytoscape. |
 | Knowledge Graph | Generic graph representation of entities and relationships. | Acceptable when describing storage, graph rendering, or import schema. |
 | Learning Pack | Portable package for reviewed learning content. | Future contract should include stable IDs, sources, anchors, atoms, relationships, review states, derivation runs, schema version, and license metadata. |
@@ -77,7 +77,7 @@ contracts, logs, or public APIs.
 | Contradicts | Source entity conflicts with the target. | Use explicitly; do not hide contradictions in prose. |
 | Supports | Source entity reinforces the target without being the primary proof. | Use when evidence is helpful but not decisive. |
 | Evidences | Source entity provides direct justification for the target. | Typical shape: `Provenance evidences Model` or `Provenance evidences System`. |
-| Strength | Optional 0-100 weighting for a relationship. | Use as an authoring hint, not as an automated truth score. |
+| Strength | Optional weighting convention for a relationship, usually authored on a 0-100 scale. | Use as an authoring hint, not as an automated truth score; the current database stores it as an unconstrained integer. |
 
 ## Source And Learning Concepts
 
@@ -124,7 +124,7 @@ future schema design.
 | Schema Version | Version marker for import/export contracts. | Current YAML includes `version`; future learning packs need a stricter schema version. |
 | Local-First | Product principle that user data should remain usable and owned locally. | Do not equate local-first with "browser-only"; future ingestion likely needs a desktop or local backend. |
 | Event Sourcing | Pattern where changes are recorded as immutable events and state can be inspected over time. | Current implementation records events but does not yet expose full as-of reconstruction in UI. |
-| As-Of State | Derived state at a specific event cursor. | Future architecture pattern borrowed from `../asof`; not implemented in the current app. |
+| As-Of State | Derived state at a specific event cursor. | Future architecture pattern borrowed from adjacent as-of work; not implemented in the current app. |
 | Package Manifest | Metadata for a portable learning pack. | Should include title, version, schema version, license, source rights, hashes, and optional signatures. |
 | Marketplace | Distribution and commerce surface for learning packs. | Future scaling pattern; do not treat it as the product itself. |
 

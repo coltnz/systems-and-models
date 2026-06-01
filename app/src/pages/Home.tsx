@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from 'react'
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import { Plus, Link2, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,6 +13,7 @@ import { getSystems } from '@/lib/db/systems'
 import { getModels } from '@/lib/db/models'
 import { getProvenance } from '@/lib/db/provenance'
 import { searchEntities } from '@/lib/search'
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import type { System, Model, Provenance } from '@/types'
 
 export function Home() {
@@ -20,6 +21,41 @@ export function Home() {
   const [allModels, setAllModels] = useState<Model[]>([])
   const [allProvenance, setAllProvenance] = useState<Provenance[]>([])
   const [searchQuery, setSearchQuery] = useState('')
+  const [createSystemOpen, setCreateSystemOpen] = useState(false)
+  const [createModelOpen, setCreateModelOpen] = useState(false)
+  const [createProvenanceOpen, setCreateProvenanceOpen] = useState(false)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
+    {
+      key: '/',
+      ctrl: true,
+      handler: () => searchInputRef.current?.focus(),
+      description: 'Focus search',
+    },
+    {
+      key: 's',
+      ctrl: true,
+      shift: true,
+      handler: () => setCreateSystemOpen(true),
+      description: 'Create new System',
+    },
+    {
+      key: 'm',
+      ctrl: true,
+      shift: true,
+      handler: () => setCreateModelOpen(true),
+      description: 'Create new Model',
+    },
+    {
+      key: 'p',
+      ctrl: true,
+      shift: true,
+      handler: () => setCreateProvenanceOpen(true),
+      description: 'Create new Provenance',
+    },
+  ])
 
   const loadData = useCallback(() => {
     try {
@@ -77,10 +113,17 @@ export function Home() {
           <div className="mt-4 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
+              ref={searchInputRef}
               type="text"
               placeholder="Search systems, models, and provenance..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  setSearchQuery('')
+                  searchInputRef.current?.blur()
+                }
+              }}
               className="pl-10"
             />
             {isSearching && (
@@ -98,7 +141,11 @@ export function Home() {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-semibold">Systems</h2>
-              <CreateSystemDialog onSystemCreated={loadData}>
+              <CreateSystemDialog
+                onSystemCreated={loadData}
+                open={createSystemOpen}
+                onOpenChange={setCreateSystemOpen}
+              >
                 <Button size="sm">
                   <Plus className="w-4 h-4 mr-2" />
                   New System
@@ -174,7 +221,11 @@ export function Home() {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-semibold">Models</h2>
-              <CreateModelDialog onModelCreated={loadData}>
+              <CreateModelDialog
+                onModelCreated={loadData}
+                open={createModelOpen}
+                onOpenChange={setCreateModelOpen}
+              >
                 <Button size="sm">
                   <Plus className="w-4 h-4 mr-2" />
                   New Model
@@ -242,7 +293,11 @@ export function Home() {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-semibold">Provenance</h2>
-              <CreateProvenanceDialog onProvenanceCreated={loadData}>
+              <CreateProvenanceDialog
+                onProvenanceCreated={loadData}
+                open={createProvenanceOpen}
+                onOpenChange={setCreateProvenanceOpen}
+              >
                 <Button size="sm">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Why

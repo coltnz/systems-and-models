@@ -5,6 +5,7 @@ import { Detail } from './pages/Detail'
 import { Button } from './components/ui/button'
 import { List, Network } from 'lucide-react'
 import { initDatabase } from './lib/db'
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import { parsePermalink, type EntityType } from './lib/permalink'
 
 type View = 'home' | 'graph' | 'detail'
@@ -19,6 +20,22 @@ function App() {
   const [error, setError] = useState<string | null>(null)
   const [currentView, setCurrentView] = useState<View>('home')
   const [detailState, setDetailState] = useState<DetailState | null>(null)
+
+  // Global keyboard shortcuts
+  useKeyboardShortcuts([
+    {
+      key: 'h',
+      alt: true,
+      handler: () => setCurrentView('home'),
+      description: 'Switch to List View',
+    },
+    {
+      key: 'g',
+      alt: true,
+      handler: () => setCurrentView('graph'),
+      description: 'Switch to Graph View',
+    },
+  ], dbInitialized)
 
   useEffect(() => {
     initDatabase()
