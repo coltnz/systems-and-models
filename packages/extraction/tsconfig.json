@@ -8,7 +8,9 @@
     "types": ["vitest/importMeta"],
     "baseUrl": ".",
     "paths": {
-      "@sam/types": ["../types/src/index.ts"]
+      "@sam/types": ["../types/src/index.ts"],
+      "@sam/validator": ["../validator/src/index.ts"],
+      "@sam/ingest": ["../ingest/src/index.ts"]
     }
   },
   "include": ["src"]
