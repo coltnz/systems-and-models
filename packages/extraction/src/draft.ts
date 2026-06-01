@@ -91,6 +91,17 @@ export class UnknownAnchorError extends Error {
  * `extract` DerivationRun. Throws {@link UnknownAnchorError} if any referenced
  * anchor id is not in `validAnchorIds`, so a buggy adapter (or a hallucinated
  * model output) can never smuggle in a fabricated anchor.
+ *
+ * It is also the authoritative chokepoint for relationship graph-integrity, so a
+ * draft from ANY adapter is always free of relationship-caused graph errors
+ * (bd-12). Concretely it:
+ *   - DROPS any relationship whose `from_atom_id`/`to_atom_id` is not an atom
+ *     produced in this same draft (a dangling endpoint can't be repaired through
+ *     the review UI, so it would otherwise block reviewed-save forever), and
+ *   - NORMALIZES a present-but-empty `anchor_ids` to a no-anchor relationship
+ *     (omitting both `anchor_ids` and `support_state`).
+ * A NON-empty `anchor_ids` referencing an unknown anchor still throws
+ * {@link UnknownAnchorError} (the "never invent anchors" hard guarantee).
  */
 export function assembleExtraction(args: AssembleArgs): {
   atoms: Atom[]
@@ -120,7 +131,18 @@ export function assembleExtraction(args: AssembleArgs): {
     return atom
   })
 
-  const relationships: Relationship[] = args.draft.relationships.map((d) => {
+  // The atoms this draft actually produced — a relationship may only connect
+  // atoms inside its own draft. Anything else is a dangling endpoint.
+  const atomIds = new Set(atoms.map((a) => a.id))
+
+  const relationships: Relationship[] = args.draft.relationships.flatMap((d) => {
+    // DROP dangling-endpoint edges: an edge to an atom not in this draft can't
+    // be repaired through the review UI, so it would block reviewed-save
+    // forever. Skip it entirely (and thus out of derivation.output_ids too).
+    if (!atomIds.has(d.from_atom_id) || !atomIds.has(d.to_atom_id)) {
+      return []
+    }
+
     const base = {
       id: d.id,
       from_atom_id: d.from_atom_id,
@@ -128,7 +150,10 @@ export function assembleExtraction(args: AssembleArgs): {
       predicate: d.predicate,
       review_state: 'generated' as const,
     }
-    if (d.anchor_ids !== undefined) {
+    // NORMALIZE empty anchor_ids: a present-but-empty list is not a valid
+    // anchored relationship, so emit a no-anchor relationship (omit both
+    // anchor_ids and support_state). Authoritative here regardless of adapter.
+    if (d.anchor_ids !== undefined && d.anchor_ids.length > 0) {
       // Schema's dependentRequired: anchor_ids present => support_state required.
       if (d.support_state === undefined) {
         throw new Error(
@@ -141,14 +166,17 @@ export function assembleExtraction(args: AssembleArgs): {
           throw new UnknownAnchorError(anchorId, `relationship "${d.id}"`)
         }
       }
-      return {
-        ...base,
-        anchor_ids: d.anchor_ids,
-        support_state: d.support_state,
-      }
+      return [
+        {
+          ...base,
+          anchor_ids: d.anchor_ids,
+          support_state: d.support_state,
+        },
+      ]
     }
-    // No anchors: support_state stays absent (valid; the human may add later).
-    return base
+    // No anchors (absent or normalized-from-empty): support_state stays absent
+    // (valid; the human may add anchors later during review).
+    return [base]
   })
 
   const derivation: DerivationRun = {

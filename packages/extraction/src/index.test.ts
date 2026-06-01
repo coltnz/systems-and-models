@@ -13,7 +13,11 @@ import {
   type ExtractionResult,
 } from './index.js'
 import { computeUsd, parseDraft } from './openai-adapter.js'
-import { assembleExtraction } from './draft.js'
+import {
+  assembleExtraction,
+  UnknownAnchorError,
+  type DraftBundle,
+} from './draft.js'
 
 // A multi-paragraph Markdown transcript fixture (CC-licensed/authored shape).
 const TRANSCRIPT = `# Compound Interest
@@ -308,6 +312,223 @@ describe('OpenAIAdapter parseDraft normalization (no network)', () => {
     expect('support_state' in rel).toBe(false)
 
     // And the wrapped pack validates cleanly (no relationship_empty_anchor_ids).
+    const pack = toPack(ingestResult, extraction)
+    const validation = validatePack(pack)
+    expect(validation.errors).toEqual([])
+    expect(validation.ok).toBe(true)
+  })
+})
+
+describe('assembleExtraction relationship graph-ref hygiene (bd-12)', () => {
+  // Helpers: assemble a bundle against a real source's anchors, then wrap the
+  // result in a full LearningPack for end-to-end validation.
+  async function assembleBundle(draft: DraftBundle): Promise<{
+    ingestResult: IngestResult
+    extraction: ExtractionResult
+  }> {
+    const ingestResult = await ingest(TRANSCRIPT)
+    const validAnchorIds = new Set(ingestResult.anchors.map((a) => a.id))
+    const extraction = assembleExtraction({
+      sourceAssetId: ingestResult.source.id,
+      derivationId: `der-extract-${ingestResult.source.id}`,
+      validAnchorIds,
+      draft,
+      cost: { tokens_in: 0, tokens_out: 0, usd: 0 },
+      createdAt: '2026-06-01T12:00:00.000Z',
+    })
+    return { ingestResult, extraction }
+  }
+
+  // Two atoms, each anchored to a real input anchor — reusable across cases.
+  function twoAtoms(
+    a1Id: string,
+    a2Id: string,
+  ): DraftBundle['atoms'] {
+    return [
+      {
+        id: 'atom-1',
+        kind: 'model',
+        title: 'Compounding',
+        summary: 'Earnings reinvested compound.',
+        body: 'Interest compounds when earnings are reinvested.',
+        anchors: [{ anchor_id: a1Id, support_state: 'supports' }],
+      },
+      {
+        id: 'atom-2',
+        kind: 'claim',
+        title: 'Small rate beats',
+        summary: 'A small rate over time beats a large rate.',
+        body: 'A small rate, given enough time, beats a large rate over a short window.',
+        anchors: [{ anchor_id: a2Id, support_state: 'partially' }],
+      },
+    ]
+  }
+
+  it('DROPS a relationship with a dangling from/to atom; keeps the sibling valid edge', async () => {
+    const ingestResult = await ingest(TRANSCRIPT)
+    const [a1, a2] = ingestResult.anchors
+    const draft: DraftBundle = {
+      atoms: twoAtoms(a1!.id, a2!.id),
+      relationships: [
+        // Valid sibling edge (both endpoints exist).
+        {
+          id: 'rel-valid',
+          from_atom_id: 'atom-1',
+          to_atom_id: 'atom-2',
+          predicate: 'explains',
+        },
+        // Dangling from_atom_id (not an atom in this draft).
+        {
+          id: 'rel-bad-from',
+          from_atom_id: 'atom-MISSING',
+          to_atom_id: 'atom-2',
+          predicate: 'explains',
+        },
+        // Dangling to_atom_id (not an atom in this draft).
+        {
+          id: 'rel-bad-to',
+          from_atom_id: 'atom-1',
+          to_atom_id: 'atom-MISSING',
+          predicate: 'explains',
+        },
+      ],
+    }
+
+    const { extraction } = await assembleBundle(draft)
+
+    const relIds = extraction.relationships.map((r) => r.id)
+    expect(relIds).toEqual(['rel-valid'])
+    expect(relIds).not.toContain('rel-bad-from')
+    expect(relIds).not.toContain('rel-bad-to')
+
+    // The dropped edges are absent from derivation.output_ids too.
+    expect(extraction.derivation.output_ids).toContain('rel-valid')
+    expect(extraction.derivation.output_ids).not.toContain('rel-bad-from')
+    expect(extraction.derivation.output_ids).not.toContain('rel-bad-to')
+    expect(extraction.derivation.output_ids).toEqual([
+      'atom-1',
+      'atom-2',
+      'rel-valid',
+    ])
+  })
+
+  it('NORMALIZES empty anchor_ids to a no-anchor relationship; wrapped pack validates clean', async () => {
+    const ingestResult = await ingest(TRANSCRIPT)
+    const [a1, a2] = ingestResult.anchors
+    const draft: DraftBundle = {
+      atoms: twoAtoms(a1!.id, a2!.id),
+      relationships: [
+        {
+          id: 'rel-empty',
+          from_atom_id: 'atom-1',
+          to_atom_id: 'atom-2',
+          predicate: 'explains',
+          anchor_ids: [],
+          support_state: 'partially',
+        },
+      ],
+    }
+
+    const { extraction } = await assembleBundle(draft)
+
+    expect(extraction.relationships).toHaveLength(1)
+    const rel = extraction.relationships[0]!
+    expect('anchor_ids' in rel).toBe(false)
+    expect('support_state' in rel).toBe(false)
+
+    const pack = toPack(ingestResult, extraction)
+    const validation = validatePack(pack)
+    expect(validation.errors).toEqual([])
+    expect(validation.ok).toBe(true)
+  })
+
+  it('still THROWS UnknownAnchorError for a NON-empty anchor_ids referencing an unknown anchor (unchanged guarantee)', async () => {
+    const ingestResult = await ingest(TRANSCRIPT)
+    const [a1, a2] = ingestResult.anchors
+    const validAnchorIds = new Set(ingestResult.anchors.map((a) => a.id))
+    const draft: DraftBundle = {
+      atoms: twoAtoms(a1!.id, a2!.id),
+      relationships: [
+        {
+          id: 'rel-invented',
+          from_atom_id: 'atom-1',
+          to_atom_id: 'atom-2',
+          predicate: 'explains',
+          anchor_ids: ['anchor-NEVER-EXISTED'],
+          support_state: 'partially',
+        },
+      ],
+    }
+
+    expect(() =>
+      assembleExtraction({
+        sourceAssetId: ingestResult.source.id,
+        derivationId: `der-extract-${ingestResult.source.id}`,
+        validAnchorIds,
+        draft,
+        cost: { tokens_in: 0, tokens_out: 0, usd: 0 },
+        createdAt: '2026-06-01T12:00:00.000Z',
+      }),
+    ).toThrow(UnknownAnchorError)
+  })
+
+  it('assembled pack ALWAYS validates: valid + dangling + empty-anchor edges ⇒ only valid/normalized kept', async () => {
+    const ingestResult = await ingest(TRANSCRIPT)
+    const [a1, a2] = ingestResult.anchors
+    const draft: DraftBundle = {
+      atoms: twoAtoms(a1!.id, a2!.id),
+      relationships: [
+        // A fully valid anchored edge.
+        {
+          id: 'rel-good',
+          from_atom_id: 'atom-1',
+          to_atom_id: 'atom-2',
+          predicate: 'explains',
+          anchor_ids: [a1!.id, a2!.id],
+          support_state: 'supports',
+        },
+        // A dangling-endpoint edge (dropped).
+        {
+          id: 'rel-dangling',
+          from_atom_id: 'atom-1',
+          to_atom_id: 'atom-GONE',
+          predicate: 'supports',
+        },
+        // An empty-anchor edge (normalized to no-anchor).
+        {
+          id: 'rel-empty',
+          from_atom_id: 'atom-2',
+          to_atom_id: 'atom-1',
+          predicate: 'requires',
+          anchor_ids: [],
+          support_state: 'partially',
+        },
+      ],
+    }
+
+    const { extraction } = await assembleBundle(draft)
+
+    // Dangling dropped; the other two kept in input order.
+    expect(extraction.relationships.map((r) => r.id)).toEqual([
+      'rel-good',
+      'rel-empty',
+    ])
+    // The normalized one has no anchors; the good one keeps its anchors.
+    const good = extraction.relationships.find((r) => r.id === 'rel-good')!
+    const empty = extraction.relationships.find((r) => r.id === 'rel-empty')!
+    expect(good.anchor_ids).toEqual([a1!.id, a2!.id])
+    expect('anchor_ids' in empty).toBe(false)
+    expect('support_state' in empty).toBe(false)
+
+    // output_ids reflects exactly the kept relationships (plus atoms).
+    expect(extraction.derivation.output_ids).toEqual([
+      'atom-1',
+      'atom-2',
+      'rel-good',
+      'rel-empty',
+    ])
+
+    // The wrapped pack validates with zero errors (no graph errors at all).
     const pack = toPack(ingestResult, extraction)
     const validation = validatePack(pack)
     expect(validation.errors).toEqual([])
