@@ -1,6 +1,6 @@
 # bd-3 — Alpha scaffold
 
-- **Status:** open
+- **Status:** done (merged 9677cf7)
 - **Type:** implementation
 - **Depends on:** bd-1, bd-2
 - **Blocks:** bd-4, bd-5, bd-6, bd-7, bd-8, bd-9, bd-10
@@ -42,4 +42,13 @@ needs this skeleton.
 - Keep packages dependency-light; pin Node engine from bd-1.
 
 ## Notes & decisions (mayor)
-- _pending._
+Worker delivered the full workspace; **all 5 gates green re-verified post-merge** (install,
+build, typecheck, test=12 passed, lint). 62 files, no node_modules/dist committed; lockfile committed.
+- `@sam/types` carries the full LearningPack v0 types; the schema's `dependentRequired
+  {anchor_ids:[support_state]}` is encoded as a compile-time discriminated union (nice).
+- Build ordering fixed via `tsc -b` project references (npm `--workspaces` is alphabetical, not
+  topological); `@sam/*` path aliases + vite aliases let packages typecheck/test without a prior build.
+- **Integration fixes (mayor, tiny cleanup):** the merged agent worktree under `.claude/worktrees/`
+  contained a full repo copy incl. the `app/` spike, so root `eslint .` recursed into it (20 errors).
+  Added `.claude/**` to root eslint ignores and removed the merged worktree (worktree hygiene). Lint green.
+- Downstream stubs throw "not implemented (bd-N)" by design (ingest, openai adapter, server listen).

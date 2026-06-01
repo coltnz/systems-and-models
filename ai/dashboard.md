@@ -14,8 +14,8 @@ web UI → save a reviewed pack → ask a grounded tutor question that cites rev
 |------|-------|--------|---------|------|
 | bd-1 | Tech/setup audit | ✅ done | — | report (no gate) |
 | bd-2 | Spike value audit | ✅ done | — | build/lint executed |
-| bd-3 | Alpha scaffold | 🟡 running | bd-1, bd-2 | install/build/lint/test/typecheck |
-| bd-4 | Pack validator | ⬜ open | bd-3 | test + example validates |
+| bd-3 | Alpha scaffold | ✅ done (9677cf7) | bd-1, bd-2 | all 5 green ✔ |
+| bd-4 | Pack validator | 🟡 dispatched | bd-3 | test + example validates |
 | bd-5 | Source ingest | ⬜ open | bd-3 | test + output validates |
 | bd-6 | Extraction adapter | ⬜ open | bd-3, bd-5, bd-4 | test offline (mock) |
 | bd-7 | Local alpha server | ⬜ open | bd-4, bd-5, bd-6 | integration test (temp dir) |
@@ -29,12 +29,17 @@ Legend: ⬜ open · 🟡 running/in-review · ✅ done · ⛔ blocked
 bd-1/bd-2 (audits) → **bd-3 (scaffold)** → bd-4 + bd-5 (parallel) → bd-6 → bd-7 → bd-8 + bd-9 → bd-10.
 
 ## Next actions
-1. Review bd-3 scaffold worktree branch; verify gates; merge onto alpha branch.
-2. Dispatch bd-4 (validator) + bd-5 (ingest) in parallel (disjoint packages) after scaffold lands.
-3. Then bd-6 → bd-7 → bd-8/bd-9 → bd-10.
+1. bd-4 (validator) dispatched (main-tree worker, D-012). Review diff, verify, commit.
+2. Then bd-5 (ingest) → bd-6 (extraction) → bd-7 (server) → bd-8 (web) / bd-9 (tutor) → bd-10 (e2e).
+
+## Worker model (D-012)
+Implementation workers run in the **main working tree** on the alpha branch, implement + run gates,
+and do **not commit**; the mayor reviews the diff, re-runs gates, and commits. Sequential, to avoid
+tree contention. (Agent worktrees branch from master and can't see merged scaffold, so they're used
+only for the read-only audits.)
 
 ## Decisions
-See `ai/decisions.md` (D-001…D-010 recorded from bd-1 + bd-2).
+See `ai/decisions.md` (D-001…D-012).
 
 ## Open product questions (non-blocking — recommended defaults taken)
 - First named learner + creator, first source talk, kill thresholds (operating brief §"blockers").

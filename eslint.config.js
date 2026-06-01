@@ -8,6 +8,9 @@ export default [
     ignores: [
       '**/dist/**',
       '**/node_modules/**',
+      // Agent worker worktrees (Mayor Method isolation) hold a full repo copy
+      // incl. the app/ spike; never lint them.
+      '.claude/**',
       // app/ is the reference spike (D-003); not part of the workspace lint gate.
       'app/**',
       'docs/**',

@@ -3,6 +3,24 @@
 Durable product/tech decisions. Format: **Decision** · _Choice_ · Rationale · (bead).
 Newest first. Findings that fed these live (gitignored) in `ai/findings/`.
 
+## D-012 · Dependent beads run as main-tree, no-commit workers; mayor integrates · process
+Agent worktrees branch from `master`, not the alpha branch, so they cannot see merged scaffold
+(bd-3 worktree was cut at master and lacked `packages/`/`ai/`). Therefore: the two **audit** beads
+ran isolated (read-only, no scaffold needed), but **implementation** beads from bd-4 on are
+dispatched as bounded workers in the **main working tree** (on the alpha branch, full scaffold,
+can read `ai/beads/*`), instructed to implement + run gates + **not commit**. The mayor reviews the
+working-tree diff against the bead, re-runs gates, and commits the integration. Run sequentially to
+avoid tree contention. _Rationale:_ preserves the mayor gate + bounded-worker discipline while
+letting each worker build on prior merged work; literal git-worktree isolation isn't usable here
+because the harness bases worktrees on master. Isolation is kept in spirit (separate agent context,
+diff reviewed before it lands).
+
+## D-011 · Build ordering via `tsc -b` project references + `@sam/*` path aliases · bd-3
+npm `--workspaces` runs alphabetically, not topologically; node packages build with
+`tsc -b tsconfig.build.json` (composite, declaration) so deps build first. TS `paths` + vite
+`resolve.alias` map `@sam/*`→sibling `src/index.ts` so a package can typecheck/test without building
+deps first. _Rationale:_ removes a foot-gun for downstream beads; the canonical gate still builds first.
+
 ## D-010 · Spike `app/` build is broken; not a foundation — confirmed · bd-2
 `app/` build fails (22 TS errors) + lint (25). All synthesis §4 defects verified at file:line.
 `app/` stays as reference only; the alpha is a clean `@sam/*` rebuild (D-003). _Rationale:_ the
