@@ -1,7 +1,7 @@
 # Dashboard — Systems & Models alpha
 
 _Mayor-maintained operator view. Updated each orchestration step._
-Last updated: 2026-06-01 · Branch: `claude/festive-ptolemy-fvmCz`
+Last updated: 2026-06-01 · Branch: `claude/festive-ptolemy-fvmCz` · **Status: ALPHA COMPLETE ✅ (10/10 beads merged)**
 
 ## Alpha goal
 User supplies transcript/Markdown → generate a draft Learning Pack via an env-configured
@@ -21,16 +21,26 @@ web UI → save a reviewed pack → ask a grounded tutor question that cites rev
 | bd-7 | Local alpha server | ✅ done (28e87e7) | bd-4, bd-5, bd-6 | 68 tests; draft validates ✔ |
 | bd-9 | Tutor proof surface | ✅ done (2b6b14f) | bd-4, bd-7 | 24 tests; refusal suite ✔ |
 | bd-8 | Web review UI | ✅ done (75915ba) | bd-7, bd-2 | 24 tests; vite build ✔ |
-| bd-10 | Alpha walkthrough | 🟡 dispatched | bd-4..9 | full root gate |
+| bd-10 | Alpha walkthrough | ✅ done (ea51d3b) | bd-4..9 | full root gate ✔ (124 tests) |
 
 Legend: ⬜ open · 🟡 running/in-review · ✅ done · ⛔ blocked
 
-## Critical path
-bd-1/bd-2 (audits) → **bd-3 (scaffold)** → bd-4 + bd-5 (parallel) → bd-6 → bd-7 → bd-8 + bd-9 → bd-10.
+**All 10 beads merged on `claude/festive-ptolemy-fvmCz` (PR #3). Full root gate green: 124 tests
+across 9 files; build/lint/typecheck clean. Live HTTP path mayor-verified on :8787.**
 
-## Next actions
-1. bd-10 (alpha walkthrough) dispatched (main-tree worker, D-012) — demo source + scripted ingest→extract→validate→review→reviewed→tutor e2e, server-start bin (fixed port 8787), combined run scripts, README. Review, verify (full root gate + offline demo), commit. **Closes the alpha.**
-2. After bd-10: mayor end-to-end verify (run server + UI), then PR ready for review.
+## Critical path (done)
+bd-1/bd-2 (audits) → bd-3 (scaffold) → bd-4 + bd-5 → bd-6 → bd-7 → bd-9 + bd-8 → bd-10. ✅
+
+## Run the alpha
+`npm install` → `npm test` (offline) · `npm run serve` (API :8787, mock) + `npm run dev` (UI :5173) ·
+`npm run demo` (scripted proof). OpenAI: set `OPENAI_API_KEY`+`OPENAI_MODEL`+`EXTRACTION_ADAPTER=openai`.
+
+## Remaining / handoff
+- Human-in-the-loop browser click-through of the UI (logic covered by bd-8 tests; live API path verified).
+- Probe-execution decisions still owed by the operator (non-blocking for the build): named first
+  learner + creator, the specific dense source talk, and confirmed kill thresholds (operating brief §"blockers").
+- Future (post-probe, gated): OpenAI live-path confirmation against a real API; richer review history;
+  shadcn/Radix UI polish (D-008b); the Go/asof stack decision (D-001, deferred to go/no-go).
 
 ## Worker model (D-012)
 Implementation workers run in the **main working tree** on the alpha branch, implement + run gates,
