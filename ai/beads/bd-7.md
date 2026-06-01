@@ -1,6 +1,6 @@
 # bd-7 — Local alpha server
 
-- **Status:** open
+- **Status:** done (merged 28e87e7)
 - **Type:** implementation
 - **Depends on:** bd-4, bd-5, bd-6
 - **Blocks:** bd-8, bd-9, bd-10
@@ -42,4 +42,18 @@ file-backed persistence under `.systems-and-models/`:
 - Tutor route must not traverse unreviewed atoms/edges (enforced in bd-9).
 
 ## Notes & decisions (mayor)
-- _pending._
+Reviewed (server pkg only, **zero new deps** — no lockfile change) and re-ran 5 gates green
+(68 tests; server 20). Clean: pure `route` core + file-backed `Store`, deterministic now/idFactory,
+full review-edit op set, reviewed-save 409. Matches the contract.
+- On-disk: `sources/<id>.json {source,anchors,ingestDerivation}`, `packs/<id>.json` (LearningPack),
+  `reviewed/<id>.json {pack,saved_at}`. Mutations refuse to persist a structurally-invalid pack (422).
+- **API shapes for bd-8** (exact): see the route table in the bead + worker report. Mutations return
+  `{pack, validation}`; split adds `new_atom_id`; `validation.errors[]` = `{code,path,message,severity}`
+  — show `structural` as hard errors (server 422/blocks), `graph` as mid-review warnings; reviewed-save
+  201 vs 409. CORS `*`; server binds 127.0.0.1; UI needs the server port (config/env).
+- **For bd-9:** replace the `/tutor/query` 501 with the grounded handler; read `reviewed/<id>.json`
+  snapshots; traverse reviewed-only via `traversableEdges`/`isTraversable`; rely on human-set
+  `support_state="supports"`, not AI draft proposals; decision is deterministic code.
+- Minor (accepted): pack draft passes joined anchor excerpts as extraction text (full source text not
+  persisted; fine since ingest anchors cover the whole text). Reviewed snapshot is last-write per pack
+  (no version history). Single-source packs → no anchor-id pooling collision yet.
