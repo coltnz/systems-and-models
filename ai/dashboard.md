@@ -43,6 +43,7 @@ on human edit; server `now` not threaded into extraction; split-lite stale prove
 eligible asymmetry; web 422 validation not surfaced. Accepted-by-design items listed in `ai/beads/bd-11.md`.
 
 | bd-11 | Review remediation | ✅ done (15a359a) | bd-4..9 | 131 tests; examples validate ✔ |
+| bd-12 | Assembly drops bad edges (PR [P1]) | 🟡 dispatched | bd-6, bd-11 | full root gate; examples unchanged |
 - Human-in-the-loop browser click-through of the UI (logic covered by bd-8 tests; live API path verified).
 - Probe-execution decisions still owed by the operator (non-blocking for the build): named first
   learner + creator, the specific dense source talk, and confirmed kill thresholds (operating brief §"blockers").
