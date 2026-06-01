@@ -13,8 +13,8 @@ web UI → save a reviewed pack → ask a grounded tutor question that cites rev
 | Bead | Title | Status | Depends | Gate |
 |------|-------|--------|---------|------|
 | bd-1 | Tech/setup audit | ✅ done | — | report (no gate) |
-| bd-2 | Spike value audit | 🟡 running | — | build/lint executed |
-| bd-3 | Alpha scaffold | ⬜ open | bd-1, bd-2 | install/build/lint/test/typecheck |
+| bd-2 | Spike value audit | ✅ done | — | build/lint executed |
+| bd-3 | Alpha scaffold | 🟡 running | bd-1, bd-2 | install/build/lint/test/typecheck |
 | bd-4 | Pack validator | ⬜ open | bd-3 | test + example validates |
 | bd-5 | Source ingest | ⬜ open | bd-3 | test + output validates |
 | bd-6 | Extraction adapter | ⬜ open | bd-3, bd-5, bd-4 | test offline (mock) |
@@ -29,12 +29,12 @@ Legend: ⬜ open · 🟡 running/in-review · ✅ done · ⛔ blocked
 bd-1/bd-2 (audits) → **bd-3 (scaffold)** → bd-4 + bd-5 (parallel) → bd-6 → bd-7 → bd-8 + bd-9 → bd-10.
 
 ## Next actions
-1. Await bd-2 report; record salvage map in bd-2 + `ai/decisions.md`.
-2. Dispatch bd-3 scaffold worker (canonical names per D-002).
-3. Commit bead system + dashboard; open the single alpha PR.
+1. Review bd-3 scaffold worktree branch; verify gates; merge onto alpha branch.
+2. Dispatch bd-4 (validator) + bd-5 (ingest) in parallel (disjoint packages) after scaffold lands.
+3. Then bd-6 → bd-7 → bd-8/bd-9 → bd-10.
 
 ## Decisions
-See `ai/decisions.md` (D-001…D-008 recorded from bd-1).
+See `ai/decisions.md` (D-001…D-010 recorded from bd-1 + bd-2).
 
 ## Open product questions (non-blocking — recommended defaults taken)
 - First named learner + creator, first source talk, kill thresholds (operating brief §"blockers").

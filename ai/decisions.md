@@ -3,6 +3,26 @@
 Durable product/tech decisions. Format: **Decision** · _Choice_ · Rationale · (bead).
 Newest first. Findings that fed these live (gitignored) in `ai/findings/`.
 
+## D-010 · Spike `app/` build is broken; not a foundation — confirmed · bd-2
+`app/` build fails (22 TS errors) + lint (25). All synthesis §4 defects verified at file:line.
+`app/` stays as reference only; the alpha is a clean `@sam/*` rebuild (D-003). _Rationale:_ the
+spike was never run end-to-end; extending it costs more than reusing audited pieces.
+
+## D-009 · Spike DROP list for the alpha · bd-2
+Drop entirely: `lib/db/*` + **sql.js** (CDN WASM breaks offline; the probe is JSON-file based,
+no browser DB), `lib/import-data.ts` (discards YAML ids → broken identity), both
+`sample-knowledge-base.yaml` (old schema; content-mine only, not LearningPack v0), and ghost deps
+`@tanstack/react-router` + `@tanstack/react-query` (installed, never used). _Rationale:_ all couple
+the alpha to spike-era schema/architecture the contract has moved past.
+
+## D-008b · Spike SALVAGE list for the web UI (bd-8) · bd-2
+Carry (copy + minor cleanup, retarget to LearningPack v0): `ui/{button,card,dialog,input,label,
+textarea}.tsx`; `lib/{graph-styles,search,permalink,utils}.ts`; `hooks/useKeyboardShortcuts.ts`;
+`components/SharePermalinkButton.tsx`. Keep graph colors (systems `#3b82f6`, models `#a855f7`,
+provenance `#f59e0b`) + 4-level semantic zoom. Add the missing `ui/badge.tsx`. Pages/dialogs are
+pattern-only rewrites onto the Atom schema (Model type `mental-model|concept|framework|principle`;
+System status `draft|active|archived|proven`). _Rationale:_ these are the audited, defect-free pieces.
+
 ## D-008 · Tutor grounding/refusal is deterministic code, not model discretion · bd-9
 The cite-or-refuse decision is made by code over the reviewed graph (reviewed atoms +
 reviewed edges + `support_state=supports` anchors). Any LLM phrasing call goes through the

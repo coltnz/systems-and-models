@@ -17,6 +17,9 @@ build/
 .env.local
 !.env.example
 
+# Agent worktrees (Mayor Method worker isolation)
+.claude/worktrees/
+
 # Editor / OS
 .idea/
 .DS_Store
