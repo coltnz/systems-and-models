@@ -35,7 +35,14 @@ bd-1/bd-2 (audits) → bd-3 (scaffold) → bd-4 + bd-5 → bd-6 → bd-7 → bd-
 `npm install` → `npm test` (offline) · `npm run serve` (API :8787, mock) + `npm run dev` (UI :5173) ·
 `npm run demo` (scripted proof). OpenAI: set `OPENAI_API_KEY`+`OPENAI_MODEL`+`EXTRACTION_ADAPTER=openai`.
 
-## Remaining / handoff
+## Post-merge review (high-effort, 7 finder angles + verify)
+Ran a `/code-review high` over the full PR #3 diff. Findings recorded; confirmed correctness items
+remediated under **bd-11** (open → dispatched). None block the offline demo; #1 bites the first real
+OpenAI run. Top confirmed: OpenAI empty-`anchor_ids` → unsaveable pack; `authored_by` never → "mixed"
+on human edit; server `now` not threaded into extraction; split-lite stale provenance; traversable/
+eligible asymmetry; web 422 validation not surfaced. Accepted-by-design items listed in `ai/beads/bd-11.md`.
+
+| bd-11 | Review remediation | 🟡 dispatched | bd-4..9 | full root gate + examples validate |
 - Human-in-the-loop browser click-through of the UI (logic covered by bd-8 tests; live API path verified).
 - Probe-execution decisions still owed by the operator (non-blocking for the build): named first
   learner + creator, the specific dense source talk, and confirmed kill thresholds (operating brief §"blockers").
