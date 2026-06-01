@@ -1,6 +1,6 @@
 # bd-8 — Web review UI
 
-- **Status:** open
+- **Status:** done (merged 75915ba)
 - **Type:** implementation
 - **Depends on:** bd-7 (API), bd-2 (salvage decisions)
 - **Blocks:** bd-10
@@ -44,4 +44,14 @@ graph hairball.
 - Keep the surface focused — accept/edit/reject/split + anchors + validation + save.
 
 ## Notes & decisions (mayor)
-- _pending; finalize reuse set from bd-2._
+Reviewed (web pkg + clsx/tailwind-merge in lockfile) and re-ran 5 gates green (115 tests; web 24).
+Focused single-page workflow, re-renders from each mutation's returned pack, save disabled on
+structural errors, 409 handling, tutor box — matches the bead.
+- **Styling decision (accepted):** worker took the authorized fallback — hand-rolled CSS + small
+  typed components instead of pulling Tailwind v4 + Radix into the new package (neither was present at
+  root; lower build risk). Reused the `cn` util + the domain palette (systems #3b82f6, models #a855f7,
+  claims #14b8a6). Trade-off: the salvaged shadcn `ui/*` components are NOT reused; D-008b's
+  shadcn/Radix direction can be layered later if desired. `app/` untouched.
+- API client (`src/api.ts`) is the only server seam; `VITE_API_BASE` default `http://127.0.0.1:8787`.
+- **For bd-10:** server must bind a FIXED port (8787) or set `VITE_API_BASE`; bd-10 owes a server-start
+  bin + combined dev script + README + the demo source; save a reviewed pack before the tutor non-refusal leg.

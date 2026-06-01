@@ -20,8 +20,8 @@ web UI → save a reviewed pack → ask a grounded tutor question that cites rev
 | bd-6 | Extraction adapter | ✅ done (209512c) | bd-3, bd-5, bd-4 | 50 tests; mock validates ✔ |
 | bd-7 | Local alpha server | ✅ done (28e87e7) | bd-4, bd-5, bd-6 | 68 tests; draft validates ✔ |
 | bd-9 | Tutor proof surface | ✅ done (2b6b14f) | bd-4, bd-7 | 24 tests; refusal suite ✔ |
-| bd-8 | Web review UI | 🟡 dispatched | bd-7, bd-2 | test + vite build |
-| bd-10 | Alpha walkthrough | ⬜ open | bd-4..9 | full root gate |
+| bd-8 | Web review UI | ✅ done (75915ba) | bd-7, bd-2 | 24 tests; vite build ✔ |
+| bd-10 | Alpha walkthrough | 🟡 dispatched | bd-4..9 | full root gate |
 
 Legend: ⬜ open · 🟡 running/in-review · ✅ done · ⛔ blocked
 
@@ -29,8 +29,8 @@ Legend: ⬜ open · 🟡 running/in-review · ✅ done · ⛔ blocked
 bd-1/bd-2 (audits) → **bd-3 (scaffold)** → bd-4 + bd-5 (parallel) → bd-6 → bd-7 → bd-8 + bd-9 → bd-10.
 
 ## Next actions
-1. bd-8 (web review UI) dispatched (main-tree worker, D-012) — focused accept/edit/reject/split + anchors + support_state + validation panel + reviewed-save, against the bd-7 API; reuse audited spike pieces (D-008b). Review, verify (vite build + tests), commit.
-2. Then bd-10 (e2e walkthrough) closes the alpha.
+1. bd-10 (alpha walkthrough) dispatched (main-tree worker, D-012) — demo source + scripted ingest→extract→validate→review→reviewed→tutor e2e, server-start bin (fixed port 8787), combined run scripts, README. Review, verify (full root gate + offline demo), commit. **Closes the alpha.**
+2. After bd-10: mayor end-to-end verify (run server + UI), then PR ready for review.
 
 ## Worker model (D-012)
 Implementation workers run in the **main working tree** on the alpha branch, implement + run gates,
