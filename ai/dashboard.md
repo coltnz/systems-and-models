@@ -17,8 +17,8 @@ web UI → save a reviewed pack → ask a grounded tutor question that cites rev
 | bd-3 | Alpha scaffold | ✅ done (9677cf7) | bd-1, bd-2 | all 5 green ✔ |
 | bd-4 | Pack validator | ✅ done (e8a5bc3) | bd-3 | 31 tests green; example validates ✔ |
 | bd-5 | Source ingest | ✅ done (bf7ac66) | bd-3 | 38 tests; output validates ✔ |
-| bd-6 | Extraction adapter | 🟡 dispatched | bd-3, bd-5, bd-4 | test offline (mock) |
-| bd-7 | Local alpha server | ⬜ open | bd-4, bd-5, bd-6 | integration test (temp dir) |
+| bd-6 | Extraction adapter | ✅ done (209512c) | bd-3, bd-5, bd-4 | 50 tests; mock validates ✔ |
+| bd-7 | Local alpha server | 🟡 dispatched | bd-4, bd-5, bd-6 | integration test (temp dir) |
 | bd-8 | Web review UI | ⬜ open | bd-7, bd-2 | test + vite build |
 | bd-9 | Tutor proof surface | ⬜ open | bd-4, bd-7 | refusal suite |
 | bd-10 | Alpha walkthrough | ⬜ open | bd-4..9 | full root gate |
@@ -29,8 +29,8 @@ Legend: ⬜ open · 🟡 running/in-review · ✅ done · ⛔ blocked
 bd-1/bd-2 (audits) → **bd-3 (scaffold)** → bd-4 + bd-5 (parallel) → bd-6 → bd-7 → bd-8 + bd-9 → bd-10.
 
 ## Next actions
-1. bd-6 (extraction adapter) dispatched (main-tree worker, D-012). Review diff, verify (mock output validates), commit.
-2. Then bd-7 (server) → bd-8 (web) / bd-9 (tutor) → bd-10 (e2e).
+1. bd-7 (local alpha server) dispatched (main-tree worker, D-012). Review diff, verify (integration test, temp dir), commit.
+2. Then bd-8 (web) / bd-9 (tutor) → bd-10 (e2e).
 
 ## Worker model (D-012)
 Implementation workers run in the **main working tree** on the alpha branch, implement + run gates,

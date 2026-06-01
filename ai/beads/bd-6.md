@@ -1,6 +1,6 @@
 # bd-6 — Extraction adapter
 
-- **Status:** open
+- **Status:** done (merged 209512c)
 - **Type:** implementation
 - **Depends on:** bd-3, bd-5 (anchors), bd-4 (validate output)
 - **Blocks:** bd-7
@@ -45,4 +45,16 @@ with an env-configured OpenAI adapter and a deterministic mock adapter for tests
 - Keep the OpenAI SDK dependency isolated to the OpenAI adapter file.
 
 ## Notes & decisions (mayor)
-- _pending._
+Reviewed (extraction pkg + 27-line lockfile for `openai`) and re-ran 5 gates green (50 tests;
+extraction 15). Verified: scope clean, SDK isolated to one lazy `await import('openai')`, NO default
+model (fail-loud, line 356), cost honest (unknown model → usd:0). Mock validates via bd-4.
+- Shapes: `ExtractionInput {source_asset_id,text,anchors}`, `ExtractionResult {atoms,relationships,
+  derivation}`; cost on `derivation.cost`. Shared `assembleExtraction` rejects invented anchors.
+- Mock emits model+claim atoms + an `explains` rel from input anchors; deterministic source-derived ids.
+- **Follow-ups for bd-7:** persist BOTH the ingest and extract derivations (atoms' `derivation_id`
+  dangles otherwise → validator fails); de-dupe deterministic `der-extract-<sourceId>` on re-extract;
+  namespace anchors by `source_asset_id` if pooling multiple sources in one pack.
+- **For bd-9:** all extraction output is `review_state:"generated"` → `traversableEdges` excludes it;
+  tutor must rely on human-set `support_state="supports"` on REVIEWED atoms, not the AI's draft proposals.
+- Risk: OpenAI live path is untested against a real API (no network in tests); first live run should
+  confirm the SDK response surface; price map needs updating when a new `OPENAI_MODEL` is adopted.
