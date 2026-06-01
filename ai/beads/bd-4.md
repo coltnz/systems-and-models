@@ -1,6 +1,6 @@
 # bd-4 — Pack validator
 
-- **Status:** open
+- **Status:** done (merged e8a5bc3)
 - **Type:** implementation
 - **Depends on:** bd-3
 - **Blocks:** bd-7, bd-9, bd-10
@@ -48,4 +48,16 @@ runs structural (JSON Schema) **and** graph-level checks so the probe can treat 
   (or the schema re-export from `packages/schema`) as the single source of truth.
 
 ## Notes & decisions (mayor)
-- _pending._
+Reviewed diff (validator pkg + lockfile + 1 justified e2e one-liner) and re-ran all 5 gates green
+(31 tests; validator 20). Example pack validates clean. Implementation matches the bead:
+- Ajv2020 + ajv-formats, single schema source via up-walk path resolver (works from src + dist).
+- All graph invariants present with a stable `ValidationCode` taxonomy + `severity`.
+- `traversableEdges`/`isTraversable` exported for bd-9.
+- **Decision (approved):** the tz-aware datetime rule lives in the graph layer
+  (`derivation_created_at_not_tz_aware`); the structural `date-time` format is overridden lenient so
+  it doesn't shadow the graph code. Single owner of the datetime contract. Good call.
+- **Note for bd-7/bd-9:** `relationship_anchor_without_support_state` is defense-in-depth — the
+  schema's `dependentRequired` catches it at the structural layer first (short-circuits), so that case
+  surfaces as `severity:"structural"`. Callers should treat missing support_state as structural.
+- ajv/ajv-formats CJS interop handled (named `Ajv2020` import + `createRequire` for the plugin);
+  downstream packages get it via the public API.
