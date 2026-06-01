@@ -14,7 +14,9 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "eslint .",
     "test": "vitest run",
-    "dev": "npm run dev --workspace @sam/web"
+    "dev": "npm run dev --workspace @sam/web",
+    "serve": "npm run build --workspace @sam/server && node packages/server/dist/start.js",
+    "demo": "npm run build --workspace @sam/e2e && npm run demo --workspace @sam/e2e"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
