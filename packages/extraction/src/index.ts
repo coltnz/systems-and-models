@@ -47,6 +47,13 @@ export interface ExtractionInput {
   text: string
   /** The existing anchors for the source. Atoms may reference only these ids. */
   anchors: SourceAnchor[]
+  /**
+   * Optional clock for the extract derivation's `created_at`. When set it takes
+   * precedence over the adapter's own clock, so a caller (e.g. the server) can
+   * thread ONE deterministic clock through the whole data path. Adapters resolve
+   * the clock as `input.now ?? this.now ?? defaultNow`.
+   */
+  now?: () => Date
 }
 
 /**

@@ -3,6 +3,7 @@ import { SCHEMA_VERSION } from '@sam/types'
 import type { Atom, LearningPack, SourceAnchor } from '@sam/types'
 import {
   acceptAtom,
+  ApiError,
   editAtom,
   patchRelationship,
   rejectAtom,
@@ -23,6 +24,24 @@ import { hasStructural, ValidationPanel } from './components/ValidationPanel'
 interface ReviewState {
   pack: LearningPack
   validation: ValidationResult
+}
+
+/**
+ * Extract a `ValidationResult` from a caught error if it is an `ApiError` whose
+ * `body` carries a `validation` field (e.g. a 422 from a structurally-invalid
+ * edit). Returns undefined for any other error so callers fall back to the plain
+ * message.
+ */
+function validationFromError(e: unknown): ValidationResult | undefined {
+  if (
+    e instanceof ApiError &&
+    typeof e.body === 'object' &&
+    e.body !== null &&
+    'validation' in e.body
+  ) {
+    return (e.body as { validation: ValidationResult }).validation
+  }
+  return undefined
 }
 
 /**
@@ -63,6 +82,14 @@ export default function App() {
       setReview(await action())
     } catch (e) {
       setError(e instanceof Error ? e.message : 'request failed')
+      // A 422 (e.g. an edit that would make the pack structurally invalid)
+      // carries the failing validation on the ApiError body. Surface it in the
+      // ValidationPanel (keeping the message banner) so the reviewer sees WHY,
+      // not just a generic error.
+      const validation = validationFromError(e)
+      if (validation) {
+        setReview((prev) => (prev ? { ...prev, validation } : prev))
+      }
     } finally {
       setBusy(false)
     }

@@ -12,7 +12,8 @@ import {
   type ExtractionInput,
   type ExtractionResult,
 } from './index.js'
-import { computeUsd } from './openai-adapter.js'
+import { computeUsd, parseDraft } from './openai-adapter.js'
+import { assembleExtraction } from './draft.js'
 
 // A multi-paragraph Markdown transcript fixture (CC-licensed/authored shape).
 const TRANSCRIPT = `# Compound Interest
@@ -167,6 +168,16 @@ describe('MockExtractionAdapter', () => {
     expect(der.id).toBe(`der-extract-${ingestResult.source.id}`)
   })
 
+  it('input.now overrides the adapter clock for the extract derivation created_at', async () => {
+    const ingestResult = await ingest(TRANSCRIPT)
+    const inputInstant = '2027-03-04T05:06:07.000Z'
+    // Adapter constructed with a DIFFERENT clock; input.now must take precedence.
+    const extraction = await new MockExtractionAdapter({
+      now: () => new Date('1999-01-01T00:00:00.000Z'),
+    }).extract({ ...toInput(ingestResult), now: () => new Date(inputInstant) })
+    expect(extraction.derivation.created_at).toBe(inputInstant)
+  })
+
   it('returns empty atoms/relationships (but a valid derivation) for zero anchors', async () => {
     const extraction = await new MockExtractionAdapter({ now: fixedNow }).extract({
       source_asset_id: 'src-empty',
@@ -230,6 +241,77 @@ describe('getAdapter factory', () => {
     })
     expect(adapter).toBeInstanceOf(OpenAIAdapter)
     expect(adapter.name).toBe('openai')
+  })
+})
+
+describe('OpenAIAdapter parseDraft normalization (no network)', () => {
+  it('normalizes a relationship with empty anchor_ids to a valid no-anchor relationship that validates', async () => {
+    // A real source + its anchors so the assembled pack references real ids.
+    const ingestResult = await ingest(TRANSCRIPT)
+    const [a1, a2] = ingestResult.anchors
+    expect(a1).toBeDefined()
+    expect(a2).toBeDefined()
+
+    // Model output where the relationship emits anchor_ids: [] (allowed by the
+    // strict structured-output schema, which marks anchor_ids required).
+    const content = JSON.stringify({
+      atoms: [
+        {
+          id: 'atom-1',
+          kind: 'model',
+          title: 'Compounding',
+          summary: 'Earnings reinvested compound.',
+          body: 'Interest compounds when earnings are reinvested.',
+          anchors: [{ anchor_id: a1!.id, support_state: 'supports' }],
+        },
+        {
+          id: 'atom-2',
+          kind: 'claim',
+          title: 'Small rate beats',
+          summary: 'A small rate over time beats a large rate over a short window.',
+          body: 'A small rate, given enough time, beats a large rate over a short window.',
+          anchors: [{ anchor_id: a2!.id, support_state: 'partially' }],
+        },
+      ],
+      relationships: [
+        {
+          id: 'rel-1',
+          from_atom_id: 'atom-1',
+          to_atom_id: 'atom-2',
+          predicate: 'explains',
+          anchor_ids: [],
+          support_state: 'partially',
+        },
+      ],
+    })
+
+    const draft = parseDraft(content)
+    // The empty-anchor relationship has BOTH fields omitted in the draft.
+    expect(draft.relationships).toHaveLength(1)
+    expect('anchor_ids' in draft.relationships[0]!).toBe(false)
+    expect('support_state' in draft.relationships[0]!).toBe(false)
+
+    const validAnchorIds = new Set(ingestResult.anchors.map((a) => a.id))
+    const extraction = assembleExtraction({
+      sourceAssetId: ingestResult.source.id,
+      derivationId: `der-extract-${ingestResult.source.id}`,
+      validAnchorIds,
+      draft,
+      cost: { tokens_in: 0, tokens_out: 0, usd: 0 },
+      createdAt: '2026-06-01T12:00:00.000Z',
+      derivationExtras: { model_name: 'gpt-4o-mini' },
+    })
+
+    // The assembled relationship carries neither anchor_ids nor support_state.
+    const rel = extraction.relationships[0]!
+    expect('anchor_ids' in rel).toBe(false)
+    expect('support_state' in rel).toBe(false)
+
+    // And the wrapped pack validates cleanly (no relationship_empty_anchor_ids).
+    const pack = toPack(ingestResult, extraction)
+    const validation = validatePack(pack)
+    expect(validation.errors).toEqual([])
+    expect(validation.ok).toBe(true)
   })
 })
 

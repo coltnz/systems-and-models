@@ -85,9 +85,6 @@ export interface IngestOptions {
 
 // --- Errors -----------------------------------------------------------------
 
-/** Media types present in the schema enum but unsupported by this alpha. */
-const UNSUPPORTED_MEDIA_TYPES = ['video', 'audio', 'pdf', 'html'] as const
-
 /** Thrown when the request asks for something the alpha ingestor cannot do. */
 export class UnsupportedMediaTypeError extends Error {
   constructor(mediaType: string) {
@@ -260,9 +257,8 @@ export function ingestSource(
   opts: IngestOptions = {},
 ): Promise<IngestResult> {
   const { media_type } = request
-  if ((UNSUPPORTED_MEDIA_TYPES as readonly string[]).includes(media_type)) {
-    throw new UnsupportedMediaTypeError(media_type)
-  }
+  // Allowlist guard: only text-shaped sources have a native, re-derivable
+  // character-offset model. Everything else (video/audio/pdf/html/…) is rejected.
   if (media_type !== 'markdown' && media_type !== 'text') {
     throw new UnsupportedMediaTypeError(String(media_type))
   }

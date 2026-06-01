@@ -242,7 +242,12 @@ function asArray(v: unknown, where: string): unknown[] {
   return v
 }
 
-function parseDraft(content: string): DraftBundle {
+/**
+ * Parse + normalize the model's JSON content into a provider-neutral
+ * {@link DraftBundle}. Exported for unit testing of the normalization rules
+ * (notably the empty-`anchor_ids` → no-anchor relationship normalization).
+ */
+export function parseDraft(content: string): DraftBundle {
   let parsed: unknown
   try {
     parsed = JSON.parse(content)
@@ -283,11 +288,24 @@ function parseDraft(content: string): DraftBundle {
       o.anchor_ids,
       `relationships[${i}].anchor_ids`,
     ).map((id, j) => asString(id, `relationships[${i}].anchor_ids[${j}]`))
-    return {
+    const base: DraftRelationship = {
       id: asString(o.id, `relationships[${i}].id`),
       from_atom_id: asString(o.from_atom_id, `relationships[${i}].from_atom_id`),
       to_atom_id: asString(o.to_atom_id, `relationships[${i}].to_atom_id`),
       predicate: asString(o.predicate, `relationships[${i}].predicate`) as Predicate,
+    }
+    // The structured-output schema marks `anchor_ids` required (OpenAI strict
+    // mode), so a model may legitimately emit `anchor_ids: []` for a no-anchor
+    // relationship. An EMPTY array would assemble into a relationship that trips
+    // the validator's `relationship_empty_anchor_ids` graph error — which then
+    // gets persisted and permanently blocks `POST /packs/:id/reviewed` (409).
+    // Normalize it here: omit both `anchor_ids` and `support_state` so
+    // `assembleExtraction` emits a valid no-anchor relationship.
+    if (anchor_ids.length === 0) {
+      return base
+    }
+    return {
+      ...base,
       anchor_ids,
       support_state: asString(
         o.support_state,
@@ -366,7 +384,10 @@ export class OpenAIAdapter implements ExtractionAdapter {
   async extract(input: ExtractionInput): Promise<ExtractionResult> {
     const derivationId = `der-extract-${input.source_asset_id}`
     const validAnchorIds = new Set(input.anchors.map((a) => a.id))
-    const createdAt = this.now().toISOString()
+    // `input.now` (the caller's data-path clock) takes precedence over the
+    // adapter's own clock, then the default. Lets the server thread one clock.
+    const now = input.now ?? this.now ?? DEFAULT_NOW
+    const createdAt = now().toISOString()
 
     // With no anchors there is nothing to ground a draft on; return an empty
     // (but valid) extraction without calling the API or fabricating cost.

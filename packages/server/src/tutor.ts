@@ -31,7 +31,6 @@
  * Reviewed relationships are only ever sourced via `traversableEdges` /
  * `isTraversable` from `@sam/validator` so non-reviewed edges are never followed.
  */
-import { traversableEdges } from '@sam/validator'
 import type { Atom, LearningPack, SourceAnchor } from '@sam/types'
 
 // --- Public contract ---------------------------------------------------------
@@ -175,11 +174,10 @@ export function answer(pack: LearningPack, question: string): TutorResult {
   const anchorsById = new Map<string, SourceAnchor>()
   for (const a of pack.anchors) anchorsById.set(a.id, a)
 
-  // Reviewed-only edges are sourced exclusively through the validator helper so
-  // a non-reviewed edge can never be followed. (Retrieval here is atom-centric;
-  // computing this guarantees we touch relationships only via the helper.)
-  const reviewedEdges = traversableEdges(pack)
-  void reviewedEdges
+  // Retrieval here is atom-centric: we score eligible atoms by their citable
+  // anchors and do not walk relationships. Any FUTURE edge traversal MUST source
+  // edges through `@sam/validator`'s `traversableEdges` (never `pack.relationships`
+  // directly) so non-traversable edges are never followed.
 
   // Score every eligible atom that ALSO has a citable anchor: an atom we could
   // never cite cannot ground an answer, so it is not a retrieval candidate.

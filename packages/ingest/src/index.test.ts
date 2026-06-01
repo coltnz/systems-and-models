@@ -148,6 +148,22 @@ describe('@sam/ingest', () => {
         content: 'irrelevant',
       }),
     ).toThrow(/not supported in alpha/i)
+
+    // The single allowlist guard rejects EVERY non-text-shaped media type — the
+    // schema-enum types that used to live in a separate blocklist (pdf/audio/
+    // html) AND an arbitrary unknown value — all via UnsupportedMediaTypeError.
+    for (const mt of ['pdf', 'audio', 'html', 'totally-made-up']) {
+      expect(() =>
+        ingestSource({
+          uri: 'inline:x',
+          media_type: mt as unknown as 'text',
+          title: 'x',
+          license: 'open',
+          access: 'open',
+          content: 'irrelevant',
+        }),
+      ).toThrow(UnsupportedMediaTypeError)
+    }
   })
 
   it('content hash is stable, sha256:-prefixed, and CRLF/LF normalize equal', async () => {

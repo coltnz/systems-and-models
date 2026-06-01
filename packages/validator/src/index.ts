@@ -400,24 +400,29 @@ export function validatePack(pack: unknown): ValidationResult {
 }
 
 /**
- * Reviewed-only traversal (D-008, synthesis §5). Returns only relationships the
- * tutor (bd-9) may traverse: those with `review_state === "reviewed"`.
+ * Reviewed-or-published traversal (D-008, synthesis §5). Returns only
+ * relationships the tutor (bd-9) may traverse: those with
+ * `review_state ∈ {reviewed, published}`. `published` ⊇ `reviewed` (a published
+ * edge is a reviewed edge that has been promoted), matching the tutor's
+ * atom-eligibility rule (`isEligible` accepts both), so a published edge is not
+ * silently dropped from traversal.
  *
- * NOTE: a non-reviewed edge is NOT a validation error — unreviewed edges are
+ * NOTE: a non-traversable edge is NOT a validation error — such edges are
  * allowed to exist, they are simply not traversable. Callers that walk the graph
  * should source edges from here (or from {@link isTraversable}) rather than from
- * `pack.relationships` directly, so non-reviewed edges are never followed.
+ * `pack.relationships` directly, so non-traversable edges are never followed.
  */
 export function traversableEdges(pack: LearningPack): Relationship[] {
-  return pack.relationships.filter((rel) => rel.review_state === 'reviewed')
+  return pack.relationships.filter((rel) => isTraversable(rel))
 }
 
 /**
- * Predicate a caller can use to detect/guard traversal of a non-reviewed edge.
- * Returns true iff the relationship is traversable (reviewed).
+ * Predicate a caller can use to detect/guard traversal of a non-traversable
+ * edge. Returns true iff the relationship is traversable
+ * (`review_state ∈ {reviewed, published}`).
  */
 export function isTraversable(rel: Relationship): boolean {
-  return rel.review_state === 'reviewed'
+  return rel.review_state === 'reviewed' || rel.review_state === 'published'
 }
 
 /** Re-exported for callers that already hold a typed pack. */

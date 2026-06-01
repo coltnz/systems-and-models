@@ -99,6 +99,23 @@ describe('happy path: source -> draft -> validate', () => {
     expect((validated.body as { validation: { ok: boolean } }).validation.ok).toBe(true)
   })
 
+  it('threads the server clock into extraction: extract derivation created_at is the injected instant', async () => {
+    const instant = '2026-06-01T12:00:00.000Z'
+    const server = createServer({
+      now: () => new Date(instant),
+      idFactory: seqIds(),
+      dataDir,
+    })
+    const src = await postSource(server)
+    const sourceId = (src.body as { source_id: string }).source_id
+    const draft = await draftPack(server, sourceId)
+    expect(draft.status).toBe(201)
+    const pack = (draft.body as { pack: { derivations: { op: string; created_at: string }[] } }).pack
+    const extract = pack.derivations.find((d) => d.op === 'extract')!
+    expect(extract).toBeDefined()
+    expect(extract.created_at).toBe(instant)
+  })
+
   it('lists sources and packs', async () => {
     const server = newServer(dataDir)
     const src = await postSource(server)
@@ -179,6 +196,41 @@ describe('review ops', () => {
     expect(atom.version).toBe(2)
   })
 
+  it('edit flips an AI atom to authored_by="mixed"; a human atom stays "human"', async () => {
+    const server = newServer(dataDir)
+    const { packId, atomIds } = await setup(server)
+
+    // The mock atom is authored_by="ai". An edit means a human co-authored it.
+    const aiRes = await server.handle({
+      method: 'PATCH',
+      path: `/packs/${packId}/atoms/${atomIds[0]}`,
+      body: { op: 'edit', patch: { title: 'Human-tweaked title' } },
+    })
+    expect(aiRes.status).toBe(200)
+    const aiAtom = (aiRes.body as { pack: { atoms: { id: string; authored_by: string }[] } }).pack.atoms.find((a) => a.id === atomIds[0])!
+    expect(aiAtom.authored_by).toBe('mixed')
+
+    // A human-authored atom must NOT be downgraded; it stays "human". Force the
+    // second atom's authored_by to "human" on disk, then edit it.
+    const { writeFileSync } = await import('node:fs')
+    const packFile = join(dataDir, 'packs', `${packId}.json`)
+    const pack = JSON.parse(readFileSync(packFile, 'utf8')) as {
+      atoms: { id: string; authored_by: string }[]
+    }
+    const humanAtom = pack.atoms.find((a) => a.id === atomIds[1])!
+    humanAtom.authored_by = 'human'
+    writeFileSync(packFile, JSON.stringify(pack), 'utf8')
+
+    const humanRes = await server.handle({
+      method: 'PATCH',
+      path: `/packs/${packId}/atoms/${atomIds[1]}`,
+      body: { op: 'edit', patch: { title: 'Human edits own atom' } },
+    })
+    expect(humanRes.status).toBe(200)
+    const stillHuman = (humanRes.body as { pack: { atoms: { id: string; authored_by: string }[] } }).pack.atoms.find((a) => a.id === atomIds[1])!
+    expect(stillHuman.authored_by).toBe('human')
+  })
+
   it('set_support updates the matching anchor ref support_state', async () => {
     const server = newServer(dataDir)
     const { packId, atomIds } = await setup(server)
@@ -237,6 +289,35 @@ describe('review ops', () => {
     expect(fresh.version).toBe(1)
     expect(body.validation.ok).toBe(true)
     expect(derivationCount(res.body)).toBe(3)
+  })
+
+  it('split wires the new atom derivation_id to the edit derivation whose output_ids contains it', async () => {
+    const server = newServer(dataDir)
+    const { packId, atomIds } = await setup(server)
+
+    const res = await server.handle({
+      method: 'POST',
+      path: `/packs/${packId}/atoms/${atomIds[0]}/split`,
+    })
+    expect(res.status).toBe(201)
+    const body = res.body as {
+      new_atom_id: string
+      pack: {
+        atoms: { id: string; derivation_id: string }[]
+        derivations: { id: string; op: string; output_ids?: string[] }[]
+      }
+      validation: { ok: boolean }
+    }
+
+    const fresh = body.pack.atoms.find((a) => a.id === body.new_atom_id)!
+    // The new atom's derivation_id resolves to a derivation in pack.derivations.
+    const der = body.pack.derivations.find((d) => d.id === fresh.derivation_id)!
+    expect(der).toBeDefined()
+    expect(der.op).toBe('edit')
+    // ...whose output_ids contains the new atom id.
+    expect(der.output_ids).toContain(body.new_atom_id)
+    // The pack still validates.
+    expect(body.validation.ok).toBe(true)
   })
 
   it('relationship accept sets review_state and appends an edit derivation', async () => {

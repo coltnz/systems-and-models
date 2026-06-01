@@ -290,6 +290,9 @@ async function postPackDraft(req: ApiRequest, deps: CoreDeps): Promise<ApiRespon
     source_asset_id: stored.source.id,
     text: stored.anchors.map((a) => a.excerpt).join('\n\n'),
     anchors: stored.anchors,
+    // Thread the server's clock so the extract derivation's created_at is on the
+    // same deterministic data-path clock as ingest/edit derivations.
+    now: deps.now,
   })
 
   const pack: LearningPack = {
@@ -334,12 +337,17 @@ function hasStructuralError(v: ValidationResult): boolean {
   return v.errors.some((e) => e.severity === 'structural')
 }
 
-/** Append an `edit`/human DerivationRun for a review mutation. */
+/**
+ * Append an `edit`/human DerivationRun for a review mutation and RETURN it, so a
+ * caller (e.g. `splitAtom`) can wire provenance — point a new atom's
+ * `derivation_id` at it and record the new atom in its `output_ids`. Callers
+ * that don't need provenance (`patchAtom`/`patchRelationship`) may ignore it.
+ */
 function appendEditDerivation(
   pack: LearningPack,
   deps: CoreDeps,
   inputIds: string[],
-): void {
+): DerivationRun {
   const derivation: DerivationRun = {
     id: deps.idFactory(),
     op: 'edit',
@@ -349,6 +357,7 @@ function appendEditDerivation(
     created_at: deps.now().toISOString(),
   }
   pack.derivations.push(derivation)
+  return derivation
 }
 
 /**
@@ -395,6 +404,9 @@ function patchAtom(
     if (applied !== undefined) return err(400, applied)
     atom.review_state = 'edited'
     atom.version += 1
+    // A human has now co-authored an AI-generated atom: promote to "mixed".
+    // ("human"/"mixed" are left unchanged.)
+    if (atom.authored_by === 'ai') atom.authored_by = 'mixed'
   } else if (op === 'set_support') {
     const anchor_id = asString(b.anchor_id)
     const support_state = asString(b.support_state)
@@ -462,6 +474,12 @@ function splitAtom(packId: string, atomId: string, deps: CoreDeps): ApiResponse 
   if (!src) return err(404, `atom "${atomId}" not found in pack "${packId}"`)
 
   const newId = deps.idFactory()
+  // The split is a human edit deriving a new atom from the source atom. Record
+  // that edit derivation and point the new atom's provenance at IT (not at the
+  // source atom's extract derivation), so the new atom's lineage is the split.
+  const editDerivation = appendEditDerivation(pack, deps, [atomId])
+  editDerivation.output_ids = [...(editDerivation.output_ids ?? []), newId]
+
   const newAtom: Atom = {
     id: newId,
     kind: src.kind as AtomKind,
@@ -472,12 +490,11 @@ function splitAtom(packId: string, atomId: string, deps: CoreDeps): ApiResponse 
     review_state: 'generated',
     authored_by: src.authored_by,
     anchors: src.anchors.map((r) => ({ ...r })),
-    derivation_id: src.derivation_id,
+    derivation_id: editDerivation.id,
     version: 1,
   }
   pack.atoms.push(newAtom)
 
-  appendEditDerivation(pack, deps, [atomId])
   return persistMutation(pack, deps, 201, { new_atom_id: newId })
 }
 

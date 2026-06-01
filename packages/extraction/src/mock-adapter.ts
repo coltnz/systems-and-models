@@ -67,6 +67,9 @@ export class MockExtractionAdapter implements ExtractionAdapter {
     const derivationId = `der-extract-${input.source_asset_id}`
     const validAnchorIds = new Set(input.anchors.map((a) => a.id))
     const draft = buildMockDraft(input.source_asset_id, input.anchors)
+    // `input.now` (the caller's data-path clock) takes precedence over the
+    // adapter's own clock, then the default. Lets the server thread one clock.
+    const now = input.now ?? this.now ?? DEFAULT_NOW
 
     const result = assembleExtraction({
       sourceAssetId: input.source_asset_id,
@@ -75,7 +78,7 @@ export class MockExtractionAdapter implements ExtractionAdapter {
       draft,
       // NEVER fabricate cost: the mock makes no API call.
       cost: { tokens_in: 0, tokens_out: 0, usd: 0 },
-      createdAt: this.now().toISOString(),
+      createdAt: now().toISOString(),
     })
 
     return Promise.resolve(result)

@@ -240,6 +240,17 @@ describe('@sam/validator — traversableEdges', () => {
     expect(isTraversable(pack.relationships[1])).toBe(true)
   })
 
+  it('treats a published edge as traversable (published ⊇ reviewed)', () => {
+    const pack = clone(loadExample())
+    // Promote one reviewed edge to published; it must still be traversable.
+    pack.relationships[0].review_state = 'published'
+    const edges = traversableEdges(pack)
+    expect(edges.some((e) => e.id === pack.relationships[0].id)).toBe(true)
+    expect(isTraversable(pack.relationships[0])).toBe(true)
+    // The other (reviewed) edge is still traversable too.
+    expect(edges.length).toBe(pack.relationships.length)
+  })
+
   it('does NOT make a non-reviewed edge a hard validation error', () => {
     const pack = clone(loadExample())
     pack.relationships[0].review_state = 'generated'

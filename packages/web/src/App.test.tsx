@@ -226,6 +226,28 @@ describe('validation panel + save gating', () => {
     expect(screen.queryByTestId('errors-structural')).toBeNull()
     expect((screen.getByTestId('save-reviewed') as HTMLButtonElement).disabled).toBe(false)
   })
+
+  it('a mutation rejecting with an ApiError {validation} updates the ValidationPanel', async () => {
+    await renderWithDraft(validResult)
+    // The mutation rejects with a 422 whose body carries the failing validation.
+    mocked.acceptAtom.mockRejectedValue(
+      new api.ApiError(422, 'edit would make the pack structurally invalid', {
+        validation: structuralResult,
+      }),
+    )
+
+    const card = cardFor('atom-1')
+    fireEvent.click(within(card).getByRole('button', { name: /accept spaced repetition/i }))
+
+    // The error banner shows the message...
+    await screen.findByText(/edit would make the pack structurally invalid/)
+    // ...and the ValidationPanel now renders the 422's validation errors.
+    await waitFor(() =>
+      expect(
+        within(screen.getByTestId('errors-structural')).getByText(/title must be a non-empty string/),
+      ).toBeTruthy(),
+    )
+  })
 })
 
 describe('reviewed save', () => {
