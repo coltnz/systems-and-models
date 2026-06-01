@@ -1,6 +1,6 @@
 # bd-9 — Tutor proof surface
 
-- **Status:** open
+- **Status:** done (merged 2b6b14f)
 - **Type:** implementation
 - **Depends on:** bd-4 (traversal helper), bd-7 (server)
 - **Blocks:** bd-10
@@ -39,4 +39,13 @@ with no reviewed grounding is the failure mode we are specifically testing.
   non-reviewed edges. No network in tests.
 
 ## Notes & decisions (mayor)
-- _pending._
+Reviewed (server pkg only, no new deps) and re-ran 5 gates green (92 tests; 24 tutor). Deterministic,
+offline, reviewed-only cite-or-refuse — matches D-008.
+- Eligible = reviewed/published atoms with a `supports`-resolvable anchor; structurally cannot cite
+  generated/edited/rejected atoms or non-supports/dangling anchors. Token-overlap retrieval,
+  `MIN_OVERLAP=1` (documented/exported), answer text from cited atom (summary→body→title).
+- Route `POST /tutor/query {pack_id,question}` loads the reviewed snapshot; refuses if none; 400 on
+  missing fields.
+- **For bd-10:** the mock sets the claim atom's anchor to `partially`, so the demo must `set_support`→
+  `supports` on the atom it wants cited, and pick an in-scope question overlapping the model atom
+  (anchor[0]); use an unrelated question for the refusal leg.
