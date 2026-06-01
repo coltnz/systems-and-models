@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Systems & Models — shared base",
+  "compilerOptions": {
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "lib": ["ES2022"]
+  }
+}

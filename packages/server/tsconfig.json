@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noEmit": true,
+    "types": ["node", "vitest/importMeta"],
+    "baseUrl": ".",
+    "paths": {
+      "@sam/types": ["../types/src/index.ts"],
+      "@sam/validator": ["../validator/src/index.ts"],
+      "@sam/ingest": ["../ingest/src/index.ts"],
+      "@sam/extraction": ["../extraction/src/index.ts"]
+    }
+  },
+  "include": ["src"]
+}
