@@ -8,6 +8,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@sam/types': r('../types/src/index.ts'),
+      // Tests validate the ingest output via bd-4 (D-011 src alias pattern).
+      '@sam/validator': r('../validator/src/index.ts'),
     },
   },
   test: {
