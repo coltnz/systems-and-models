@@ -104,7 +104,9 @@ The contract is **encoded, not described**: `spec/learning-pack.schema.json` (JS
 
 Publish invariant: a `published` atom needs ≥1 anchor with `support_state = supports` (not
 merely `verifiable`) and `review_state ∈ {reviewed, published}`; only `reviewed` edges are
-traversable. (Both enforced by the validator; the example pack passes.)
+traversable. JSON Schema covers the structural v0 shape; a Day 1-2 graph-level validator
+must enforce publish invariants, reference integrity, and reviewed-only traversal before
+the probe treats a pack as valid. The example pack is shaped to pass those checks.
 
 Honest note (review A): `support_state` *relocated* the subjective trust call to the right
 place (per atom-anchor) — it did not remove it. `claim_support_accuracy` therefore needs its
