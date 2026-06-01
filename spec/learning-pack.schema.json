@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://systems-and-models/spec/learning-pack.schema.json",
+  "title": "LearningPack v0",
+  "description": "Evaluation pack contract v0 for the source->reviewed-learning-graph probe. Deliberately minimal: only what the probe in docs/12 needs. Storage-independent JSON. Ugly enough to ship, strict enough to measure.",
+  "type": "object",
+  "$defs": {
+    "id": { "type": "string", "minLength": 1 },
+    "reviewState": {
+      "type": "string",
+      "enum": ["generated", "edited", "reviewed", "rejected", "published"]
+    },
+    "supportState": {
+      "type": "string",
+      "description": "Reviewed judgment that the anchored excerpt actually supports the claim. 'verifiable' (excerpt re-derives from selector) is necessary but NOT sufficient; this is the human call that a correct citation backs the right claim.",
+      "enum": ["supports", "partially", "does_not_support", "disputed"]
+    },
+    "SourceAsset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "uri", "media_type", "title", "license", "access"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "uri": { "type": "string" },
+        "media_type": { "type": "string", "enum": ["video", "audio", "pdf", "html", "markdown", "text"] },
+        "title": { "type": "string" },
+        "creator": { "type": "string" },
+        "license": { "type": "string", "description": "e.g. CC-BY-4.0, or 'creator-authorized'." },
+        "access": { "type": "string", "enum": ["owned", "open", "restricted"] },
+        "content_hash": { "type": "string" }
+      }
+    },
+    "SourceAnchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "source_asset_id", "selector", "excerpt", "extraction_method", "verifiable"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "source_asset_id": { "$ref": "#/$defs/id" },
+        "selector": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "start", "end"],
+          "properties": {
+            "kind": { "type": "string", "enum": ["text_quote", "timestamp_range", "page_range"] },
+            "start": { "type": "string", "description": "char offset, ms, or page as string" },
+            "end": { "type": "string" }
+          }
+        },
+        "excerpt": { "type": "string", "description": "The exact supporting text/caption, stored inline." },
+        "extraction_method": { "type": "string", "enum": ["asr", "native", "ocr", "human"] },
+        "verifiable": { "type": "boolean", "description": "COMPUTED: excerpt re-derives from selector against the stored source asset (string match within tolerance). Not a trust score; a check." }
+      }
+    },
+    "Atom": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "title", "review_state", "authored_by", "anchors", "derivation_id", "version"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "kind": { "type": "string", "enum": ["system", "model", "claim"], "description": "Probe-minimum kinds only. exercise/misconception/term/example are deferred until the gate says build more." },
+        "title": { "type": "string" },
+        "summary": { "type": "string" },
+        "body": { "type": "string", "description": "markdown" },
+        "steps": {
+          "type": "array",
+          "description": "systems only; ordered steps. Per-step anchoring is deferred; rely on the atom's anchors for v0.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["text"],
+            "properties": { "text": { "type": "string" } }
+          }
+        },
+        "review_state": { "$ref": "#/$defs/reviewState" },
+        "authored_by": { "type": "string", "enum": ["ai", "human", "mixed"] },
+        "anchors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["anchor_id", "support_state"],
+            "properties": {
+              "anchor_id": { "$ref": "#/$defs/id" },
+              "support_state": { "$ref": "#/$defs/supportState" }
+            }
+          }
+        },
+        "derivation_id": { "$ref": "#/$defs/id" },
+        "version": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "Relationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Edges are first-class structure and can be hallucinated. Only review_state=reviewed edges may be traversed by the tutor; edge quality is measured (relationship_precision). If anchor_ids is present, support_state is required (the trust call cannot be skipped).",
+      "required": ["id", "from_atom_id", "to_atom_id", "predicate", "review_state"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "from_atom_id": { "$ref": "#/$defs/id" },
+        "to_atom_id": { "$ref": "#/$defs/id" },
+        "predicate": { "type": "string", "enum": ["uses", "requires", "explains", "supports", "contradicts"] },
+        "review_state": { "$ref": "#/$defs/reviewState" },
+        "anchor_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "description": "optional: source spans where the source itself asserts this relation. If set, support_state is required." },
+        "support_state": { "$ref": "#/$defs/supportState" }
+      },
+      "dependentRequired": { "anchor_ids": ["support_state"] }
+    },
+    "DerivationRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "op", "actor", "schema_version", "created_at"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "op": { "type": "string", "enum": ["ingest", "extract", "edit", "publish"] },
+        "input_ids": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+        "output_ids": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+        "actor": { "type": "string", "enum": ["ai", "human"] },
+        "model_name": { "type": "string" },
+        "model_snapshot": { "type": "string" },
+        "prompt_hash": { "type": "string" },
+        "schema_version": { "type": "string" },
+        "cost": {
+          "type": "object",
+          "description": "Logged so the probe can answer usd_per_published_atom. Half of 'is it worth it'.",
+          "additionalProperties": false,
+          "properties": {
+            "tokens_in": { "type": "integer", "minimum": 0 },
+            "tokens_out": { "type": "integer", "minimum": 0 },
+            "usd": { "type": "number", "minimum": 0 }
+          }
+        },
+        "created_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Eval": {
+      "type": "object",
+      "description": "Probe results. anchor_precision/grounding/refusal are automatable; the rest need the gold set. Compared against a baseline arm, not only absolute thresholds.",
+      "additionalProperties": false,
+      "properties": {
+        "anchor_precision":        { "type": "number", "minimum": 0, "maximum": 1 },
+        "claim_support_accuracy":  { "type": "number", "minimum": 0, "maximum": 1 },
+        "relationship_precision":  { "type": "number", "minimum": 0, "maximum": 1 },
+        "extraction_precision":    { "type": "number", "minimum": 0, "maximum": 1 },
+        "extraction_recall":       { "type": "number", "minimum": 0, "maximum": 1 },
+        "grounding_accuracy":      { "type": "number", "minimum": 0, "maximum": 1 },
+        "refusal_correctness":     { "type": "number", "minimum": 0, "maximum": 1 },
+        "median_minutes_per_published_atom": { "type": "number", "minimum": 0 },
+        "usd_per_published_atom":  { "type": "number", "minimum": 0 },
+        "accept_edit_reject": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "accept": { "type": "integer", "minimum": 0 },
+            "edit":   { "type": "integer", "minimum": 0 },
+            "reject": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "gold_set": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "annotators": { "type": "integer", "minimum": 1 },
+            "inter_rater_agreement": { "type": "number", "minimum": 0, "maximum": 1, "description": "on the subset double-annotated; guards against single-annotator taste" }
+          }
+        },
+        "baseline": {
+          "type": "object",
+          "description": "what we compared against (e.g. NotebookLM, or a naive single-prompt no-anchor extraction) on the same source",
+          "additionalProperties": false,
+          "properties": { "name": { "type": "string" }, "notes": { "type": "string" } }
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": ["id", "title", "version", "schema_version", "license", "sources", "anchors", "atoms", "relationships", "derivations"],
+  "properties": {
+    "id": { "$ref": "#/$defs/id" },
+    "title": { "type": "string" },
+    "version": { "type": "string" },
+    "schema_version": { "type": "string", "const": "0" },
+    "license": { "type": "string" },
+    "sources": { "type": "array", "items": { "$ref": "#/$defs/SourceAsset" }, "minItems": 1 },
+    "anchors": { "type": "array", "items": { "$ref": "#/$defs/SourceAnchor" }, "description": "All source anchors referenced by atoms, steps, and relationships. Stored before generated summaries." },
+    "atoms": { "type": "array", "items": { "$ref": "#/$defs/Atom" } },
+    "relationships": { "type": "array", "items": { "$ref": "#/$defs/Relationship" } },
+    "derivations": { "type": "array", "items": { "$ref": "#/$defs/DerivationRun" } },
+    "eval": { "$ref": "#/$defs/Eval" }
+  }
+}
