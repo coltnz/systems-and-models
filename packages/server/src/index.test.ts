@@ -379,11 +379,10 @@ describe('errors and edge cases', () => {
     expect(res.status).toBe(400)
   })
 
-  it('/tutor/query returns 501 (bd-9 placeholder)', async () => {
+  it('/tutor/query is no longer 501 and 400s on missing body fields (bd-9)', async () => {
     const server = newServer(dataDir)
     const res = await server.handle({ method: 'POST', path: '/tutor/query', body: { q: 'hi' } })
-    expect(res.status).toBe(501)
-    expect((res.body as { error: string }).error).toMatch(/bd-9/)
+    expect(res.status).toBe(400)
   })
 })
 

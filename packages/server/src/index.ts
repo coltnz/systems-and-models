@@ -39,6 +39,7 @@ import type {
 } from '@sam/types'
 
 import { Store, type StoredReviewed, type StoredSource } from './store.js'
+import { answer } from './tutor.js'
 
 // --- Public options / server -------------------------------------------------
 
@@ -201,9 +202,9 @@ async function route(req: ApiRequest, deps: CoreDeps): Promise<ApiResponse> {
     return err(404, 'not found')
   }
 
-  // /tutor/query — placeholder for bd-9.
+  // /tutor/query — reviewed-only grounding proof surface (bd-9).
   if (seg[0] === 'tutor' && seg[1] === 'query' && seg.length === 2) {
-    if (m === 'POST') return err(501, 'tutor implemented in bd-9')
+    if (m === 'POST') return postTutorQuery(req, deps)
     return err(405, `method ${m} not allowed on /tutor/query`)
   }
 
@@ -524,6 +525,39 @@ function postReviewed(packId: string, deps: CoreDeps): ApiResponse {
   return ok(201, { reviewed })
 }
 
+// --- Tutor query (bd-9) ------------------------------------------------------
+
+/**
+ * `POST /tutor/query` body `{ pack_id, question }` — answer ONLY from the
+ * reviewed snapshot of `pack_id`, or refuse (D-008, bd-9). The grounding/refusal
+ * decision is deterministic code in {@link answer}; no LLM call.
+ *
+ * We load the REVIEWED snapshot (`reviewed/<pack_id>.json`), which is guaranteed
+ * `validation.ok` by `POST /packs/:id/reviewed`. If there is no reviewed snapshot
+ * for the pack, the tutor REFUSES (200) rather than answering from an unreviewed
+ * draft — answering an unreviewed pack is the failure mode this surface tests.
+ */
+function postTutorQuery(req: ApiRequest, deps: CoreDeps): ApiResponse {
+  const b = req.body
+  if (!isObject(b)) return err(400, 'body must be a JSON object')
+  const pack_id = asString(b.pack_id)
+  const question = asString(b.question)
+  if (!pack_id) return err(400, 'pack_id is required')
+  if (!question) return err(400, 'question is required')
+
+  const reviewed = deps.store.getReviewed(pack_id)
+  if (!reviewed) {
+    return ok(200, {
+      result: {
+        kind: 'refusal',
+        reason: `no reviewed pack "${pack_id}" — the tutor only answers from a reviewed snapshot`,
+      },
+    })
+  }
+
+  return ok(200, { result: answer(reviewed.pack, question) })
+}
+
 // --- Public factory ----------------------------------------------------------
 
 /** Sequential id factory used by default for server-minted ids. */
@@ -621,6 +655,8 @@ function writeResponse(
 }
 
 // Re-exports for consumers/tests.
+export { answer, MIN_OVERLAP } from './tutor.js'
+export type { TutorCitation, TutorResult } from './tutor.js'
 export { Store } from './store.js'
 export type {
   StoredSource,
