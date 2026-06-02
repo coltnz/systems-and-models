@@ -48,6 +48,10 @@ eligible asymmetry; web 422 validation not surfaced. Accepted-by-design items li
 PR #3 owner review thread r3332633664 ([P1], draft.ts) — **resolved by bd-12**: `assembleExtraction`
 now drops dangling-endpoint relationships and normalizes empty `anchor_ids`, so a draft can never be
 persisted with a relationship-caused graph error that blocks reviewed-save.
+
+**Re-review (medium, 3 angles over `060a488..HEAD`): CLEAN.** Fix-correctness — no new bugs;
+regressions — none (examples byte-stable, `appendEditDerivation` pushes once); findings-closed — all
+7 prior findings + the P1 verified genuinely closed. No further changes; full gate green (135 tests).
 - Human-in-the-loop browser click-through of the UI (logic covered by bd-8 tests; live API path verified).
 - Probe-execution decisions still owed by the operator (non-blocking for the build): named first
   learner + creator, the specific dense source talk, and confirmed kill thresholds (operating brief §"blockers").
