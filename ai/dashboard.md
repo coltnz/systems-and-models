@@ -44,14 +44,20 @@ eligible asymmetry; web 422 validation not surfaced. Accepted-by-design items li
 
 | bd-11 | Review remediation | ✅ done (15a359a) | bd-4..9 | 131 tests; examples validate ✔ |
 | bd-12 | Assembly drops bad edges (PR [P1]) | ✅ done (fa8d87e) | bd-6, bd-11 | 135 tests; examples unchanged ✔ |
+| bd-13 | Dedupe extraction ids (PR [P1]) | 🟡 dispatched | bd-12 | full root gate; examples unchanged |
 
 PR #3 owner review thread r3332633664 ([P1], draft.ts) — **resolved by bd-12**: `assembleExtraction`
 now drops dangling-endpoint relationships and normalizes empty `anchor_ids`, so a draft can never be
 persisted with a relationship-caused graph error that blocks reviewed-save.
 
-**Re-review (medium, 3 angles over `060a488..HEAD`): CLEAN.** Fix-correctness — no new bugs;
-regressions — none (examples byte-stable, `appendEditDerivation` pushes once); findings-closed — all
-7 prior findings + the P1 verified genuinely closed. No further changes; full gate green (135 tests).
+**Re-review (medium, 3 angles over `060a488..HEAD`):** fix-correctness — no new bugs; regressions —
+none (examples byte-stable, `appendEditDerivation` pushes once); the 7 prior findings + the original
+P1 verified closed. **Correction (PR [P2] r3347963222):** that re-review was scoped to the code delta
+and did NOT re-check the PR, so it MISSED an owner [P1] (r3337754930) — **duplicate** model-supplied
+atom/relationship ids are still trusted by `assembleExtraction` → `duplicate_id` graph error → same
+persisted-unsaveable dead-end as bd-12. So the alpha is **NOT all-clear**: that P1 is OPEN and being
+fixed by **bd-13** (dedupe at the assembly chokepoint). Process fix: re-reviews now fetch PR review
+activity first, then re-scan code.
 - Human-in-the-loop browser click-through of the UI (logic covered by bd-8 tests; live API path verified).
 - Probe-execution decisions still owed by the operator (non-blocking for the build): named first
   learner + creator, the specific dense source talk, and confirmed kill thresholds (operating brief §"blockers").
