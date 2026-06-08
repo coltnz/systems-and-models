@@ -63,6 +63,18 @@ export interface PackListItem {
 type Subdir = 'sources' | 'packs' | 'reviewed'
 
 /**
+ * Defense-in-depth id guard for the Store chokepoint (bd-14). An id is "safe"
+ * only if it is a non-empty run of `[A-Za-z0-9._-]` and is neither `.` nor `..`.
+ * This blocks path traversal via client-controllable id fields (`source_id`,
+ * `pack_id`) that would otherwise interpolate straight into a join under
+ * `dataDir` (e.g. `"../../etc/passwd"` or `"../packs/<id>"`). All server-minted
+ * ids (`src-<hex>`, `srv-…`) and the demo `id-N` ids pass.
+ */
+export function isSafeId(id: string): boolean {
+  return /^[A-Za-z0-9._-]+$/.test(id) && id !== '.' && id !== '..'
+}
+
+/**
  * File-backed store rooted at `dataDir`. Directories are created lazily on the
  * first write so merely constructing a Store (or a Server) touches no disk.
  */
@@ -81,6 +93,11 @@ export class Store {
 
   /** Atomic-enough write: temp file in the same dir, then rename into place. */
   private writeJson(sub: Subdir, id: string, value: unknown): void {
+    // Server-minted ids are always safe; this is defense-in-depth so a future
+    // caller can never write outside `dataDir` via a crafted id.
+    if (!isSafeId(id)) {
+      throw new Error(`unsafe id "${id}" — refusing to write outside dataDir`)
+    }
     const d = this.ensureDir(sub)
     const target = join(d, `${id}.json`)
     const tmp = join(d, `.${id}.${process.pid}.${Date.now()}.tmp`)
@@ -89,6 +106,9 @@ export class Store {
   }
 
   private readJson<T>(sub: Subdir, id: string): T | undefined {
+    // An unsafe id can never name a real persisted file; treat it as missing so
+    // routes 404 cleanly (no read attempt outside `dataDir`).
+    if (!isSafeId(id)) return undefined
     const target = join(this.dir(sub), `${id}.json`)
     let raw: string
     try {

@@ -16,6 +16,7 @@ vi.mock('./api', async (importOriginal) => {
     ...actual,
     listPacks: vi.fn(async () => []),
     getPack: vi.fn(),
+    validate: vi.fn(),
     createSourceAndDraft: vi.fn(),
     acceptAtom: vi.fn(),
     rejectAtom: vi.fn(),
@@ -275,6 +276,34 @@ describe('reviewed save', () => {
     expect(within(screen.getByTestId('errors-structural')).getByText(/title must be/)).toBeTruthy()
     // still on the review surface (atoms visible)
     expect(screen.getAllByTestId('atom-card').length).toBeGreaterThan(0)
+  })
+})
+
+describe('load existing pack uses real validation (bd-14)', () => {
+  it('loads a pack whose validate() reports a structural error and blocks save', async () => {
+    const pack = makeDraftPack()
+    mocked.listPacks.mockResolvedValue([
+      { id: pack.id, title: pack.title, version: pack.version },
+    ])
+    mocked.getPack.mockResolvedValue(pack)
+    // The stored pack is structurally invalid — loadExisting() must surface this.
+    mocked.validate.mockResolvedValue(structuralResult)
+
+    render(<App />)
+
+    const select = await screen.findByLabelText('Existing packs')
+    fireEvent.change(select, { target: { value: pack.id } })
+    fireEvent.click(screen.getByRole('button', { name: /load pack/i }))
+
+    // The pack loads with the REAL validation state (not a hardcoded ok).
+    await screen.findByText('Pack: Learning')
+    await waitFor(() => expect(mocked.validate).toHaveBeenCalledWith(pack.id))
+
+    // Structural error is rendered and the reviewed-save button is disabled.
+    expect(
+      within(screen.getByTestId('errors-structural')).getByText(/title must be a non-empty string/),
+    ).toBeTruthy()
+    expect((screen.getByTestId('save-reviewed') as HTMLButtonElement).disabled).toBe(true)
   })
 })
 

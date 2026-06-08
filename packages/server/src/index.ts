@@ -87,6 +87,9 @@ export interface ApiResponse {
 const PACK_VERSION = '0.1.0'
 const SCHEMA_VERSION = '0' as const
 
+/** Max accepted request body, in bytes (~10 MB). Oversized bodies get a 413. */
+const MAX_BODY_BYTES = 10 * 1024 * 1024
+
 /** Permissive localhost CORS for the alpha (web UI on a different Vite port). */
 const CORS_HEADERS: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',
@@ -234,6 +237,7 @@ async function postSource(req: ApiRequest, deps: CoreDeps): Promise<ApiResponse>
     return err(400, 'access must be "owned", "open", or "restricted"')
   }
   if (content === undefined) return err(400, 'content is required')
+  if (content.trim().length === 0) return err(400, 'content must not be empty')
 
   let result
   try {
@@ -563,7 +567,9 @@ function postTutorQuery(req: ApiRequest, deps: CoreDeps): ApiResponse {
   if (!question) return err(400, 'question is required')
 
   const reviewed = deps.store.getReviewed(pack_id)
-  if (!reviewed) {
+  // Defense-in-depth: never call answer() with a non-pack. A falsy snapshot, or
+  // any stored value that is not a real StoredReviewed (no `.pack`), refuses.
+  if (!reviewed || !reviewed.pack) {
     return ok(200, {
       result: {
         kind: 'refusal',
@@ -601,8 +607,10 @@ export function createServer(options: ServerOptions = {}): Server {
     try {
       return await route(req, deps)
     } catch (e) {
-      // Never leak a stack to the client; keep the alpha resilient.
-      return err(500, e instanceof Error ? e.message : 'internal error')
+      // Never leak internal detail to the client: log server-side, return a
+      // generic 500. (Intentional 4xx messages stay in the route handlers.)
+      console.error('[server] unhandled error:', e)
+      return err(500, 'internal error')
     }
   }
 
@@ -614,8 +622,24 @@ export function createServer(options: ServerOptions = {}): Server {
     listen(port: number): Promise<number> {
       const server = createHttpServer((httpReq, httpRes) => {
         const chunks: Buffer[] = []
-        httpReq.on('data', (c: Buffer) => chunks.push(c))
+        let total = 0
+        let tooLarge = false
+        httpReq.on('data', (c: Buffer) => {
+          if (tooLarge) return
+          total += c.length
+          if (total > MAX_BODY_BYTES) {
+            // Stop accumulating, refuse, and tear down the request rather than
+            // buffering an unbounded body into memory.
+            tooLarge = true
+            chunks.length = 0
+            writeResponse(httpRes, err(413, 'request body too large'))
+            httpReq.destroy()
+            return
+          }
+          chunks.push(c)
+        })
         httpReq.on('end', () => {
+          if (tooLarge) return
           void (async () => {
             const raw = Buffer.concat(chunks).toString('utf8')
             const url = httpReq.url ?? '/'

@@ -4,7 +4,8 @@ import { join } from 'node:path'
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import { createServer, type Server, type ApiResponse } from './index.js'
+import { createServer, Store, type Server, type ApiResponse } from './index.js'
+import { isSafeId } from './store.js'
 
 // --- Deterministic harness ---------------------------------------------------
 
@@ -499,5 +500,172 @@ describe('http wiring', () => {
     } finally {
       await server.close()
     }
+  })
+
+  it('caps an oversized request body with 413 and stays responsive (bd-14)', async () => {
+    const server = newServer(dataDir)
+    const port = await server.listen(0)
+    try {
+      // A body over MAX_BODY_BYTES (~10 MB) must be refused with 413, not buffered.
+      const huge = 'x'.repeat(11 * 1024 * 1024)
+      const big = await fetch(`http://127.0.0.1:${port}/sources`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ blob: huge }),
+      })
+      expect(big.status).toBe(413)
+      expect(((await big.json()) as { error: string }).error).toBe('request body too large')
+
+      // The server stays up: a normal request after the oversized one still works.
+      const ok = await fetch(`http://127.0.0.1:${port}/sources`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: 'After 413',
+          media_type: 'text',
+          license: 'CC-BY-4.0',
+          access: 'open',
+          content: SAMPLE_CONTENT,
+        }),
+      })
+      expect(ok.status).toBe(201)
+    } finally {
+      await server.close()
+    }
+  })
+})
+
+// --- bd-14: id sanitization (security) ---------------------------------------
+
+describe('bd-14 id sanitization', () => {
+  it('isSafeId accepts our real ids and rejects traversal/empty ids', () => {
+    // Real ids all pass.
+    expect(isSafeId('src-deadbeef')).toBe(true)
+    expect(isSafeId('srv-1-abc')).toBe(true)
+    expect(isSafeId('id-1')).toBe(true)
+    expect(isSafeId('pack_id.v2')).toBe(true)
+    // Traversal / separators / empties are rejected.
+    expect(isSafeId('.')).toBe(false)
+    expect(isSafeId('..')).toBe(false)
+    expect(isSafeId('../x')).toBe(false)
+    expect(isSafeId('../packs/x')).toBe(false)
+    expect(isSafeId('../../etc/passwd')).toBe(false)
+    expect(isSafeId('a/b')).toBe(false)
+    expect(isSafeId('')).toBe(false)
+  })
+
+  it('Store reads for unsafe ids return undefined (no read outside dataDir)', () => {
+    const store = new Store(dataDir)
+    expect(store.getSource('../x')).toBeUndefined()
+    expect(store.getPack('../x')).toBeUndefined()
+    expect(store.getReviewed('../packs/x')).toBeUndefined()
+  })
+
+  it('Store writes with an unsafe id throw a clear error', () => {
+    const store = new Store(dataDir)
+    expect(() => store.putReviewed('../escape', { pack: {} as never, saved_at: 'now' })).toThrow(
+      /unsafe id/,
+    )
+  })
+
+  it('GET /sources/:id and /packs/:id with a traversal id 404 (no crash)', async () => {
+    const server = newServer(dataDir)
+    const src = await server.handle({ method: 'GET', path: '/sources/..' })
+    expect(src.status).toBe(404)
+    const pack = await server.handle({ method: 'GET', path: '/packs/..' })
+    expect(pack.status).toBe(404)
+  })
+
+  it('POST /packs/draft with a traversal source_id 404s (no read outside dataDir, no crash)', async () => {
+    const server = newServer(dataDir)
+    const res = await server.handle({
+      method: 'POST',
+      path: '/packs/draft',
+      body: { source_id: '../../etc/passwd' },
+    })
+    expect(res.status).toBe(404)
+    expect((res.body as { error: string }).error).toMatch(/not found/)
+  })
+})
+
+// --- bd-14: tutor defense-in-depth -------------------------------------------
+
+describe('bd-14 tutor route defense-in-depth', () => {
+  it('refuses (never throws) when no reviewed snapshot exists', async () => {
+    const server = newServer(dataDir)
+    const res = await server.handle({
+      method: 'POST',
+      path: '/tutor/query',
+      body: { pack_id: 'pack-x', question: 'why?' },
+    })
+    expect(res.status).toBe(200)
+    expect((res.body as { result: { kind: string } }).result.kind).toBe('refusal')
+  })
+
+  it('refuses for a malformed reviewed entry that lacks a .pack (never calls answer)', async () => {
+    const server = newServer(dataDir)
+    // Write a corrupt reviewed snapshot (no `.pack`) directly under reviewed/.
+    const { mkdirSync, writeFileSync } = await import('node:fs')
+    mkdirSync(join(dataDir, 'reviewed'), { recursive: true })
+    writeFileSync(
+      join(dataDir, 'reviewed', 'broken.json'),
+      JSON.stringify({ saved_at: '2026-06-01T12:00:00.000Z' }),
+      'utf8',
+    )
+    const res = await server.handle({
+      method: 'POST',
+      path: '/tutor/query',
+      body: { pack_id: 'broken', question: 'why?' },
+    })
+    expect(res.status).toBe(200)
+    expect((res.body as { result: { kind: string } }).result.kind).toBe('refusal')
+  })
+})
+
+// --- bd-14: empty content rejection ------------------------------------------
+
+describe('bd-14 empty/whitespace content', () => {
+  it('rejects empty content with 400', async () => {
+    const server = newServer(dataDir)
+    const res = await server.handle({
+      method: 'POST',
+      path: '/sources',
+      body: { title: 'x', media_type: 'text', license: 'CC', access: 'open', content: '' },
+    })
+    expect(res.status).toBe(400)
+    expect((res.body as { error: string }).error).toBe('content must not be empty')
+  })
+
+  it('rejects whitespace-only content with 400', async () => {
+    const server = newServer(dataDir)
+    const res = await server.handle({
+      method: 'POST',
+      path: '/sources',
+      body: { title: 'x', media_type: 'text', license: 'CC', access: 'open', content: '   \n\t  ' },
+    })
+    expect(res.status).toBe(400)
+    expect((res.body as { error: string }).error).toBe('content must not be empty')
+  })
+})
+
+// --- bd-14: generic 500 (no internal leak) -----------------------------------
+
+describe('bd-14 generic 500 on unexpected error', () => {
+  it('returns a generic "internal error" body, not the internal detail', async () => {
+    // Inject an adapter that throws a detail-bearing error during draft extraction,
+    // so the route's unguarded extract() rejects → top-level catch fires.
+    const secret = 'SECRET INTERNAL DETAIL leaked-token-xyz'
+    const adapter = {
+      name: 'boom',
+      extract: () => Promise.reject(new Error(secret)),
+    }
+    const server = createServer({ dataDir, now: FIXED_NOW, idFactory: seqIds(), adapter })
+    const src = await postSource(server)
+    const sourceId = (src.body as { source_id: string }).source_id
+
+    const res = await draftPack(server, sourceId)
+    expect(res.status).toBe(500)
+    expect((res.body as { error: string }).error).toBe('internal error')
+    expect(JSON.stringify(res.body)).not.toContain(secret)
   })
 })

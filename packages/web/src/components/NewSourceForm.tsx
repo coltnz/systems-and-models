@@ -4,6 +4,7 @@ import {
   createSourceAndDraft,
   getPack,
   listPacks,
+  validate,
   type DraftResult,
   type PackListItem,
 } from '../api'
@@ -70,7 +71,10 @@ export function NewSourceForm({
     setBusy(true)
     try {
       const pack = await getPack(selectedPack)
-      onLoaded({ pack_id: pack.id, pack, validation: { ok: true, errors: [] } })
+      // Use the REAL validation state of the stored pack (not a hardcoded ok),
+      // so a pack with errors shows the true state and gates the reviewed-save.
+      const validation = await validate(selectedPack)
+      onLoaded({ pack_id: pack.id, pack, validation })
     } catch (e) {
       onError(e instanceof Error ? e.message : 'failed to load pack')
     } finally {
