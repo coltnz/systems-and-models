@@ -45,6 +45,7 @@ eligible asymmetry; web 422 validation not surfaced. Accepted-by-design items li
 | bd-11 | Review remediation | ✅ done (15a359a) | bd-4..9 | 131 tests; examples validate ✔ |
 | bd-12 | Assembly drops bad edges (PR [P1]) | ✅ done (fa8d87e) | bd-6, bd-11 | 135 tests; examples unchanged ✔ |
 | bd-13 | Dedupe extraction ids (PR [P1]) | ✅ done (e114b64) | bd-12 | 138 tests; examples unchanged ✔ |
+| bd-14 | Server/web robustness (PR review) | 🟡 dispatched | bd-7..9 | full root gate; examples unchanged |
 
 PR #3 owner review thread r3332633664 ([P1], draft.ts) — **resolved by bd-12**: `assembleExtraction`
 now drops dangling-endpoint relationships and normalizes empty `anchor_ids`, so a draft can never be
