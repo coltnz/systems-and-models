@@ -536,6 +536,224 @@ describe('assembleExtraction relationship graph-ref hygiene (bd-12)', () => {
   })
 })
 
+describe('assembleExtraction duplicate-id dedupe (bd-13)', () => {
+  // Assemble a bundle against a real source's anchors, then wrap the result in a
+  // full LearningPack for end-to-end validation.
+  async function assembleBundle(draft: DraftBundle): Promise<{
+    ingestResult: IngestResult
+    extraction: ExtractionResult
+  }> {
+    const ingestResult = await ingest(TRANSCRIPT)
+    const validAnchorIds = new Set(ingestResult.anchors.map((a) => a.id))
+    const extraction = assembleExtraction({
+      sourceAssetId: ingestResult.source.id,
+      derivationId: `der-extract-${ingestResult.source.id}`,
+      validAnchorIds,
+      draft,
+      cost: { tokens_in: 0, tokens_out: 0, usd: 0 },
+      createdAt: '2026-06-01T12:00:00.000Z',
+    })
+    return { ingestResult, extraction }
+  }
+
+  it('DROPS a duplicate-id atom (keep FIRST); pack validates with no duplicate_id', async () => {
+    const ingestResult = await ingest(TRANSCRIPT)
+    const [a1, a2] = ingestResult.anchors
+    const draft: DraftBundle = {
+      atoms: [
+        {
+          id: 'atom-dup',
+          kind: 'model',
+          title: 'First — kept',
+          summary: 'The first definition is the one that survives.',
+          body: 'Interest compounds when earnings are reinvested.',
+          anchors: [{ anchor_id: a1!.id, support_state: 'supports' }],
+        },
+        // Same id as the first atom — the validator would flag duplicate_id.
+        {
+          id: 'atom-dup',
+          kind: 'claim',
+          title: 'Second — dropped',
+          summary: 'This later duplicate must be dropped.',
+          body: 'A small rate, given enough time, beats a large rate.',
+          anchors: [{ anchor_id: a2!.id, support_state: 'partially' }],
+        },
+      ],
+      relationships: [],
+    }
+
+    const { ingestResult: ir, extraction } = await assembleBundle(draft)
+
+    // Only the FIRST atom is kept.
+    expect(extraction.atoms).toHaveLength(1)
+    expect(extraction.atoms[0]!.id).toBe('atom-dup')
+    expect(extraction.atoms[0]!.title).toBe('First — kept')
+
+    // output_ids carries the kept atom once, no duplicate.
+    expect(extraction.derivation.output_ids).toEqual(['atom-dup'])
+
+    const pack = toPack(ir, extraction)
+    const validation = validatePack(pack)
+    expect(validation.errors).toEqual([])
+    expect(validation.ok).toBe(true)
+  })
+
+  it('DROPS a duplicate-id relationship (keep FIRST, both endpoints valid); pack validates', async () => {
+    const ingestResult = await ingest(TRANSCRIPT)
+    const [a1, a2] = ingestResult.anchors
+    const draft: DraftBundle = {
+      atoms: [
+        {
+          id: 'atom-1',
+          kind: 'model',
+          title: 'Compounding',
+          summary: 'Earnings reinvested compound.',
+          body: 'Interest compounds when earnings are reinvested.',
+          anchors: [{ anchor_id: a1!.id, support_state: 'supports' }],
+        },
+        {
+          id: 'atom-2',
+          kind: 'claim',
+          title: 'Small rate beats',
+          summary: 'A small rate over time beats a large rate.',
+          body: 'A small rate, given enough time, beats a large rate.',
+          anchors: [{ anchor_id: a2!.id, support_state: 'partially' }],
+        },
+      ],
+      relationships: [
+        {
+          id: 'rel-dup',
+          from_atom_id: 'atom-1',
+          to_atom_id: 'atom-2',
+          predicate: 'explains',
+        },
+        // Same id (both endpoints valid) — dropped as a duplicate.
+        {
+          id: 'rel-dup',
+          from_atom_id: 'atom-2',
+          to_atom_id: 'atom-1',
+          predicate: 'requires',
+        },
+      ],
+    }
+
+    const { ingestResult: ir, extraction } = await assembleBundle(draft)
+
+    // Only the FIRST relationship is kept.
+    expect(extraction.relationships).toHaveLength(1)
+    expect(extraction.relationships[0]!.id).toBe('rel-dup')
+    expect(extraction.relationships[0]!.predicate).toBe('explains')
+    expect(extraction.relationships[0]!.from_atom_id).toBe('atom-1')
+
+    // output_ids carries the kept relationship once, no duplicate.
+    expect(extraction.derivation.output_ids).toEqual([
+      'atom-1',
+      'atom-2',
+      'rel-dup',
+    ])
+
+    const pack = toPack(ir, extraction)
+    const validation = validatePack(pack)
+    expect(validation.errors).toEqual([])
+    expect(validation.ok).toBe(true)
+  })
+
+  it('mixed bundle: dup atom + dup rel + dangling edge + empty-anchor edge ⇒ only unique/valid/normalized; pack validates', async () => {
+    const ingestResult = await ingest(TRANSCRIPT)
+    const [a1, a2] = ingestResult.anchors
+    const draft: DraftBundle = {
+      atoms: [
+        {
+          id: 'atom-1',
+          kind: 'model',
+          title: 'Compounding',
+          summary: 'Earnings reinvested compound.',
+          body: 'Interest compounds when earnings are reinvested.',
+          anchors: [{ anchor_id: a1!.id, support_state: 'supports' }],
+        },
+        {
+          id: 'atom-2',
+          kind: 'claim',
+          title: 'Small rate beats',
+          summary: 'A small rate over time beats a large rate.',
+          body: 'A small rate, given enough time, beats a large rate.',
+          anchors: [{ anchor_id: a2!.id, support_state: 'partially' }],
+        },
+        // Duplicate-id atom — dropped (keep first atom-1).
+        {
+          id: 'atom-1',
+          kind: 'claim',
+          title: 'Duplicate atom — dropped',
+          summary: 'Later duplicate of atom-1.',
+          body: 'Reinvested dividends are the clearest everyday example.',
+          anchors: [{ anchor_id: a2!.id, support_state: 'supports' }],
+        },
+      ],
+      relationships: [
+        // Fully valid anchored edge — kept.
+        {
+          id: 'rel-good',
+          from_atom_id: 'atom-1',
+          to_atom_id: 'atom-2',
+          predicate: 'explains',
+          anchor_ids: [a1!.id, a2!.id],
+          support_state: 'supports',
+        },
+        // Duplicate-id relationship — dropped (keep first rel-good).
+        {
+          id: 'rel-good',
+          from_atom_id: 'atom-2',
+          to_atom_id: 'atom-1',
+          predicate: 'requires',
+        },
+        // Dangling-endpoint edge (bd-12) — dropped.
+        {
+          id: 'rel-dangling',
+          from_atom_id: 'atom-1',
+          to_atom_id: 'atom-GONE',
+          predicate: 'supports',
+        },
+        // Empty-anchor edge (bd-12) — normalized to a no-anchor relationship.
+        {
+          id: 'rel-empty',
+          from_atom_id: 'atom-2',
+          to_atom_id: 'atom-1',
+          predicate: 'requires',
+          anchor_ids: [],
+          support_state: 'partially',
+        },
+      ],
+    }
+
+    const { ingestResult: ir, extraction } = await assembleBundle(draft)
+
+    // Only the unique atom ids survive (keep first).
+    expect(extraction.atoms.map((a) => a.id)).toEqual(['atom-1', 'atom-2'])
+
+    // Kept relationships, in order: the unique valid edge + the normalized one.
+    expect(extraction.relationships.map((r) => r.id)).toEqual([
+      'rel-good',
+      'rel-empty',
+    ])
+    const good = extraction.relationships.find((r) => r.id === 'rel-good')!
+    const empty = extraction.relationships.find((r) => r.id === 'rel-empty')!
+    expect(good.anchor_ids).toEqual([a1!.id, a2!.id])
+    expect('anchor_ids' in empty).toBe(false)
+    expect('support_state' in empty).toBe(false)
+
+    // output_ids reflects exactly the kept items, with no duplicates (the exact
+    // array assertion below is itself proof there is no repeated id).
+    const outputIds = extraction.derivation.output_ids ?? []
+    expect(outputIds).toEqual(['atom-1', 'atom-2', 'rel-good', 'rel-empty'])
+    expect(new Set(outputIds).size).toBe(outputIds.length)
+
+    const pack = toPack(ir, extraction)
+    const validation = validatePack(pack)
+    expect(validation.errors).toEqual([])
+    expect(validation.ok).toBe(true)
+  })
+})
+
 describe('OpenAIAdapter cost / price map (no network)', () => {
   it('computes usd from the documented price map', () => {
     // 1,000,000 input + 1,000,000 output tokens on gpt-4o-mini.

@@ -92,9 +92,14 @@ export class UnknownAnchorError extends Error {
  * anchor id is not in `validAnchorIds`, so a buggy adapter (or a hallucinated
  * model output) can never smuggle in a fabricated anchor.
  *
- * It is also the authoritative chokepoint for relationship graph-integrity, so a
- * draft from ANY adapter is always free of relationship-caused graph errors
- * (bd-12). Concretely it:
+ * It is also the authoritative chokepoint for graph-integrity, so a draft from
+ * ANY adapter is always free of graph errors (bd-12, bd-13). Concretely it:
+ *   - DROPS any atom or relationship whose `id` already appeared earlier in the
+ *     draft (keep-FIRST dedupe), so a model can't emit a `duplicate_id` graph
+ *     error. We drop rather than rename because a relationship endpoint may
+ *     reference a duplicated atom id: dropping keeps the FIRST definition intact
+ *     so that reference still resolves, whereas renaming would silently break it
+ *     (bd-13),
  *   - DROPS any relationship whose `from_atom_id`/`to_atom_id` is not an atom
  *     produced in this same draft (a dangling endpoint can't be repaired through
  *     the review UI, so it would otherwise block reviewed-save forever), and
@@ -110,7 +115,17 @@ export function assembleExtraction(args: AssembleArgs): {
 } {
   const { validAnchorIds } = args
 
-  const atoms: Atom[] = args.draft.atoms.map((d) => {
+  // DROP duplicate-id atoms (keep-FIRST, preserve order): a model may emit two
+  // atoms with the same id, which the validator would flag as `duplicate_id`.
+  // We drop the later one rather than rename it because a relationship endpoint
+  // may reference this id — keeping the FIRST definition means that reference
+  // still resolves, whereas renaming would silently break it (bd-13).
+  const seenAtomIds = new Set<string>()
+  const atoms: Atom[] = args.draft.atoms.flatMap((d) => {
+    if (seenAtomIds.has(d.id)) {
+      return []
+    }
+    seenAtomIds.add(d.id)
     for (const ref of d.anchors) {
       if (!validAnchorIds.has(ref.anchor_id)) {
         throw new UnknownAnchorError(ref.anchor_id, `atom "${d.id}"`)
@@ -128,14 +143,27 @@ export function assembleExtraction(args: AssembleArgs): {
       derivation_id: args.derivationId,
       version: 1,
     }
-    return atom
+    return [atom]
   })
 
-  // The atoms this draft actually produced — a relationship may only connect
-  // atoms inside its own draft. Anything else is a dangling endpoint.
-  const atomIds = new Set(atoms.map((a) => a.id))
+  // The atoms this draft actually produced (after dedupe) — a relationship may
+  // only connect atoms inside its own draft. Anything else is a dangling
+  // endpoint. Built from the DEDUPED set, so an edge referencing a duplicated
+  // atom id still resolves to the kept first atom.
+  const atomIds = seenAtomIds
 
+  const seenRelIds = new Set<string>()
   const relationships: Relationship[] = args.draft.relationships.flatMap((d) => {
+    // DROP duplicate-id relationships (keep-FIRST, preserve order): a model may
+    // emit two relationships with the same id, which the validator would flag
+    // as `duplicate_id`. We drop the later one (keep first) — same rationale as
+    // atoms above. Checked FIRST so a kept edge is both unique-id AND (below)
+    // has valid endpoints AND normalized anchors (bd-13).
+    if (seenRelIds.has(d.id)) {
+      return []
+    }
+    seenRelIds.add(d.id)
+
     // DROP dangling-endpoint edges: an edge to an atom not in this draft can't
     // be repaired through the review UI, so it would block reviewed-save
     // forever. Skip it entirely (and thus out of derivation.output_ids too).
