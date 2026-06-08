@@ -1,7 +1,7 @@
 # Dashboard — Systems & Models alpha
 
 _Mayor-maintained operator view. Updated each orchestration step._
-Last updated: 2026-06-01 · Branch: `claude/festive-ptolemy-fvmCz` · **Status: ALPHA COMPLETE ✅ (10/10 beads merged)**
+Last updated: 2026-06-08 · Branch: `claude/festive-ptolemy-fvmCz` · **Status: ALPHA COMPLETE ✅ (bd-1..bd-13 merged) · PR #3 review threads all resolved · 138 tests green**
 
 ## Alpha goal
 User supplies transcript/Markdown → generate a draft Learning Pack via an env-configured
@@ -58,8 +58,8 @@ atom/relationship ids. Process fix: **re-reviews fetch PR review activity first,
 
 **Duplicate-ID [P1] (r3337754930): resolved by bd-13.** With bd-12 + bd-13, `assembleExtraction`
 emits a draft free of every model-controllable validator graph error; the persisted-unsaveable-draft
-class is fully closed. PR threads r3337754930 + r3347963222 to be replied + resolved after a fresh PR
-re-check. Full gate green: **138 tests**.
+class is fully closed. **PR re-checked: all 3 review threads replied + resolved; no open threads remain.**
+Full gate green: **138 tests**.
 - Human-in-the-loop browser click-through of the UI (logic covered by bd-8 tests; live API path verified).
 - Probe-execution decisions still owed by the operator (non-blocking for the build): named first
   learner + creator, the specific dense source talk, and confirmed kill thresholds (operating brief §"blockers").
