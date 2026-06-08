@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Local runtime data (gitignored per alpha brief) — file-backed packs, sources, runs
+.systems-and-models/
+
+# Mayor findings/research — durable decisions go in ai/decisions.md, not here
+ai/findings/
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Env / secrets
+.env
+.env.local
+!.env.example
+
+# Agent worktrees (Mayor Method worker isolation)
+.claude/worktrees/
+
+# Editor / OS
+.idea/
+.DS_Store
+*.log

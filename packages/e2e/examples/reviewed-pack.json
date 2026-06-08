@@ -1,0 +1,174 @@
+{
+  "id": "id-1",
+  "title": "Pack: The Circuit Breaker Pattern for Resilient Services",
+  "version": "0.1.0",
+  "schema_version": "0",
+  "license": "CC-BY-4.0",
+  "sources": [
+    {
+      "id": "src-1ebca36115d7",
+      "uri": "inline:The Circuit Breaker Pattern for Resilient Services",
+      "media_type": "markdown",
+      "title": "The Circuit Breaker Pattern for Resilient Services",
+      "creator": "Systems & Models project",
+      "license": "CC-BY-4.0",
+      "access": "open",
+      "content_hash": "sha256:1ebca36115d7a88f62321d2ad978aeb2f5bd32b0ebf396af261718cba32757eb"
+    }
+  ],
+  "anchors": [
+    {
+      "id": "anc-0-417",
+      "source_asset_id": "src-1ebca36115d7",
+      "selector": {
+        "kind": "text_quote",
+        "start": "0",
+        "end": "417"
+      },
+      "excerpt": "The circuit breaker pattern is a mental model for protecting a service that depends on a flaky downstream dependency. Like an electrical breaker that trips to stop current when a fault is detected, the software circuit breaker watches the failure rate of outgoing calls and, once that rate crosses a threshold, it \"opens\" and short-circuits further calls so the caller fails fast instead of piling up doomed requests.",
+      "extraction_method": "native",
+      "verifiable": true
+    },
+    {
+      "id": "anc-419-901",
+      "source_asset_id": "src-1ebca36115d7",
+      "selector": {
+        "kind": "text_quote",
+        "start": "419",
+        "end": "901"
+      },
+      "excerpt": "To operate a circuit breaker you follow a concrete procedure. First, wrap each remote call and record whether it succeeded or failed. Second, when the rolling failure rate exceeds the configured threshold, move the breaker to the open state and immediately reject new calls for a cooldown window. Third, after the cooldown elapses, allow a single trial call through in a half-open state; if it succeeds, close the breaker and resume normal traffic, otherwise re-open and wait again.",
+      "extraction_method": "native",
+      "verifiable": true
+    },
+    {
+      "id": "anc-903-1258",
+      "source_asset_id": "src-1ebca36115d7",
+      "selector": {
+        "kind": "text_quote",
+        "start": "903",
+        "end": "1258"
+      },
+      "excerpt": "Teams that adopt this pattern claim that a tripped breaker measurably reduces cascading failures during a downstream outage, because callers stop waiting on timeouts and shed load before the whole system saturates. This assertion is testable: you can compare error budgets and tail latency with the breaker enabled versus disabled under an injected fault.",
+      "extraction_method": "native",
+      "verifiable": true
+    }
+  ],
+  "atoms": [
+    {
+      "id": "atom-src-1ebca36115d7-1",
+      "kind": "model",
+      "title": "The circuit breaker pattern is a mental model for protecting a service that dep…",
+      "summary": "The circuit breaker pattern is a mental model for protecting a service that depends on a flaky downstream dependency. Like an electrical breaker that trips to stop current when a fault is detected, t…",
+      "body": "The circuit breaker pattern is a mental model for protecting a service that depends on a flaky downstream dependency. Like an electrical breaker that trips to stop current when a fault is detected, the software circuit breaker watches the failure rate of outgoing calls and, once that rate crosses a threshold, it \"opens\" and short-circuits further calls so the caller fails fast instead of piling up doomed requests.",
+      "review_state": "reviewed",
+      "authored_by": "ai",
+      "anchors": [
+        {
+          "anchor_id": "anc-0-417",
+          "support_state": "supports"
+        }
+      ],
+      "derivation_id": "der-extract-src-1ebca36115d7",
+      "version": 1
+    },
+    {
+      "id": "atom-src-1ebca36115d7-2",
+      "kind": "claim",
+      "title": "To operate a circuit breaker you follow a concrete procedure. First, wrap each…",
+      "summary": "To operate a circuit breaker you follow a concrete procedure. First, wrap each remote call and record whether it succeeded or failed. Second, when the rolling failure rate exceeds the configured thre…",
+      "body": "To operate a circuit breaker you follow a concrete procedure. First, wrap each remote call and record whether it succeeded or failed. Second, when the rolling failure rate exceeds the configured threshold, move the breaker to the open state and immediately reject new calls for a cooldown window. Third, after the cooldown elapses, allow a single trial call through in a half-open state; if it succeeds, close the breaker and resume normal traffic, otherwise re-open and wait again.",
+      "review_state": "rejected",
+      "authored_by": "ai",
+      "anchors": [
+        {
+          "anchor_id": "anc-419-901",
+          "support_state": "partially"
+        }
+      ],
+      "derivation_id": "der-extract-src-1ebca36115d7",
+      "version": 1
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel-src-1ebca36115d7-1",
+      "from_atom_id": "atom-src-1ebca36115d7-1",
+      "to_atom_id": "atom-src-1ebca36115d7-2",
+      "predicate": "explains",
+      "review_state": "generated",
+      "anchor_ids": [
+        "anc-0-417",
+        "anc-419-901"
+      ],
+      "support_state": "partially"
+    }
+  ],
+  "derivations": [
+    {
+      "id": "der-ingest-src-1ebca36115d7",
+      "op": "ingest",
+      "input_ids": [
+        "src-1ebca36115d7"
+      ],
+      "output_ids": [
+        "anc-0-417",
+        "anc-419-901",
+        "anc-903-1258"
+      ],
+      "actor": "ai",
+      "schema_version": "0",
+      "created_at": "2026-06-01T12:00:00.000Z"
+    },
+    {
+      "id": "der-extract-src-1ebca36115d7",
+      "op": "extract",
+      "input_ids": [
+        "src-1ebca36115d7"
+      ],
+      "output_ids": [
+        "atom-src-1ebca36115d7-1",
+        "atom-src-1ebca36115d7-2",
+        "rel-src-1ebca36115d7-1"
+      ],
+      "actor": "ai",
+      "schema_version": "0",
+      "cost": {
+        "tokens_in": 0,
+        "tokens_out": 0,
+        "usd": 0
+      },
+      "created_at": "2026-06-01T12:00:00.000Z"
+    },
+    {
+      "id": "id-2",
+      "op": "edit",
+      "input_ids": [
+        "atom-src-1ebca36115d7-1"
+      ],
+      "actor": "human",
+      "schema_version": "0",
+      "created_at": "2026-06-01T12:00:00.000Z"
+    },
+    {
+      "id": "id-3",
+      "op": "edit",
+      "input_ids": [
+        "atom-src-1ebca36115d7-1"
+      ],
+      "actor": "human",
+      "schema_version": "0",
+      "created_at": "2026-06-01T12:00:00.000Z"
+    },
+    {
+      "id": "id-4",
+      "op": "edit",
+      "input_ids": [
+        "atom-src-1ebca36115d7-2"
+      ],
+      "actor": "human",
+      "schema_version": "0",
+      "created_at": "2026-06-01T12:00:00.000Z"
+    }
+  ]
+}

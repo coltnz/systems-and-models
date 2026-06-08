@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.node.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "types": ["node"]
+  },
+  "references": [
+    { "path": "../types/tsconfig.build.json" },
+    { "path": "../validator/tsconfig.build.json" },
+    { "path": "../ingest/tsconfig.build.json" },
+    { "path": "../extraction/tsconfig.build.json" }
+  ],
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts"]
+}

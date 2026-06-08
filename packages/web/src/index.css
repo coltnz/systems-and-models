@@ -1,0 +1,259 @@
+/* Hand-rolled minimal styles for the review UI (bd-8).
+ *
+ * The audited spike ships a Tailwind v4 + Radix shadcn setup (D-008b). Bringing
+ * that PostCSS/Radix pipeline into the fresh @sam/web package added install +
+ * peer-dep risk against the hard requirement of a green build/test, so per the
+ * bead's explicit fallback we use small hand-rolled CSS + simple components and
+ * keep only the cheap audited pieces (the `cn` helper and the graph palette).
+ */
+
+:root {
+  --bg: #f8fafc;
+  --panel: #ffffff;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --muted: #64748b;
+  --blocking: #dc2626;
+  --blocking-bg: #fef2f2;
+  --warning: #d97706;
+  --warning-bg: #fffbeb;
+  --ok: #16a34a;
+  --ok-bg: #f0fdf4;
+  --accent: #2563eb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+    Helvetica, Arial, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.45;
+}
+
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 20px 64px;
+}
+
+.app h1 {
+  font-size: 1.5rem;
+  margin: 0 0 4px;
+}
+
+.app h2 {
+  font-size: 1.05rem;
+  margin: 24px 0 8px;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* Cards / panels */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin: 10px 0;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.spread {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* Form controls */
+label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  width: 100%;
+}
+
+textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 140px;
+  flex: 1;
+}
+
+/* Buttons */
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+button:hover:not(:disabled) {
+  background: #f1f5f9;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+button.primary:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+button.danger {
+  color: var(--blocking);
+  border-color: #fecaca;
+}
+
+button.danger:hover:not(:disabled) {
+  background: var(--blocking-bg);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: #fff;
+}
+
+.badge.state {
+  color: var(--text);
+  background: #f1f5f9;
+  border: 1px solid var(--border);
+}
+
+/* Validation panel */
+.errors {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+}
+
+.errors li {
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin: 6px 0;
+  font-size: 0.85rem;
+}
+
+.errors li.structural {
+  background: var(--blocking-bg);
+  border: 1px solid #fecaca;
+  color: var(--blocking);
+}
+
+.errors li.graph {
+  background: var(--warning-bg);
+  border: 1px solid #fde68a;
+  color: var(--warning);
+}
+
+.errors code {
+  font-weight: 700;
+}
+
+.banner {
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 8px 0;
+  font-size: 0.9rem;
+}
+
+.banner.ok {
+  background: var(--ok-bg);
+  border: 1px solid #bbf7d0;
+  color: var(--ok);
+}
+
+.banner.err {
+  background: var(--blocking-bg);
+  border: 1px solid #fecaca;
+  color: var(--blocking);
+}
+
+/* Anchors */
+.anchor {
+  border-left: 3px solid var(--border);
+  padding: 6px 10px;
+  margin: 6px 0;
+  background: #f8fafc;
+  border-radius: 0 6px 6px 0;
+}
+
+.anchor .excerpt {
+  font-style: italic;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  background: #e2e8f0;
+  color: var(--muted);
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin-left: 6px;
+}
+
+.editor {
+  border-top: 1px dashed var(--border);
+  margin-top: 10px;
+  padding-top: 10px;
+}
