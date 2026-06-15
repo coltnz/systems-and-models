@@ -4,8 +4,9 @@
   License: CC-BY-4.0 (https://creativecommons.org/licenses/by/4.0/).
   Title: The Circuit Breaker Pattern for Resilient Services
   This file is the offline demo transcript: it is dense enough to extract from
-  and is split into blank-line-separated paragraphs so bd-5's paragraph anchoring
-  yields multiple verifiable anchors (one anchor per paragraph below this header).
+  and is split into blank-line-separated paragraphs of multiple sentences so
+  bd-17's sentence anchoring yields multiple verifiable anchors (one anchor per
+  sentence within the paragraphs below this header).
 -->
 The circuit breaker pattern is a mental model for protecting a service that depends on a flaky downstream dependency. Like an electrical breaker that trips to stop current when a fault is detected, the software circuit breaker watches the failure rate of outgoing calls and, once that rate crosses a threshold, it "opens" and short-circuits further calls so the caller fails fast instead of piling up doomed requests.
 

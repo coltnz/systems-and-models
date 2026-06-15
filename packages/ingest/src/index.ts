@@ -10,8 +10,9 @@
  *   1. Validate the request (reject unsupported media types).
  *   2. Normalize the text deterministically (line endings only).
  *   3. Content-hash the normalized text (sha256) and derive a stable asset id.
- *   4. Segment into paragraph spans and emit a `SourceAnchor` per non-empty span
- *      with char-offset selectors and the exact normalized substring as excerpt.
+ *   4. Segment into SENTENCE spans (within blank-line paragraph blocks) and emit
+ *      a `SourceAnchor` per non-empty span with char-offset selectors and the
+ *      exact normalized substring as excerpt (bd-17 / issue #4).
  *   5. Emit an `ingest` `DerivationRun` linking the source to the anchors.
  *
  * Determinism: every value in the result is a pure function of `content` plus
@@ -142,43 +143,88 @@ interface Span {
 }
 
 /**
- * Segment normalized text into paragraph spans.
+ * Segment normalized text into SENTENCE spans (bd-17).
  *
- * SEGMENTATION DECISION (documented per bd-5): we split on blank lines — i.e. a
- * run of one-or-more lines that are empty or whitespace-only acts as a
- * paragraph boundary. Each emitted span covers the contiguous block of
- * non-blank lines between boundaries, with leading/trailing blank lines
- * excluded from the span. We do NOT trim interior whitespace inside a paragraph
- * (so the excerpt is the exact normalized substring), and we deliberately do
- * NOT do finer sentence splitting in the alpha: paragraph granularity is
- * deterministic, language-agnostic, and avoids abbreviation/decimal edge cases
- * that sentence tokenizers get wrong. Offsets are computed by scanning the
- * normalized string directly, so they never drift from `normalized.slice`.
+ * SEGMENTATION DECISION (documented per bd-17, issue #4): we keep the outer
+ * blank-line PARAGRAPH split as structure, then split each paragraph into
+ * SENTENCES, so a multi-sentence source now yields one anchor PER sentence (the
+ * finer-grained provenance the operator chose over bd-5's paragraph anchoring).
  *
- * Whitespace-only spans are skipped entirely (no anchor is emitted for them).
+ * Paragraph boundary: a run of one-or-more blank/whitespace-only lines (2+
+ * newlines). A sentence boundary NEVER crosses a paragraph boundary — each
+ * paragraph block is segmented independently.
+ *
+ * Sentence-boundary HEURISTIC (deterministic, language-agnostic): inside a
+ * paragraph block, a boundary occurs at a sentence-ending char `[.!?]` —
+ * allowing trailing closing quotes/brackets `["')\]]*` — that is FOLLOWED BY
+ * whitespace and then a non-whitespace char, OR at the end of the paragraph
+ * block. Because a boundary requires whitespace after the terminator, decimals
+ * like `3.14` (where `.` is followed by a digit, not whitespace) do NOT split.
+ *
+ * KNOWN LIMITATION (accepted, no over-engineering): abbreviations such as
+ * `e.g.`, `i.e.`, `Dr.`, `etc.` are followed by whitespace + a letter, so this
+ * heuristic OVER-SPLITS them into separate sentences. This is a deliberately
+ * accepted trade-off — we do NOT carry an abbreviation dictionary or any
+ * locale-specific tables. The anchors remain exact and verifiable regardless;
+ * only the granularity differs at those rare points.
+ *
+ * Each emitted span is trimmed to a tight (leading/trailing-whitespace-free)
+ * span, so the excerpt is the exact `normalized.slice(start,end)` with no
+ * surrounding whitespace. Interior whitespace/newlines are preserved verbatim.
+ * Offsets are computed by scanning the normalized string directly, so they
+ * never drift from `normalized.slice`. Whitespace-only spans are skipped
+ * entirely (no anchor is emitted for them).
  */
-function segmentParagraphs(normalized: string): Span[] {
+function segmentSentences(normalized: string): Span[] {
   const spans: Span[] = []
-  // Split into blocks on one-or-more blank lines. We track offsets manually so
-  // the spans index back into `normalized` exactly.
-  const blankRunRe = /\n[ \t]*(?:\n[ \t]*)*\n/g // 2+ newlines (a blank line) = boundary
-  let cursor = 0
-  let match: RegExpExecArray | null
+  // Trim a [rawStart,rawEnd) range to a tight span and push it if non-empty.
   const pushTrimmed = (rawStart: number, rawEnd: number): void => {
-    // Trim only leading/trailing whitespace of the block to find the tight
-    // span; interior content is preserved verbatim.
     let s = rawStart
     let e = rawEnd
     while (s < e && /\s/.test(normalized[s]!)) s++
     while (e > s && /\s/.test(normalized[e - 1]!)) e--
     if (e > s) spans.push({ start: s, end: e })
   }
+
+  // Split a [blockStart,blockEnd) PARAGRAPH block into sentence spans. The
+  // sentence-terminator regex is anchored within the block only, so a boundary
+  // can never cross into the next paragraph.
+  const segmentBlock = (blockStart: number, blockEnd: number): void => {
+    // Match a terminator [.!?], optional closing quotes/brackets, then the
+    // whitespace run, then look-ahead at the following non-whitespace char. The
+    // whitespace is consumed by the match so the next sentence starts at the
+    // following non-whitespace char (the trim() below handles it either way).
+    const boundaryRe = /[.!?]["')\]]*\s+(?=\S)/g
+    boundaryRe.lastIndex = 0
+    let cursor = blockStart
+    let m: RegExpExecArray | null
+    // Restrict matching to this block by slicing-by-index: scan the whole
+    // normalized string but stop once a match starts at/after blockEnd.
+    const block = normalized.slice(blockStart, blockEnd)
+    while ((m = boundaryRe.exec(block)) !== null) {
+      // Absolute end of this sentence = block-relative match index + the length
+      // of the terminator+closers (i.e. up to, but excluding, the whitespace).
+      const termLen = m[0].length - (m[0].match(/\s+$/)?.[0].length ?? 0)
+      const sentenceEnd = blockStart + m.index + termLen
+      pushTrimmed(cursor, sentenceEnd)
+      cursor = blockStart + boundaryRe.lastIndex
+    }
+    // Trailing sentence (or the whole block if it had no internal boundary):
+    // ends at the paragraph end.
+    pushTrimmed(cursor, blockEnd)
+  }
+
+  // Outer paragraph split on one-or-more blank lines, tracking offsets manually
+  // so spans index back into `normalized` exactly.
+  const blankRunRe = /\n[ \t]*(?:\n[ \t]*)*\n/g // 2+ newlines (a blank line) = boundary
+  let cursor = 0
+  let match: RegExpExecArray | null
   while ((match = blankRunRe.exec(normalized)) !== null) {
-    pushTrimmed(cursor, match.index)
+    segmentBlock(cursor, match.index)
     cursor = match.index + match[0].length
   }
-  // Trailing block after the last boundary.
-  pushTrimmed(cursor, normalized.length)
+  // Trailing paragraph block after the last boundary.
+  segmentBlock(cursor, normalized.length)
   return spans
 }
 
@@ -280,7 +326,7 @@ export function ingestSource(
     content_hash: contentHash(normalized),
   }
 
-  const anchors = segmentParagraphs(normalized).map((span) =>
+  const anchors = segmentSentences(normalized).map((span) =>
     buildAnchor(sourceId, normalized, span),
   )
 
