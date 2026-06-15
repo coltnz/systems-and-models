@@ -122,8 +122,11 @@ const SUPPORT_STATES: SupportState[] = [
  * ids are constrained to the EXACT input anchor ids via `enum`, so the model is
  * structurally prevented from inventing anchors. We still re-check in
  * `assembleExtraction` (defense in depth).
+ *
+ * Exported for unit testing of the schema's invariants (e.g. atom `anchors`
+ * carries `minItems: 1` — bd-15).
  */
-function buildResponseSchema(anchorIds: string[]): Record<string, unknown> {
+export function buildResponseSchema(anchorIds: string[]): Record<string, unknown> {
   // `enum` cannot be empty; when there are no anchors the caller short-circuits
   // before building a schema, so anchorIds is always non-empty here.
   const anchorIdSchema = { type: 'string', enum: anchorIds }
@@ -146,6 +149,11 @@ function buildResponseSchema(anchorIds: string[]): Record<string, unknown> {
             body: { type: 'string' },
             anchors: {
               type: 'array',
+              // An atom with `anchors: []` validates clean as `generated` but can
+              // never be `published` and can't be cited, so forbid it at the
+              // structured-output layer (bd-15). The mock + e2e paths give every
+              // atom an anchor, so they are unaffected.
+              minItems: 1,
               items: {
                 type: 'object',
                 additionalProperties: false,
@@ -243,6 +251,30 @@ function asArray(v: unknown, where: string): unknown[] {
 }
 
 /**
+ * Parse a string against an allowed enum set, throwing a clear, located error on
+ * an out-of-enum value (bd-15). A hostile/garbage model response (e.g. a `kind`
+ * of `"fact"`) must fail loudly HERE in `parseDraft` rather than slip through an
+ * unchecked `as`-cast and surface later as an opaque 500 at `validatePack`. The
+ * allowed sets are the same `ATOM_KINDS`/`PREDICATES`/`SUPPORT_STATES` consts the
+ * response schema is built from, so the runtime guard and the schema can't drift.
+ */
+function asEnum<T extends string>(
+  v: unknown,
+  allowed: readonly T[],
+  field: string,
+  where: string,
+): T {
+  const s = asString(v, where)
+  if (!(allowed as readonly string[]).includes(s)) {
+    throw new Error(
+      `OpenAI extraction: invalid ${field} ${JSON.stringify(s)} at ${where} ` +
+        `(allowed: ${allowed.join(', ')})`,
+    )
+  }
+  return s as T
+}
+
+/**
  * Parse + normalize the model's JSON content into a provider-neutral
  * {@link DraftBundle}. Exported for unit testing of the normalization rules
  * (notably the empty-`anchor_ids` → no-anchor relationship normalization).
@@ -258,15 +290,17 @@ export function parseDraft(content: string): DraftBundle {
 
   const atoms: DraftAtom[] = asArray(root.atoms, 'atoms').map((raw, i) => {
     const o = asRecord(raw, `atoms[${i}]`)
-    const kind = asString(o.kind, `atoms[${i}].kind`) as AtomKind
+    const kind = asEnum(o.kind, ATOM_KINDS, 'kind', `atoms[${i}].kind`)
     const anchors = asArray(o.anchors, `atoms[${i}].anchors`).map((aRaw, j) => {
       const a = asRecord(aRaw, `atoms[${i}].anchors[${j}]`)
       return {
         anchor_id: asString(a.anchor_id, `atoms[${i}].anchors[${j}].anchor_id`),
-        support_state: asString(
+        support_state: asEnum(
           a.support_state,
+          SUPPORT_STATES,
+          'support_state',
           `atoms[${i}].anchors[${j}].support_state`,
-        ) as SupportState,
+        ),
       }
     })
     return {
@@ -292,7 +326,12 @@ export function parseDraft(content: string): DraftBundle {
       id: asString(o.id, `relationships[${i}].id`),
       from_atom_id: asString(o.from_atom_id, `relationships[${i}].from_atom_id`),
       to_atom_id: asString(o.to_atom_id, `relationships[${i}].to_atom_id`),
-      predicate: asString(o.predicate, `relationships[${i}].predicate`) as Predicate,
+      predicate: asEnum(
+        o.predicate,
+        PREDICATES,
+        'predicate',
+        `relationships[${i}].predicate`,
+      ),
     }
     // The structured-output schema marks `anchor_ids` required (OpenAI strict
     // mode), so a model may legitimately emit `anchor_ids: []` for a no-anchor
@@ -307,10 +346,12 @@ export function parseDraft(content: string): DraftBundle {
     return {
       ...base,
       anchor_ids,
-      support_state: asString(
+      support_state: asEnum(
         o.support_state,
+        SUPPORT_STATES,
+        'support_state',
         `relationships[${i}].support_state`,
-      ) as SupportState,
+      ),
     }
   })
 

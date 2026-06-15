@@ -129,6 +129,55 @@ describe('@sam/validator — referential integrity', () => {
   })
 })
 
+// --- Graph: pack-global (cross-collection) id uniqueness (bd-15 / D-013) -----
+
+describe('@sam/validator — cross-collection id uniqueness', () => {
+  it('flags an id shared by an atom and an anchor', () => {
+    const pack = clone(loadExample())
+    // Make an atom's id collide with an existing anchor id. The atom's anchors
+    // already resolve, so this is purely a cross-collection collision.
+    const sharedId = pack.anchors[0].id
+    pack.atoms[0].id = sharedId
+    const result = validatePack(pack)
+    expect(result.ok).toBe(false)
+    expect(codes(result.errors)).toContain('cross_collection_duplicate_id')
+    // It must NOT be mis-reported as a within-collection duplicate.
+    expect(codes(result.errors)).not.toContain('duplicate_id')
+    // Path points at the later (atoms) occurrence.
+    const err = result.errors.find(
+      (e) => e.code === 'cross_collection_duplicate_id',
+    )!
+    expect(err.path).toBe('/atoms/0/id')
+    expect(err.severity).toBe('graph')
+  })
+
+  it('flags an id shared by an atom and a relationship', () => {
+    const pack = clone(loadExample())
+    // Point both a relationship and an atom at the same id. Keep the
+    // relationship endpoints valid so only the cross-collection check fires.
+    const sharedId = pack.atoms[0].id
+    pack.relationships[0].id = sharedId
+    const result = validatePack(pack)
+    expect(result.ok).toBe(false)
+    expect(codes(result.errors)).toContain('cross_collection_duplicate_id')
+  })
+
+  it('keeps the existing per-collection duplicate_id check unchanged', () => {
+    const pack = clone(loadExample())
+    // Two atoms with the same id ⇒ within-collection duplicate, NOT cross.
+    pack.atoms.push(clone(pack.atoms[0]))
+    const result = validatePack(pack)
+    expect(codes(result.errors)).toContain('duplicate_id')
+    expect(codes(result.errors)).not.toContain('cross_collection_duplicate_id')
+  })
+
+  it('the committed example pack has no cross-collection collisions', () => {
+    const result = validatePack(loadExample())
+    expect(codes(result.errors)).not.toContain('cross_collection_duplicate_id')
+    expect(result.ok).toBe(true)
+  })
+})
+
 // --- Graph: publish invariant -----------------------------------------------
 
 describe('@sam/validator — publish invariant', () => {
@@ -217,6 +266,53 @@ describe('@sam/validator — datetime tolerance', () => {
     expect(result.ok).toBe(false)
     // structural date-time format catches the bad calendar value first.
     expect(result.errors.length).toBeGreaterThan(0)
+  })
+})
+
+// --- date-time contract guard (bd-15 / D-014) -------------------------------
+//
+// The tz-aware rule for instants is owned by the GRAPH layer
+// (`derivation_created_at_not_tz_aware`), deliberately kept off the structural
+// pass (the structural `date-time` format is lenient on purpose). That contract
+// only holds if `DerivationRun.created_at` is the ONLY `format:"date-time"` field
+// in the schema. This guard fails loudly if a future field adds `date-time`
+// without a paired graph check, forcing a conscious decision.
+
+describe('@sam/validator — date-time contract guard', () => {
+  /** Recursively collect every JSON Pointer-ish location with format:"date-time". */
+  function findDateTimeFields(
+    node: unknown,
+    path: string,
+    out: string[],
+  ): void {
+    if (Array.isArray(node)) {
+      node.forEach((child, i) => findDateTimeFields(child, `${path}/${i}`, out))
+      return
+    }
+    if (typeof node !== 'object' || node === null) return
+    const obj = node as Record<string, unknown>
+    if (obj.format === 'date-time') out.push(path)
+    for (const [key, value] of Object.entries(obj)) {
+      findDateTimeFields(value, `${path}/${key}`, out)
+    }
+  }
+
+  it('the ONLY format:"date-time" field in the schema is DerivationRun.created_at', () => {
+    const schemaPath = join(repoRoot(), 'spec', 'learning-pack.schema.json')
+    const schema: unknown = JSON.parse(readFileSync(schemaPath, 'utf8'))
+    const found: string[] = []
+    findDateTimeFields(schema, '', found)
+    expect(found).toEqual(['/$defs/DerivationRun/properties/created_at'])
+  })
+
+  it('rejects a zoneless/date-only created_at at the GRAPH layer', () => {
+    for (const bad of ['2026-05-26', '2026-05-26T10:00:00']) {
+      const pack = clone(loadExample())
+      pack.derivations[0].created_at = bad
+      const result = validatePack(pack)
+      expect(result.ok).toBe(false)
+      expect(codes(result.errors)).toContain('derivation_created_at_not_tz_aware')
+    }
   })
 })
 

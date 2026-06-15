@@ -47,6 +47,7 @@ export type ValidationCode =
   | 'structural'
   // graph: referential integrity + uniqueness
   | 'duplicate_id'
+  | 'cross_collection_duplicate_id'
   | 'dangling_anchor_source_ref'
   | 'dangling_atom_anchor_ref'
   | 'dangling_atom_derivation_ref'
@@ -216,6 +217,55 @@ function checkUnique(
   return errors
 }
 
+/**
+ * Flag any id that appears in MORE THAN ONE of the five pack collections
+ * {sources, anchors, atoms, relationships, derivations} (D-013). Ids are meant to
+ * be unique pack-wide, not just within their own collection, so a cross-collection
+ * collision (e.g. `atom.id === anchor.id`) makes a reference ambiguous.
+ *
+ * Distinct from {@link checkUnique} (which catches repeats WITHIN one collection
+ * and is kept unchanged). The FIRST collection an id appears in claims it (in the
+ * fixed traversal order below); each later occurrence in a DIFFERENT collection is
+ * flagged at its own path, so the error points at the colliding occurrence and the
+ * output is deterministic. A within-collection repeat is NOT re-flagged here — that
+ * remains `duplicate_id`.
+ */
+function checkCrossCollectionUnique(pack: LearningPack): ValidationError[] {
+  const errors: ValidationError[] = []
+  // Fixed traversal order ⇒ deterministic "first claimant".
+  const collections: ReadonlyArray<{
+    name: string
+    items: ReadonlyArray<{ id: string }>
+  }> = [
+    { name: 'sources', items: pack.sources },
+    { name: 'anchors', items: pack.anchors },
+    { name: 'atoms', items: pack.atoms },
+    { name: 'relationships', items: pack.relationships },
+    { name: 'derivations', items: pack.derivations },
+  ]
+  // id -> the collection that first claimed it.
+  const owner = new Map<string, string>()
+  for (const { name, items } of collections) {
+    items.forEach((item, i) => {
+      const existing = owner.get(item.id)
+      if (existing === undefined) {
+        owner.set(item.id, name)
+      } else if (existing !== name) {
+        // Collision across collections; flag this (later) occurrence.
+        errors.push({
+          code: 'cross_collection_duplicate_id',
+          path: `/${name}/${i}/id`,
+          message: `id "${item.id}" in ${name} also appears in ${existing} — ids must be unique across all collections`,
+          severity: 'graph',
+        })
+      }
+      // If existing === name it is a within-collection repeat, already reported
+      // by checkUnique as duplicate_id; do not double-report it here.
+    })
+  }
+  return errors
+}
+
 // --- Graph-level validation -------------------------------------------------
 
 function validateGraph(pack: LearningPack): ValidationError[] {
@@ -233,6 +283,15 @@ function validateGraph(pack: LearningPack): ValidationError[] {
   errors.push(...checkUnique(pack.atoms, 'atoms'))
   errors.push(...checkUnique(pack.relationships, 'relationships'))
   errors.push(...checkUnique(pack.derivations, 'derivations'))
+
+  // 1b. Pack-global id uniqueness (D-013). An id is meant to identify ONE object
+  // pack-wide; the same id appearing across two collections (e.g. an atom whose
+  // id collides with an anchor or a relationship) makes references ambiguous.
+  // The per-collection `duplicate_id` check above stays as-is; this is the
+  // ORTHOGONAL cross-collection check. Extraction output can never trip this
+  // (assembleExtraction seeds its dedupe with the reserved ids — bd-15), so this
+  // can only fire on external/hand-edited packs.
+  errors.push(...checkCrossCollectionUnique(pack))
 
   // 2. Referential integrity — anchors -> source assets.
   pack.anchors.forEach((anchor: SourceAnchor, i) => {
