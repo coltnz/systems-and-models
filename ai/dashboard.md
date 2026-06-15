@@ -1,15 +1,16 @@
 # Dashboard — Systems & Models alpha
 
 _Mayor-maintained operator view. Updated each orchestration step._
-Last updated: 2026-06-15 · Branch: `claude/issue-4-followups` (off merged master) · **Alpha merged via PR #3. Now landing issue #4 follow-ups — bd-15 + bd-16 done · 173 tests green.**
+Last updated: 2026-06-15 · Branch: `claude/issue-4-followups` (off merged master) · **Alpha merged via PR #3. Issue #4 follow-ups (PR #5) — bd-15 + bd-16 + bd-17 done · 177 tests green.**
 
 ## Issue #4 follow-ups (post-merge hardening)
 - ✅ **bd-15 (3d508ae):** parseDraft runtime enum validation; atom `anchors minItems:1`; pack-global id
   uniqueness (validator `cross_collection_duplicate_id` + assembly chokepoint guarantee, D-013); date-time
   guard test (D-014).
 - ✅ **bd-16 (f2403b3):** per-pack mutation serialization `withPackLock` (D-015); de-flaked the bd-14 413 test.
-- ⏸ **Deferred (in issue #4):** OpenAI live-API confirmation (needs a real key + network); ingest finer
-  segmentation (product call — soft-wrap vs paragraph vs sentence, changes anchors+examples); reviewed-
+- ✅ **bd-17 (957ff89):** sentence-level source anchoring (operator-chosen); demo source 3 → 8 anchors;
+  regenerated example packs validate.
+- ⏸ **Deferred (in issue #4):** OpenAI live-API confirmation (needs a real key + network); reviewed-
   snapshot history; shadcn/Radix UI adoption (D-008b). Left open in #4 with reasons.
 
 ## Alpha goal
