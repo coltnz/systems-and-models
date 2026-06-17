@@ -1,6 +1,14 @@
-# Schema Review & Model Linking Analysis
+# Legacy Schema Review & Model Linking Analysis
 
-## Current Schema Status: ✅ SUFFICIENT
+> Archived context from the pre-alpha YAML/sql.js spike. This file reviews the
+> legacy `systems`/`models`/`provenance` schema and model-to-model linking demo;
+> it does **not** describe the active LearningPack v0 contract.
+>
+> Current schema source of truth: `spec/learning-pack.schema.json`.
+> Current graph/validator decisions: `ai/decisions.md` (especially D-005 and
+> D-013).
+
+## Legacy Schema Status: ✅ Sufficient For The Old Demo
 
 ### Strengths
 
@@ -54,15 +62,16 @@
 
 ## Recommendations
 
-**For Current Needs**: ✅ Schema is sufficient
+**For legacy spike needs**: ✅ Schema is sufficient
 
-The existing schema supports:
+The legacy schema supports:
 - Model-to-model relationships (all types)
 - Complex knowledge graphs
 - Physics, AI/ML, philosophy content
 - Cross-domain linking
 
-**Action**: Proceed with adding advanced topics using current schema.
+**Action**: Do not use this file as guidance for active alpha work. For new
+source-to-pack work, use LearningPack v0 and the validator.
 
 ## Example: Complex Model Linking
 

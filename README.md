@@ -112,14 +112,15 @@ The mock path is unchanged; tests stay offline regardless.
 
 ## Workspace layout
 
-npm workspaces under `packages/*` (`@sam/*` scope, D-002). Each package is a
-typed stub today; its owning bead fills it in.
+npm workspaces under `packages/*` (`@sam/*` scope, D-002). Each package is
+implemented behind its owning bead; see `ai/dashboard.md` for bead status and
+gate history.
 
 | Package           | Role                                                              | Bead   |
 | ----------------- | ---------------------------------------------------------------- | ------ |
 | `@sam/types`      | Shared TypeScript types mirroring the LearningPack v0 schema.     | bd-3   |
 | `@sam/validator`  | Structural + graph validation of a pack (Ajv against the schema).| bd-4   |
-| `@sam/ingest`     | Source → stored asset + verifiable anchors (pure data).          | bd-5   |
+| `@sam/ingest`     | Source → stored asset + sentence-level verifiable anchors.       | bd-5, bd-17 |
 | `@sam/extraction` | Pluggable extraction adapters (mock + OpenAI); `getAdapter(env)`.| bd-6   |
 | `@sam/server`     | Local HTTP API; sole owner of the `.systems-and-models/` dir.    | bd-7   |
 | `@sam/web`        | React + Vite review UI (rebuilt fresh; `app/` is a spike, D-003).| bd-8   |

@@ -13,6 +13,11 @@ in architecture docs, but should not become product-facing nouns unless
 they are exposed in UI, imports, exports, database schema, package
 contracts, logs, or public APIs.
 
+Implementation state, June 2026: the active alpha lives under `packages/*` and
+uses LearningPack v0 (`spec/learning-pack.schema.json`). The old `app/`
+browser/sql.js implementation remains a legacy reference spike, not the active
+foundation.
+
 ## Naming Rules
 
 - Use `System` for an actionable process, workflow, protocol, or
@@ -27,43 +32,43 @@ contracts, logs, or public APIs.
   use tags as a substitute for graph structure.
 - Use `Learning Graph` for the connected body of systems, models,
   provenance, and relationships. Use `Knowledge Graph` when discussing
-  the current implementation or generic graph tooling.
+  generic graph tooling or the legacy graph-rendering spike.
 - Use `Learning Pack` for a portable, versioned package of sources,
   anchors, atoms, relationships, and derivation metadata. Do not call a
   raw YAML seed file a learning pack unless it satisfies that contract.
-- Keep current and future terms distinct. The current app has separate
-  `systems`, `models`, and `provenance` tables; future architecture may
-  unify them as typed `Atom` records.
+- Keep active-alpha and legacy-spike terms distinct. The active alpha stores
+  systems, models, and claims as typed `Atom` records inside a Learning Pack;
+  the legacy spike has separate `systems`, `models`, and `provenance` tables.
 
 ## Core Product Concepts
 
 | Concept | Definition | Implementation note |
 |---|---|---|
-| Systems & Models | Local-first knowledge tool for capturing what to do, what to know, and why to trust it. | Current app lives in `app/`; strategy and architecture notes live under `docs/`. |
-| System | Actionable process, methodology, workflow, habit, protocol, or checklist. | Stored in `systems`; status is `draft`, `active`, `archived`, or `proven`. |
-| Model | Explanatory concept, framework, principle, or mental model. | Stored in `models`; type is `mental-model`, `concept`, `framework`, or `principle`. |
-| Provenance | Evidence and source-backed justification for a system or model. | Stored in `provenance`; type is `theory`, `quote`, `fact`, `principle`, `corollary`, or `research`. |
-| Relationship | Directed, typed connection between two entities. | Stored in `relationships` with `from_type`, `from_id`, `to_type`, `to_id`, `relationship_type`, optional `strength`, `metadata`, and tags. |
-| Learning Graph | Reviewable graph of practical knowledge, explanatory models, evidence, and learning artifacts. | Product concept; current UI renders a knowledge graph with Cytoscape. |
+| Systems & Models | Local-first knowledge tool for capturing what to do, what to know, and why to trust it. | Active alpha lives under `packages/*`; `app/` is a legacy reference spike. |
+| System | Actionable process, methodology, workflow, habit, protocol, or checklist. | Active alpha: `Atom.kind = "system"`; legacy spike: `systems` table. |
+| Model | Explanatory concept, framework, principle, or mental model. | Active alpha: `Atom.kind = "model"`; legacy spike: `models` table. |
+| Provenance | Evidence and source-backed justification for a system or model. | Active alpha: source assets, source anchors, `support_state`, and derivation runs; legacy spike: `provenance` table. |
+| Relationship | Directed, typed connection between two entities. | Active alpha: first-class `Relationship` records with reviewed traversal; legacy spike: `relationships` table. |
+| Learning Graph | Reviewable graph of practical knowledge, explanatory models, evidence, and learning artifacts. | Active alpha validates the graph in LearningPack v0; graph visualization is future UI work. |
 | Knowledge Graph | Generic graph representation of entities and relationships. | Acceptable when describing storage, graph rendering, or import schema. |
-| Learning Pack | Portable package for reviewed learning content. | Future contract should include stable IDs, sources, anchors, atoms, relationships, review states, derivation runs, schema version, and license metadata. |
+| Learning Pack | Portable package for reviewed learning content. | Current contract: `spec/learning-pack.schema.json` with stable IDs, sources, anchors, atoms, relationships, review states, derivation runs, schema version, and license metadata. |
 | Source-Grounded Learning | Learning experience where every important claim can point back to source material. | Product direction; source anchors are the trust primitive. |
 
 ## Entity Concepts
 
 | Concept | Definition | Implementation note |
 |---|---|---|
-| Entity | Current persisted object that can appear as a node. | Current entity types are `system`, `model`, and `provenance`. |
-| Stable ID | Durable identifier used for imports, relationships, and permalinks. | Current generated IDs are timestamp-based; schema docs say published IDs should not change. |
-| Permalink | Shareable hash URL for one entity. | Format is `#/system/{id}`, `#/model/{id}`, or `#/provenance/{id}`. |
+| Entity | Legacy persisted object that can appear as a node. | Active alpha uses `Atom`, `SourceAsset`, `SourceAnchor`, and `Relationship` records instead. |
+| Stable ID | Durable identifier used for imports, relationships, and permalinks. | LearningPack ids are non-empty and graph-validated for uniqueness; D-013 adds cross-collection collision checks. |
+| Permalink | Shareable hash URL for one entity. | Legacy format is `#/system/{id}`, `#/model/{id}`, or `#/provenance/{id}`; shareable Learning Pack routes are future work. |
 | Tag | Lightweight categorization label. | Tags support filtering/search; they do not express evidence or prerequisites. |
-| Evidence Link | Legacy/current system field that points to provenance IDs. | Prefer explicit `Relationship` edges for new graph semantics. |
-| Status | Lifecycle state for a system. | `draft` means unproven or incomplete; `proven` should imply supporting provenance, not just confidence. |
-| Model Type | Category for a model. | Use the exact enum values: `mental-model`, `concept`, `framework`, `principle`. |
-| Provenance Type | Category for source/evidence material. | Use the exact enum values: `theory`, `quote`, `fact`, `principle`, `corollary`, `research`. |
-| Credibility Score | Numeric source reliability hint. | Current field is `credibility_score`; future architecture should favor review completeness and provenance quality over a subjective score alone. |
-| Evolution Note | Human note explaining why understanding changed. | Table exists as `evolution_notes`; use for rationale, not immutable change history. |
-| Event | Immutable record of an entity change. | Stored in `events` with `entity_type`, `entity_id`, `event_type`, JSON data, metadata, and timestamp. |
+| Evidence Link | Legacy system field that points to provenance IDs. | Prefer source anchors and explicit `Relationship` edges for new graph semantics. |
+| Status | Legacy lifecycle state for a system. | Active alpha uses `review_state`; `published` requires reviewed support. |
+| Model Type | Legacy category for a model. | Active alpha has `Atom.kind = "model"` only; richer model subtypes are deferred. |
+| Provenance Type | Legacy category for source/evidence material. | Active alpha models provenance as source assets, anchors, support state, and derivations. |
+| Credibility Score | Legacy numeric source reliability hint. | Active alpha favors review completeness, anchor verifiability, and support state over a subjective score. |
+| Evolution Note | Legacy human note explaining why understanding changed. | Table exists as `evolution_notes`; use for rationale, not immutable change history. |
+| Event | Legacy immutable record of an entity change. | Active alpha uses `DerivationRun` for source/extraction/edit/publish lineage. |
 
 ## Relationship Concepts
 
@@ -81,50 +86,56 @@ contracts, logs, or public APIs.
 
 ## Source And Learning Concepts
 
-These terms describe the recommended next architecture. Use them when
-talking about source ingestion, review workflows, package formats, or
-future schema design.
+These terms describe the active alpha architecture and near-future pack work.
+Use them when talking about source ingestion, review workflows, package
+formats, or schema design.
 
 | Concept | Definition | Implementation note |
 |---|---|---|
 | Source Asset | Original material used to create or verify learning content. | Examples: video, podcast, paper, article, transcript, conversation, or course notes. |
-| Source Anchor | Exact location inside a source asset. | Examples: timestamp range, page range, quote selector, frame range, or character range. |
-| Atom | Unified future object for a system, model, claim, example, exercise, misconception, term, or provenance item. | Keep `Atom` to schema/architecture discussions until the app actually stores atoms. |
+| Source Anchor | Exact location inside a source asset. | Current text ingest emits sentence-level `text_quote` anchors with exact character offsets. |
+| Atom | Unified object for a system, model, claim, example, exercise, misconception, term, or provenance item. | Current alpha stores `system`, `model`, and `claim`; later atom kinds are deferred. |
 | Claim | Small assertion that can be supported, contradicted, or revised. | Useful for source extraction; do not force all claims into `Model`. |
 | Exercise | Learning artifact that asks the learner to retrieve, apply, or test knowledge. | Future atom kind; should include an answer, check, or rubric. |
 | Misconception | Common wrong belief or failure mode that learning content should remediate. | Future atom kind; often linked by `contradicts` or `remediates` in later schemas. |
 | Review State | Human/editorial state of an atom or relationship. | Recommended values include `generated`, `edited`, `reviewed`, `rejected`, and `published`. |
-| Derivation Run | Logged AI or tool execution that produced graph proposals from sources. | Should record provider, model, snapshot, prompt hash, schema version, inputs, outputs, validation, cost, and timestamp. |
-| Source-To-Pack Ingestion | Pipeline that turns source material into draft learning graph content. | Steps: ingest source, segment, extract atoms, extract edges, validate, review, publish/export. |
+| Derivation Run | Logged AI or tool execution that produced graph proposals from sources. | Current schema records actor, model metadata, schema version, inputs, outputs, cost, and timestamp. |
+| Source-To-Pack Ingestion | Pipeline that turns source material into draft learning graph content. | Active alpha: ingest source, segment into sentence anchors, extract atoms/edges, validate, review, save reviewed pack. |
 | Tutor Mode | Learning experience constrained to reviewed atoms and source anchors. | Should keep "show source" and "why should I believe this?" available. |
 
 ## UI Concepts
 
+These rows mostly describe the legacy spike UI. The active alpha UI is the
+focused review surface in `packages/web`.
+
 | Concept | Definition | Implementation note |
 |---|---|---|
-| List View | Main browsing surface for systems, models, and provenance cards. | Current page: `Home`; supports search and creation dialogs. |
-| Graph View | Visual network surface for nodes and relationship edges. | Current page: `Graph`; implemented with Cytoscape. |
-| Detail View | Entity-focused reading surface with permalink, markdown body, evidence, and relationships. | Current page: `Detail`; route is hash/permalink-driven. |
+| List View | Main browsing surface for systems, models, and provenance cards. | Legacy page: `Home`; supports search and creation dialogs. |
+| Graph View | Visual network surface for nodes and relationship edges. | Legacy page: `Graph`; implemented with Cytoscape. |
+| Detail View | Entity-focused reading surface with permalink, markdown body, evidence, and relationships. | Legacy page: `Detail`; route is hash/permalink-driven. |
 | Card | Compact representation of one entity in list view. | Product copy should identify entity type, title, description, tags, and lifecycle/type metadata. |
-| Link Dialog | UI for creating a typed relationship from one entity to another. | Component: `LinkEntityDialog`. |
-| Import Dialog | UI for importing YAML graph data. | Component: `ImportDataDialog`; imports current schema, not full learning packs. |
-| Search | Keyword search over titles, descriptions, content, tags, status/type, and provenance source. | Current search is client-side scoring in `searchEntities`. |
-| Graph Node | Visual representation of an entity. | Current colors: systems blue, models purple, provenance amber. |
+| Link Dialog | UI for creating a typed relationship from one entity to another. | Legacy component: `LinkEntityDialog`. |
+| Import Dialog | UI for importing YAML graph data. | Legacy component: `ImportDataDialog`; imports spike schema, not full learning packs. |
+| Search | Keyword search over titles, descriptions, content, tags, status/type, and provenance source. | Legacy search is client-side scoring in `searchEntities`. |
+| Graph Node | Visual representation of an entity. | Legacy colors: systems blue, models purple, provenance amber. |
 | Graph Edge | Visual representation of a relationship. | Edge labels show predicate and optional tags. |
 | Semantic Zoom | Graph behavior where label detail changes with zoom level. | Implemented in `graph-styles`; use for graph UI, not data model language. |
-| Inspector | Future side panel for source anchors, derivation runs, validation, review state, and diffs. | Current detail sidebar is a graph selection panel, not yet a full inspector. |
+| Inspector | Future side panel for source anchors, derivation runs, validation, review state, and diffs. | Legacy detail sidebar is a graph selection panel, not yet a full inspector. |
 
 ## Data And Platform Concepts
 
+These rows distinguish legacy spike storage from the active alpha's file-backed
+Learning Pack store.
+
 | Concept | Definition | Implementation note |
 |---|---|---|
-| Browser Database | SQLite database running in the browser through `sql.js`. | Current implementation loads sql.js WASM from `https://sql.js.org/dist/`. |
-| IndexedDB Persistence | Browser storage for the exported SQLite database bytes. | Current database name is `SystemsAndModelsDB`; object store is `database`. |
-| YAML Knowledge Base | Import format for seeding systems, models, provenance, and relationships. | Documented in `data/schema.md`; current import generates new internal IDs. |
-| Schema Version | Version marker for import/export contracts. | Current YAML includes `version`; future learning packs need a stricter schema version. |
+| Browser Database | SQLite database running in the browser through `sql.js`. | Legacy spike only; active alpha uses the local server's file-backed `.systems-and-models/` store. |
+| IndexedDB Persistence | Browser storage for the exported SQLite database bytes. | Legacy database name is `SystemsAndModelsDB`; object store is `database`. |
+| YAML Knowledge Base | Import format for seeding systems, models, provenance, and relationships. | Legacy format documented in `data/schema.md`; not a Learning Pack. |
+| Schema Version | Version marker for import/export contracts. | Active alpha uses `schema_version: "0"` in LearningPack v0. |
 | Local-First | Product principle that user data should remain usable and owned locally. | Do not equate local-first with "browser-only"; future ingestion likely needs a desktop or local backend. |
-| Event Sourcing | Pattern where changes are recorded as immutable events and state can be inspected over time. | Current implementation records events but does not yet expose full as-of reconstruction in UI. |
-| As-Of State | Derived state at a specific event cursor. | Future architecture pattern borrowed from adjacent as-of work; not implemented in the current app. |
+| Event Sourcing | Pattern where changes are recorded as immutable events and state can be inspected over time. | Legacy spike records events; active alpha records derivation runs but does not yet expose full as-of reconstruction. |
+| As-Of State | Derived state at a specific event cursor. | Future architecture pattern borrowed from adjacent as-of work; not implemented in the active alpha. |
 | Package Manifest | Metadata for a portable learning pack. | Should include title, version, schema version, license, source rights, hashes, and optional signatures. |
 | Marketplace | Distribution and commerce surface for learning packs. | Future scaling pattern; do not treat it as the product itself. |
 
@@ -135,8 +146,8 @@ future schema design.
 | Three-Layer Knowledge Model | Systems are what to do; models are what to know; provenance is why to trust it. | This is the product vocabulary users should learn first. |
 | First-Class Provenance | Evidence is modeled as graph content, not only as links in markdown. | Use when explaining trust, review, and source-backed learning. |
 | Explicit Relationship Edge | Typed graph edge captures meaning between entities. | Use instead of relying on proximity, tags, or prose-only references. |
-| Event Log With Snapshot Data | Entity CRUD records JSON snapshots in `events`. | Use for history/audit discussions; future as-of support needs stronger invariants. |
-| Graph Projection | UI maps database rows into Cytoscape nodes and edges. | Use for rendering discussions; it is not the canonical package model. |
+| Event Log With Snapshot Data | Entity CRUD records JSON snapshots in `events`. | Legacy spike pattern; future as-of support needs stronger invariants. |
+| Graph Projection | UI maps database rows into Cytoscape nodes and edges. | Legacy rendering pattern; it is not the canonical package model. |
 | Source Anchor First | Source locations should be stored before generated summaries. | Use for ingestion and trust workflows. |
 | AI Output As Proposal | Generated graph content requires validation and human review before publication. | Use for model-assisted extraction; never imply generated means trusted. |
 | Portable Package Contract | Learning content should move between tools as a versioned package. | Use for import/export and future marketplace planning. |
@@ -152,7 +163,7 @@ future schema design.
 - `Source Asset` is the original work. `Source Anchor` is the exact
   location inside that work. `Provenance` is the evidence object in the
   learning graph.
-- `Evidence Link` is a current field on systems. Prefer explicit
+- `Evidence Link` is a legacy field on systems. Prefer explicit
   relationship edges when modeling evidence in the graph.
 - `Relationship` is not a tag. Tags classify; relationships explain.
 - `Event` is not an evolution note. Events record what changed;
@@ -162,9 +173,9 @@ future schema design.
 - `Knowledge Graph` is not automatically a `Learning Pack`. A learning
   pack needs source rights, anchors, schema version, review state, and a
   portable manifest.
-- `Local-first` is not the same as current browser-only storage. The
+- `Local-first` is not the same as browser-only storage. The
   product can remain local-first while moving ingestion, search, or
   package validation into a local backend.
-- The current split tables are implementation detail. Future architecture
-  may unify systems, models, claims, exercises, and provenance as typed
-  atoms while preserving the user-facing language.
+- The legacy split tables are implementation detail. The active alpha already
+  unifies systems, models, and claims as typed atoms while preserving the
+  user-facing language.

@@ -25,11 +25,15 @@ tracked here as durable, committed markdown:
 
 Each worker is dispatched with a single bead and must return: bead ID, scope,
 changed files, gates run, risks, and any decisions made. The mayor reviews that
-report and the actual diff before integrating onto the alpha branch.
+report and the actual diff before integrating onto the current branch.
 
 ## Branch / PR model
 
-All alpha work lands on `claude/festive-ptolemy-fvmCz` behind a single PR. Workers
-operate in isolated worktrees; the mayor integrates verified diffs onto the alpha
-branch and records each bead's outcome (ID, scope, files, gates, risks, decisions)
-in the PR body and the bead file.
+PR #3 merged the alpha branch (`claude/festive-ptolemy-fvmCz`) to `master`.
+Post-merge follow-ups land on short-lived branches off the merged alpha (for
+example, issue #4 follow-ups in PR #5).
+
+Per D-012, dependent implementation workers run sequentially in the main working
+tree on the current integration branch and do not commit. The mayor integrates
+verified diffs and records each bead's outcome (ID, scope, files, gates, risks,
+decisions) in the bead file, dashboard, and PR notes.
