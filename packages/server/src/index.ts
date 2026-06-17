@@ -130,6 +130,55 @@ interface CoreDeps {
   adapter: ExtractionAdapter
   now: () => Date
   idFactory: () => string
+  /** Per-pack async serializer for read-modify-write mutations (bd-16). */
+  withPackLock: PackLock
+}
+
+/**
+ * A per-pack async serializer: `withPackLock(packId, fn)` runs `fn` only after
+ * any earlier mutation on that SAME `packId` has fully settled, so the
+ * read-modify-write-validate-persist cycle for one pack never interleaves with
+ * another on the same pack (the lost-update gap, bd-16). Different pack ids are
+ * independent queues, so they still run concurrently (no global lock/deadlock).
+ */
+export type PackLock = <T>(packId: string, fn: () => T | Promise<T>) => Promise<T>
+
+/**
+ * Build a {@link PackLock}. Keyed by pack id, it keeps a `Map` of the TAIL of
+ * each pack's promise chain. A new call chains its `fn` after the current tail,
+ * so calls on the same key run strictly in arrival order, each to completion.
+ *
+ * Memory: the map entry for a key is deleted once its chain fully drains (the
+ * scheduled call is the last one in flight for that key), so the map never grows
+ * past the set of packs with an in-flight/queued mutation — no unbounded growth.
+ *
+ * Robustness: a rejecting `fn` propagates its error to ITS caller but must NOT
+ * poison the queue for the next caller. The tail we chain on is a settle-only
+ * barrier (`.then(noop, noop)`), so one mutation's throw never breaks the chain.
+ */
+export function createPackLock(): PackLock {
+  const tails = new Map<string, Promise<unknown>>()
+
+  return function withPackLock<T>(packId: string, fn: () => T | Promise<T>): Promise<T> {
+    // Wait for the prior tail to SETTLE (success or failure) before running fn.
+    const prior = tails.get(packId) ?? Promise.resolve()
+    const run = prior.then(
+      () => fn(),
+      () => fn(),
+    )
+    // The new tail is a settle-only barrier so a rejection can't break the chain.
+    const tail = run.then(
+      () => undefined,
+      () => undefined,
+    )
+    tails.set(packId, tail)
+    // Clean up once THIS call is the last one queued for the key, so the map
+    // never retains drained keys (avoids an unbounded leak across many packs).
+    void tail.then(() => {
+      if (tails.get(packId) === tail) tails.delete(packId)
+    })
+    return run
+  }
 }
 
 /**
@@ -179,17 +228,23 @@ async function route(req: ApiRequest, deps: CoreDeps): Promise<ApiResponse> {
       return err(405, `method ${m} not allowed on /packs/:id/validate`)
     }
     if (seg.length === 3 && action === 'reviewed') {
-      if (m === 'POST') return postReviewed(packId, deps)
+      // Mutating route — serialize against other mutations on this same pack
+      // (read-validate-persist must run to completion atomically, bd-16).
+      if (m === 'POST') return deps.withPackLock(packId, () => postReviewed(packId, deps))
       return err(405, `method ${m} not allowed on /packs/:id/reviewed`)
     }
     if (action === 'atoms') {
       const atomId = seg[3]
       if (seg.length === 4 && atomId !== undefined) {
-        if (m === 'PATCH') return patchAtom(packId, atomId, req, deps)
+        // Mutating route — serialize per-pack (bd-16).
+        if (m === 'PATCH') {
+          return deps.withPackLock(packId, () => patchAtom(packId, atomId, req, deps))
+        }
         return err(405, `method ${m} not allowed on /packs/:id/atoms/:atomId`)
       }
       if (seg.length === 5 && atomId !== undefined && seg[4] === 'split') {
-        if (m === 'POST') return splitAtom(packId, atomId, deps)
+        // Mutating route — serialize per-pack (bd-16).
+        if (m === 'POST') return deps.withPackLock(packId, () => splitAtom(packId, atomId, deps))
         return err(405, `method ${m} not allowed on /packs/:id/atoms/:atomId/split`)
       }
       return err(404, 'not found')
@@ -197,7 +252,10 @@ async function route(req: ApiRequest, deps: CoreDeps): Promise<ApiResponse> {
     if (action === 'relationships') {
       const relId = seg[3]
       if (seg.length === 4 && relId !== undefined) {
-        if (m === 'PATCH') return patchRelationship(packId, relId, req, deps)
+        // Mutating route — serialize per-pack (bd-16).
+        if (m === 'PATCH') {
+          return deps.withPackLock(packId, () => patchRelationship(packId, relId, req, deps))
+        }
         return err(405, `method ${m} not allowed on /packs/:id/relationships/:relId`)
       }
       return err(404, 'not found')
@@ -599,7 +657,13 @@ export function createServer(options: ServerOptions = {}): Server {
   const now = options.now ?? DEFAULT_NOW
   const idFactory = options.idFactory ?? defaultIdFactory()
 
-  const deps: CoreDeps = { store: new Store(dataDir), adapter, now, idFactory }
+  const deps: CoreDeps = {
+    store: new Store(dataDir),
+    adapter,
+    now,
+    idFactory,
+    withPackLock: createPackLock(),
+  }
 
   let httpServer: HttpServer | undefined
 

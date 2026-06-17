@@ -14,8 +14,9 @@ import {
 } from './index.js'
 
 // A multi-paragraph Markdown transcript fixture. Blank lines separate
-// paragraphs; one paragraph spans multiple lines to exercise interior-newline
-// preservation; trailing blank lines exercise boundary trimming.
+// paragraphs; one paragraph holds TWO sentences on separate lines to exercise
+// the within-paragraph sentence split (bd-17); trailing blank lines exercise
+// boundary trimming.
 const TRANSCRIPT = `# Compound Interest
 
 Interest compounds when earnings are reinvested.
@@ -70,8 +71,10 @@ describe('@sam/ingest', () => {
     expect(result.source.creator).toBe('Test Author')
     expect(result.source.content_hash).toMatch(/^sha256:[0-9a-f]{64}$/)
 
-    // Four non-empty paragraph spans in the fixture.
-    expect(result.anchors).toHaveLength(4)
+    // Five non-empty SENTENCE spans in the fixture (bd-17): the heading, the two
+    // sentences of the multi-line paragraph (split within the paragraph), the
+    // blockquote sentence, and the final sentence.
+    expect(result.anchors).toHaveLength(5)
     for (const anchor of result.anchors) {
       expect(anchor.selector.kind).toBe('text_quote')
       expect(anchor.extraction_method).toBe('native')
@@ -80,11 +83,15 @@ describe('@sam/ingest', () => {
       expect(anchor.excerpt).toBe(anchor.excerpt.trim())
     }
 
-    // The multi-line paragraph keeps its interior newline verbatim.
-    const multiline = result.anchors.find((a) => a.excerpt.includes('\n'))
-    expect(multiline?.excerpt).toContain(
-      'Interest compounds when earnings are reinvested.\nEach period',
-    )
+    // The multi-sentence paragraph yields ONE anchor per sentence; the
+    // interior newline is now a sentence boundary, not preserved in an excerpt.
+    expect(result.anchors.map((a) => a.excerpt)).toEqual([
+      '# Compound Interest',
+      'Interest compounds when earnings are reinvested.',
+      'Each period grows the principal, so growth accelerates over time.',
+      '> The most powerful force in the universe is compound interest.',
+      'A small rate, given enough time, beats a large rate over a short window.',
+    ])
 
     // Derivation links source -> anchors.
     expect(result.derivation.op).toBe('ingest')
@@ -192,6 +199,55 @@ describe('@sam/ingest', () => {
     expect(result.anchors.map((a) => a.excerpt)).toEqual(['Alpha.', 'Beta.'])
     for (const anchor of result.anchors) {
       expect(anchor.excerpt.trim().length).toBeGreaterThan(0)
+    }
+  })
+
+  it('splits a single paragraph into one anchor per sentence (bd-17)', async () => {
+    const result = await ingest('First sentence. Second sentence! Third?')
+    expect(result.anchors.map((a) => a.excerpt)).toEqual([
+      'First sentence.',
+      'Second sentence!',
+      'Third?',
+    ])
+    // Never crosses a paragraph boundary: two paragraphs, two+ sentences each.
+    const two = await ingest('Alpha one. Alpha two.\n\nBeta one. Beta two.')
+    expect(two.anchors.map((a) => a.excerpt)).toEqual([
+      'Alpha one.',
+      'Alpha two.',
+      'Beta one.',
+      'Beta two.',
+    ])
+  })
+
+  it('does NOT split on a decimal (terminator not followed by whitespace)', async () => {
+    const result = await ingest('Pi is about 3.14 in value. The end.')
+    expect(result.anchors.map((a) => a.excerpt)).toEqual([
+      'Pi is about 3.14 in value.',
+      'The end.',
+    ])
+  })
+
+  it('allows trailing closing quotes/brackets before a sentence boundary', async () => {
+    const result = await ingest('He said "go now." She left.')
+    expect(result.anchors.map((a) => a.excerpt)).toEqual([
+      'He said "go now."',
+      'She left.',
+    ])
+  })
+
+  it('over-splits abbreviations (documented, accepted heuristic limitation)', async () => {
+    // `e.g.` is followed by whitespace + a letter, so the heuristic treats each
+    // `.` as a sentence boundary. This is an accepted trade-off (no abbreviation
+    // dictionary). The anchors stay exact + verifiable regardless.
+    const result = await ingest('Use a model, e.g. a map. It helps.')
+    expect(result.anchors.map((a) => a.excerpt)).toEqual([
+      'Use a model, e.g.',
+      'a map.',
+      'It helps.',
+    ])
+    const normalized = normalizeText('Use a model, e.g. a map. It helps.')
+    for (const anchor of result.anchors) {
+      expect(verifyAnchor(anchor, normalized)).toBe(true)
     }
   })
 

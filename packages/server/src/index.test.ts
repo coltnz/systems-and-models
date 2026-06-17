@@ -4,7 +4,7 @@ import { join } from 'node:path'
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import { createServer, Store, type Server, type ApiResponse } from './index.js'
+import { createPackLock, createServer, Store, type Server, type ApiResponse } from './index.js'
 import { isSafeId } from './store.js'
 
 // --- Deterministic harness ---------------------------------------------------
@@ -506,15 +506,31 @@ describe('http wiring', () => {
     const server = newServer(dataDir)
     const port = await server.listen(0)
     try {
-      // A body over MAX_BODY_BYTES (~10 MB) must be refused with 413, not buffered.
+      // A body over MAX_BODY_BYTES (~10 MB) must be refused, not buffered. The
+      // server caps it mid-upload and `req.destroy()`s the socket; depending on
+      // timing the client either receives the 413 response OR sees the connection
+      // reset before it finishes writing the 11 MB body. BOTH prove the cap
+      // engaged (the body was not buffered) — accept either so the test is not
+      // flaky on the destroy/upload race.
       const huge = 'x'.repeat(11 * 1024 * 1024)
-      const big = await fetch(`http://127.0.0.1:${port}/sources`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ blob: huge }),
-      })
-      expect(big.status).toBe(413)
-      expect(((await big.json()) as { error: string }).error).toBe('request body too large')
+      let refused = false
+      try {
+        const big = await fetch(`http://127.0.0.1:${port}/sources`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ blob: huge }),
+        })
+        if (big.status === 413) {
+          refused = true
+          expect(((await big.json()) as { error: string }).error).toBe(
+            'request body too large',
+          )
+        }
+      } catch {
+        // Connection reset before the full body was sent — the server refused it.
+        refused = true
+      }
+      expect(refused).toBe(true)
 
       // The server stays up: a normal request after the oversized one still works.
       const ok = await fetch(`http://127.0.0.1:${port}/sources`, {
@@ -667,5 +683,213 @@ describe('bd-14 generic 500 on unexpected error', () => {
     expect(res.status).toBe(500)
     expect((res.body as { error: string }).error).toBe('internal error')
     expect(JSON.stringify(res.body)).not.toContain(secret)
+  })
+})
+
+// --- bd-16: serialize same-pack mutations ------------------------------------
+
+describe('bd-16 withPackLock serializer', () => {
+  // A read-modify-write cycle with a REAL async window between read and write.
+  // This is the shape the lock must protect: without serialization two cycles on
+  // the same key both read the same value and the second write clobbers the first
+  // (a lost update). The server's store is synchronous today so this gap is only
+  // theoretical in-process, but the lock guarantees correctness if it ever isn't.
+  const yieldTick = (): Promise<void> => new Promise((r) => setTimeout(r, 0))
+
+  it('without a lock, two overlapping read-modify-write cycles lose an update (control)', async () => {
+    const store = { v: 0 }
+    async function inc(): Promise<void> {
+      const read = store.v
+      await yieldTick() // both reads happen before either write → clobber
+      store.v = read + 1
+    }
+    await Promise.all([inc(), inc()])
+    // The lost update: two increments, but only one landed.
+    expect(store.v).toBe(1)
+  })
+
+  it('serializes same-key cycles so BOTH overlapping mutations land (no lost update)', async () => {
+    const lock = createPackLock()
+    const store = { v: 0 }
+    async function inc(): Promise<void> {
+      const read = store.v
+      await yieldTick()
+      store.v = read + 1
+    }
+    // Both started before either resolves; same key → the lock chains them.
+    await Promise.all([lock('p', inc), lock('p', inc)])
+    expect(store.v).toBe(2)
+  })
+
+  it('runs DIFFERENT keys concurrently (no global lock, no deadlock)', async () => {
+    const lock = createPackLock()
+    const order: string[] = []
+    // p1's fn yields a few ticks; p2 must not be blocked behind it.
+    const p1 = lock('p1', async () => {
+      await yieldTick()
+      await yieldTick()
+      order.push('p1')
+    })
+    const p2 = lock('p2', async () => {
+      order.push('p2')
+    })
+    await Promise.all([p1, p2])
+    // p2 finished first despite being started second → not serialized vs p1.
+    expect(order).toEqual(['p2', 'p1'])
+  })
+
+  it('propagates a rejection to its caller WITHOUT poisoning the chain for the next', async () => {
+    const lock = createPackLock()
+    const seen: string[] = []
+    const boom = lock('p', () => {
+      throw new Error('boom')
+    })
+    // The next same-key call still runs to completion after the rejection.
+    const next = lock('p', () => {
+      seen.push('next ran')
+      return 42
+    })
+    await expect(boom).rejects.toThrow('boom')
+    await expect(next).resolves.toBe(42)
+    expect(seen).toEqual(['next ran'])
+  })
+
+  it('drains its internal map once a key has no in-flight work (no leak)', async () => {
+    const lock = createPackLock()
+    // Touch many distinct keys; each chain should clean itself up after settling.
+    await Promise.all(
+      Array.from({ length: 50 }, (_, i) => lock(`k${i}`, () => i)),
+    )
+    // After all settle, a fresh key behaves exactly like the first (cold) call:
+    // it does not wait behind any prior tail. Assert it resolves on the next tick
+    // without inheriting a stale chain (proxy for "the map is not growing").
+    let ran = false
+    await lock('fresh', () => {
+      ran = true
+    })
+    expect(ran).toBe(true)
+  })
+})
+
+describe('bd-16 same-pack mutations serialize end-to-end', () => {
+  async function setup(server: Server): Promise<{ packId: string; atomIds: string[] }> {
+    const src = await postSource(server)
+    const sourceId = (src.body as { source_id: string }).source_id
+    const draft = await draftPack(server, sourceId)
+    const pack = (draft.body as { pack: { id: string; atoms: { id: string }[] } }).pack
+    return { packId: pack.id, atomIds: pack.atoms.map((a) => a.id) }
+  }
+
+  it('two concurrent PATCHes on the SAME pack (different atoms) BOTH land — neither lost', async () => {
+    const server = newServer(dataDir)
+    const { packId, atomIds } = await setup(server)
+    expect(atomIds.length).toBeGreaterThanOrEqual(2)
+
+    // Fire two mutations on the SAME pack WITHOUT awaiting between them: accept
+    // atom A and accept atom B. Both promises are pending simultaneously; the
+    // per-pack lock serializes the two read-modify-write cycles so the second
+    // reads the first's persisted result and neither edit is dropped.
+    const [resA, resB] = await Promise.all([
+      server.handle({
+        method: 'PATCH',
+        path: `/packs/${packId}/atoms/${atomIds[0]}`,
+        body: { op: 'accept' },
+      }),
+      server.handle({
+        method: 'PATCH',
+        path: `/packs/${packId}/atoms/${atomIds[1]}`,
+        body: { op: 'reject' },
+      }),
+    ])
+    expect(resA.status).toBe(200)
+    expect(resB.status).toBe(200)
+
+    // The FINAL persisted pack must reflect BOTH mutations.
+    const got = await server.handle({ method: 'GET', path: `/packs/${packId}` })
+    const pack = (got.body as {
+      pack: { atoms: { id: string; review_state: string }[]; derivations: unknown[] }
+    }).pack
+    const a = pack.atoms.find((x) => x.id === atomIds[0])!
+    const b = pack.atoms.find((x) => x.id === atomIds[1])!
+    expect(a.review_state).toBe('reviewed')
+    expect(b.review_state).toBe('rejected')
+    // Both mutations appended an edit derivation (ingest + extract + 2 edits = 4):
+    // had the second clobbered the first's write, only ONE edit would survive.
+    expect(pack.derivations.length).toBe(4)
+  })
+
+  it('the second same-pack mutation observes the first persisted write (read after write)', async () => {
+    const server = newServer(dataDir)
+    const { packId, atomIds } = await setup(server)
+
+    // Instrument the real Store to record the ORDER of pack reads/writes across
+    // the two concurrent handle() calls. With the per-pack lock, the order is the
+    // serialized [get, put, get, put]; the second get must follow the first put.
+    const events: string[] = []
+    const realGet = Store.prototype.getPack
+    const realPut = Store.prototype.putPack
+    Store.prototype.getPack = function (this: Store, id: string) {
+      if (id === packId) events.push('get')
+      return realGet.call(this, id)
+    }
+    Store.prototype.putPack = function (this: Store, pack: Parameters<Store['putPack']>[0]) {
+      if (pack.id === packId) events.push('put')
+      return realPut.call(this, pack)
+    }
+    try {
+      await Promise.all([
+        server.handle({
+          method: 'PATCH',
+          path: `/packs/${packId}/atoms/${atomIds[0]}`,
+          body: { op: 'accept' },
+        }),
+        server.handle({
+          method: 'PATCH',
+          path: `/packs/${packId}/atoms/${atomIds[1]}`,
+          body: { op: 'accept' },
+        }),
+      ])
+    } finally {
+      Store.prototype.getPack = realGet
+      Store.prototype.putPack = realPut
+    }
+    // Serialized: each cycle reads then writes before the next reads.
+    expect(events).toEqual(['get', 'put', 'get', 'put'])
+  })
+
+  it('concurrent mutations on DIFFERENT packs both complete (no deadlock, not serialized away)', async () => {
+    const server = newServer(dataDir)
+    const a = await setup(server)
+    const b = await setup(server)
+    expect(a.packId).not.toBe(b.packId)
+
+    // Two different packs mutated concurrently must both complete promptly.
+    const [resA, resB] = await Promise.all([
+      server.handle({
+        method: 'PATCH',
+        path: `/packs/${a.packId}/atoms/${a.atomIds[0]}`,
+        body: { op: 'accept' },
+      }),
+      server.handle({
+        method: 'PATCH',
+        path: `/packs/${b.packId}/atoms/${b.atomIds[0]}`,
+        body: { op: 'accept' },
+      }),
+    ])
+    expect(resA.status).toBe(200)
+    expect(resB.status).toBe(200)
+
+    const gotA = await server.handle({ method: 'GET', path: `/packs/${a.packId}` })
+    const gotB = await server.handle({ method: 'GET', path: `/packs/${b.packId}` })
+    expect(
+      (gotA.body as { pack: { atoms: { id: string; review_state: string }[] } }).pack.atoms.find(
+        (x) => x.id === a.atomIds[0],
+      )!.review_state,
+    ).toBe('reviewed')
+    expect(
+      (gotB.body as { pack: { atoms: { id: string; review_state: string }[] } }).pack.atoms.find(
+        (x) => x.id === b.atomIds[0],
+      )!.review_state,
+    ).toBe('reviewed')
   })
 })

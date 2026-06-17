@@ -18,38 +18,98 @@
   ],
   "anchors": [
     {
-      "id": "anc-0-417",
+      "id": "anc-0-117",
       "source_asset_id": "src-1ebca36115d7",
       "selector": {
         "kind": "text_quote",
         "start": "0",
-        "end": "417"
+        "end": "117"
       },
-      "excerpt": "The circuit breaker pattern is a mental model for protecting a service that depends on a flaky downstream dependency. Like an electrical breaker that trips to stop current when a fault is detected, the software circuit breaker watches the failure rate of outgoing calls and, once that rate crosses a threshold, it \"opens\" and short-circuits further calls so the caller fails fast instead of piling up doomed requests.",
+      "excerpt": "The circuit breaker pattern is a mental model for protecting a service that depends on a flaky downstream dependency.",
       "extraction_method": "native",
       "verifiable": true
     },
     {
-      "id": "anc-419-901",
+      "id": "anc-118-417",
+      "source_asset_id": "src-1ebca36115d7",
+      "selector": {
+        "kind": "text_quote",
+        "start": "118",
+        "end": "417"
+      },
+      "excerpt": "Like an electrical breaker that trips to stop current when a fault is detected, the software circuit breaker watches the failure rate of outgoing calls and, once that rate crosses a threshold, it \"opens\" and short-circuits further calls so the caller fails fast instead of piling up doomed requests.",
+      "extraction_method": "native",
+      "verifiable": true
+    },
+    {
+      "id": "anc-419-480",
       "source_asset_id": "src-1ebca36115d7",
       "selector": {
         "kind": "text_quote",
         "start": "419",
-        "end": "901"
+        "end": "480"
       },
-      "excerpt": "To operate a circuit breaker you follow a concrete procedure. First, wrap each remote call and record whether it succeeded or failed. Second, when the rolling failure rate exceeds the configured threshold, move the breaker to the open state and immediately reject new calls for a cooldown window. Third, after the cooldown elapses, allow a single trial call through in a half-open state; if it succeeds, close the breaker and resume normal traffic, otherwise re-open and wait again.",
+      "excerpt": "To operate a circuit breaker you follow a concrete procedure.",
       "extraction_method": "native",
       "verifiable": true
     },
     {
-      "id": "anc-903-1258",
+      "id": "anc-481-552",
+      "source_asset_id": "src-1ebca36115d7",
+      "selector": {
+        "kind": "text_quote",
+        "start": "481",
+        "end": "552"
+      },
+      "excerpt": "First, wrap each remote call and record whether it succeeded or failed.",
+      "extraction_method": "native",
+      "verifiable": true
+    },
+    {
+      "id": "anc-553-715",
+      "source_asset_id": "src-1ebca36115d7",
+      "selector": {
+        "kind": "text_quote",
+        "start": "553",
+        "end": "715"
+      },
+      "excerpt": "Second, when the rolling failure rate exceeds the configured threshold, move the breaker to the open state and immediately reject new calls for a cooldown window.",
+      "extraction_method": "native",
+      "verifiable": true
+    },
+    {
+      "id": "anc-716-901",
+      "source_asset_id": "src-1ebca36115d7",
+      "selector": {
+        "kind": "text_quote",
+        "start": "716",
+        "end": "901"
+      },
+      "excerpt": "Third, after the cooldown elapses, allow a single trial call through in a half-open state; if it succeeds, close the breaker and resume normal traffic, otherwise re-open and wait again.",
+      "extraction_method": "native",
+      "verifiable": true
+    },
+    {
+      "id": "anc-903-1117",
       "source_asset_id": "src-1ebca36115d7",
       "selector": {
         "kind": "text_quote",
         "start": "903",
+        "end": "1117"
+      },
+      "excerpt": "Teams that adopt this pattern claim that a tripped breaker measurably reduces cascading failures during a downstream outage, because callers stop waiting on timeouts and shed load before the whole system saturates.",
+      "extraction_method": "native",
+      "verifiable": true
+    },
+    {
+      "id": "anc-1118-1258",
+      "source_asset_id": "src-1ebca36115d7",
+      "selector": {
+        "kind": "text_quote",
+        "start": "1118",
         "end": "1258"
       },
-      "excerpt": "Teams that adopt this pattern claim that a tripped breaker measurably reduces cascading failures during a downstream outage, because callers stop waiting on timeouts and shed load before the whole system saturates. This assertion is testable: you can compare error budgets and tail latency with the breaker enabled versus disabled under an injected fault.",
+      "excerpt": "This assertion is testable: you can compare error budgets and tail latency with the breaker enabled versus disabled under an injected fault.",
       "extraction_method": "native",
       "verifiable": true
     }
@@ -59,13 +119,13 @@
       "id": "atom-src-1ebca36115d7-1",
       "kind": "model",
       "title": "The circuit breaker pattern is a mental model for protecting a service that dep…",
-      "summary": "The circuit breaker pattern is a mental model for protecting a service that depends on a flaky downstream dependency. Like an electrical breaker that trips to stop current when a fault is detected, t…",
-      "body": "The circuit breaker pattern is a mental model for protecting a service that depends on a flaky downstream dependency. Like an electrical breaker that trips to stop current when a fault is detected, the software circuit breaker watches the failure rate of outgoing calls and, once that rate crosses a threshold, it \"opens\" and short-circuits further calls so the caller fails fast instead of piling up doomed requests.",
+      "summary": "The circuit breaker pattern is a mental model for protecting a service that depends on a flaky downstream dependency.",
+      "body": "The circuit breaker pattern is a mental model for protecting a service that depends on a flaky downstream dependency.",
       "review_state": "reviewed",
       "authored_by": "ai",
       "anchors": [
         {
-          "anchor_id": "anc-0-417",
+          "anchor_id": "anc-0-117",
           "support_state": "supports"
         }
       ],
@@ -75,14 +135,14 @@
     {
       "id": "atom-src-1ebca36115d7-2",
       "kind": "claim",
-      "title": "To operate a circuit breaker you follow a concrete procedure. First, wrap each…",
-      "summary": "To operate a circuit breaker you follow a concrete procedure. First, wrap each remote call and record whether it succeeded or failed. Second, when the rolling failure rate exceeds the configured thre…",
-      "body": "To operate a circuit breaker you follow a concrete procedure. First, wrap each remote call and record whether it succeeded or failed. Second, when the rolling failure rate exceeds the configured threshold, move the breaker to the open state and immediately reject new calls for a cooldown window. Third, after the cooldown elapses, allow a single trial call through in a half-open state; if it succeeds, close the breaker and resume normal traffic, otherwise re-open and wait again.",
+      "title": "Like an electrical breaker that trips to stop current when a fault is detected,…",
+      "summary": "Like an electrical breaker that trips to stop current when a fault is detected, the software circuit breaker watches the failure rate of outgoing calls and, once that rate crosses a threshold, it \"op…",
+      "body": "Like an electrical breaker that trips to stop current when a fault is detected, the software circuit breaker watches the failure rate of outgoing calls and, once that rate crosses a threshold, it \"opens\" and short-circuits further calls so the caller fails fast instead of piling up doomed requests.",
       "review_state": "rejected",
       "authored_by": "ai",
       "anchors": [
         {
-          "anchor_id": "anc-419-901",
+          "anchor_id": "anc-118-417",
           "support_state": "partially"
         }
       ],
@@ -98,8 +158,8 @@
       "predicate": "explains",
       "review_state": "generated",
       "anchor_ids": [
-        "anc-0-417",
-        "anc-419-901"
+        "anc-0-117",
+        "anc-118-417"
       ],
       "support_state": "partially"
     }
@@ -112,9 +172,14 @@
         "src-1ebca36115d7"
       ],
       "output_ids": [
-        "anc-0-417",
-        "anc-419-901",
-        "anc-903-1258"
+        "anc-0-117",
+        "anc-118-417",
+        "anc-419-480",
+        "anc-481-552",
+        "anc-553-715",
+        "anc-716-901",
+        "anc-903-1117",
+        "anc-1118-1258"
       ],
       "actor": "ai",
       "schema_version": "0",

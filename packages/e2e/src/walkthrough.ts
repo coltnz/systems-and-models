@@ -111,8 +111,15 @@ function body<T>(res: ApiResponse): T {
   return res.body as T
 }
 
-/** In-scope: overlaps the model atom (circuit-breaker paragraph = anchor[0]). */
-export const IN_SCOPE_QUESTION = 'What is the circuit breaker pattern and when does it open?'
+/**
+ * In-scope: overlaps the reviewed MODEL atom, whose body is now the FIRST
+ * SENTENCE of the source (bd-17 sentence anchoring) — "The circuit breaker
+ * pattern is a mental model for protecting a service that depends on a flaky
+ * downstream dependency." The content tokens circuit/breaker/pattern/model/
+ * service all overlap that first-sentence anchor, so the tutor cites it.
+ */
+export const IN_SCOPE_QUESTION =
+  'What is the circuit breaker pattern as a mental model for protecting a service?'
 /** Out-of-scope: zero content-token overlap with the reviewed graph. */
 export const OUT_OF_SCOPE_QUESTION = 'How does photosynthesis convert sunlight into sugar in plants?'
 
@@ -156,7 +163,8 @@ export async function runWalkthrough(dataDir: string): Promise<WalkthroughResult
   if (!draft.validation.ok) throw new Error('draft pack failed validation')
   if (draft.pack.atoms.length < 1) throw new Error('draft pack has no atoms')
 
-  // The mock anchors the MODEL atom to anchor[0] with support_state="supports".
+  // The mock anchors the MODEL atom to anchor[0] (the FIRST SENTENCE of the
+  // source under bd-17) with support_state="supports".
   const modelAtom = draft.pack.atoms.find((a) => a.kind === 'model')
   if (!modelAtom) throw new Error('draft pack has no model atom to cite')
   const modelAnchorId = modelAtom.anchors[0]?.anchor_id

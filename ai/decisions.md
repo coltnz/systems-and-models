@@ -3,6 +3,25 @@
 Durable product/tech decisions. Format: **Decision** · _Choice_ · Rationale · (bead).
 Newest first. Findings that fed these live (gitignored) in `ai/findings/`.
 
+## D-015 · Server serializes mutations per pack id (in-memory mutex) · bd-16 (issue #4)
+`withPackLock(packId, fn)` (a per-pack promise-chain) wraps the pack-mutating routes so a read-modify-
+write cycle for a pack completes before the next on that same pack starts; different packs stay
+concurrent. _Rationale:_ prevents lost updates. Forward-looking — with today's synchronous store
+`handle()` is already atomic per call; the lock matters once persistence becomes async. No DB.
+
+## D-014 · The date-time tz-aware rule stays graph-owned, guarded by a test · bd-15 (issue #4)
+Kept the lenient structural `date-time` format + the graph-layer `derivation_created_at_not_tz_aware`
+check (no runtime-severity change). Added a regression test asserting `created_at` is the only
+`date-time` field, so a future `date-time` field forces a conscious graph-check decision. _Rationale:_
+fix the fragility (review finding) without moving where the error surfaces.
+
+## D-013 · Pack ids are globally unique; enforced in the validator AND guaranteed at assembly · bd-15 (issue #4)
+The validator flags `cross_collection_duplicate_id` (an id shared across sources/anchors/atoms/
+relationships/derivations); `assembleExtraction` guarantees uniqueness at the chokepoint (a single
+`used` set seeded with the reserved ids) so extraction output can never trip it. _Rationale:_ makes
+`DerivationRun.output_ids` unambiguous and preserves the no-stranded-draft property (consistent with
+bd-12/bd-13 — the validator check only ever fires on external/hand-edited packs).
+
 ## D-012 · Dependent beads run as main-tree, no-commit workers; mayor integrates · process
 Agent worktrees branch from `master`, not the alpha branch, so they cannot see merged scaffold
 (bd-3 worktree was cut at master and lacked `packages/`/`ai/`). Therefore: the two **audit** beads

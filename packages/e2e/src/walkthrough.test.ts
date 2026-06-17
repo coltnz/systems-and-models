@@ -55,7 +55,8 @@ describe('alpha walkthrough (offline, mock adapter)', () => {
   })
 
   it('ingests the demo source into a source + multiple verifiable anchors', () => {
-    // The demo fixture is split into >=2 blank-line paragraphs -> >=2 anchors.
+    // The demo fixture is split into SENTENCES (bd-17) -> several anchors
+    // (paragraph blocks of multiple sentences each yield one anchor per sentence).
     expect(result.anchorCount).toBeGreaterThanOrEqual(2)
     expect(result.sourceId).toMatch(/^src-/)
     // The license travels in metadata; the ingested body has no header comment.

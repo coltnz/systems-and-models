@@ -12,7 +12,7 @@ import {
   type ExtractionInput,
   type ExtractionResult,
 } from './index.js'
-import { computeUsd, parseDraft } from './openai-adapter.js'
+import { buildResponseSchema, computeUsd, parseDraft } from './openai-adapter.js'
 import {
   assembleExtraction,
   UnknownAnchorError,
@@ -316,6 +316,88 @@ describe('OpenAIAdapter parseDraft normalization (no network)', () => {
     const validation = validatePack(pack)
     expect(validation.errors).toEqual([])
     expect(validation.ok).toBe(true)
+  })
+})
+
+describe('OpenAIAdapter parseDraft runtime enum validation (bd-15)', () => {
+  // A minimal well-formed draft, parametrized so each test can corrupt exactly
+  // ONE enum field and assert parseDraft throws a clear, located error.
+  function draftWith(overrides: {
+    kind?: string
+    atomSupport?: string
+    predicate?: string
+    relSupport?: string
+  }): string {
+    return JSON.stringify({
+      atoms: [
+        {
+          id: 'atom-1',
+          kind: overrides.kind ?? 'model',
+          title: 'Compounding',
+          summary: 'Earnings reinvested compound.',
+          body: 'Interest compounds when earnings are reinvested.',
+          anchors: [
+            { anchor_id: 'anc-1', support_state: overrides.atomSupport ?? 'supports' },
+          ],
+        },
+        {
+          id: 'atom-2',
+          kind: 'claim',
+          title: 'Small rate beats',
+          summary: 'A small rate over time beats a large rate.',
+          body: 'A small rate, given enough time, beats a large rate.',
+          anchors: [{ anchor_id: 'anc-2', support_state: 'partially' }],
+        },
+      ],
+      relationships: [
+        {
+          id: 'rel-1',
+          from_atom_id: 'atom-1',
+          to_atom_id: 'atom-2',
+          predicate: overrides.predicate ?? 'explains',
+          anchor_ids: ['anc-1'],
+          support_state: overrides.relSupport ?? 'supports',
+        },
+      ],
+    })
+  }
+
+  it('a well-formed draft (all enums in range) parses without throwing', () => {
+    expect(() => parseDraft(draftWith({}))).not.toThrow()
+  })
+
+  it('throws a clear, located error for an out-of-enum atom kind', () => {
+    expect(() => parseDraft(draftWith({ kind: 'fact' }))).toThrow(
+      'OpenAI extraction: invalid kind "fact" at atoms[0].kind',
+    )
+  })
+
+  it('throws a clear, located error for an out-of-enum relationship predicate', () => {
+    expect(() => parseDraft(draftWith({ predicate: 'causes' }))).toThrow(
+      'OpenAI extraction: invalid predicate "causes" at relationships[0].predicate',
+    )
+  })
+
+  it('throws a clear, located error for an out-of-enum atom anchor support_state', () => {
+    expect(() => parseDraft(draftWith({ atomSupport: 'maybe' }))).toThrow(
+      'OpenAI extraction: invalid support_state "maybe" at atoms[0].anchors[0].support_state',
+    )
+  })
+
+  it('throws a clear, located error for an out-of-enum relationship support_state', () => {
+    expect(() => parseDraft(draftWith({ relSupport: 'unsure' }))).toThrow(
+      'OpenAI extraction: invalid support_state "unsure" at relationships[0].support_state',
+    )
+  })
+})
+
+describe('OpenAIAdapter response schema (bd-15)', () => {
+  it('requires minItems:1 on atom anchors so an atom can never have anchors: []', () => {
+    const schema = buildResponseSchema(['anc-1', 'anc-2'])
+    const atoms = (schema.properties as Record<string, { items: unknown }>).atoms
+    const atomItem = atoms.items as { properties: Record<string, unknown> }
+    const anchors = atomItem.properties.anchors as { minItems?: number }
+    expect(anchors.minItems).toBe(1)
   })
 })
 
@@ -746,6 +828,159 @@ describe('assembleExtraction duplicate-id dedupe (bd-13)', () => {
     const outputIds = extraction.derivation.output_ids ?? []
     expect(outputIds).toEqual(['atom-1', 'atom-2', 'rel-good', 'rel-empty'])
     expect(new Set(outputIds).size).toBe(outputIds.length)
+
+    const pack = toPack(ir, extraction)
+    const validation = validatePack(pack)
+    expect(validation.errors).toEqual([])
+    expect(validation.ok).toBe(true)
+  })
+})
+
+describe('assembleExtraction pack-global id uniqueness (bd-15)', () => {
+  // Assemble against a real source's anchors, then wrap for end-to-end validation.
+  async function assembleBundle(draft: DraftBundle): Promise<{
+    ingestResult: IngestResult
+    extraction: ExtractionResult
+  }> {
+    const ingestResult = await ingest(TRANSCRIPT)
+    const validAnchorIds = new Set(ingestResult.anchors.map((a) => a.id))
+    const extraction = assembleExtraction({
+      sourceAssetId: ingestResult.source.id,
+      derivationId: `der-extract-${ingestResult.source.id}`,
+      validAnchorIds,
+      draft,
+      cost: { tokens_in: 0, tokens_out: 0, usd: 0 },
+      createdAt: '2026-06-01T12:00:00.000Z',
+    })
+    return { ingestResult, extraction }
+  }
+
+  it('DROPS an atom whose id collides with an INPUT ANCHOR id (reserved); pack validates clean', async () => {
+    const ingestResult = await ingest(TRANSCRIPT)
+    const [a1, a2] = ingestResult.anchors
+    const draft: DraftBundle = {
+      atoms: [
+        // This atom's id collides with a reserved input anchor id — must be dropped.
+        {
+          id: a1!.id,
+          kind: 'model',
+          title: 'Colliding atom — dropped',
+          summary: 'Its id equals an input anchor id.',
+          body: 'Interest compounds when earnings are reinvested.',
+          anchors: [{ anchor_id: a1!.id, support_state: 'supports' }],
+        },
+        // A normal, non-colliding atom — kept.
+        {
+          id: 'atom-2',
+          kind: 'claim',
+          title: 'Small rate beats',
+          summary: 'A small rate over time beats a large rate.',
+          body: 'A small rate, given enough time, beats a large rate.',
+          anchors: [{ anchor_id: a2!.id, support_state: 'partially' }],
+        },
+      ],
+      relationships: [],
+    }
+
+    const { ingestResult: ir, extraction } = await assembleBundle(draft)
+
+    // The colliding atom is gone; only the clean one survives.
+    expect(extraction.atoms.map((a) => a.id)).toEqual(['atom-2'])
+    expect(extraction.derivation.output_ids).toEqual(['atom-2'])
+
+    const pack = toPack(ir, extraction)
+    const validation = validatePack(pack)
+    expect(validation.errors).toEqual([])
+    expect(validation.ok).toBe(true)
+  })
+
+  it('DROPS a relationship whose id collides with a kept ATOM id; pack validates clean', async () => {
+    const ingestResult = await ingest(TRANSCRIPT)
+    const [a1, a2] = ingestResult.anchors
+    const draft: DraftBundle = {
+      atoms: [
+        {
+          id: 'atom-1',
+          kind: 'model',
+          title: 'Compounding',
+          summary: 'Earnings reinvested compound.',
+          body: 'Interest compounds when earnings are reinvested.',
+          anchors: [{ anchor_id: a1!.id, support_state: 'supports' }],
+        },
+        {
+          id: 'atom-2',
+          kind: 'claim',
+          title: 'Small rate beats',
+          summary: 'A small rate over time beats a large rate.',
+          body: 'A small rate, given enough time, beats a large rate.',
+          anchors: [{ anchor_id: a2!.id, support_state: 'partially' }],
+        },
+      ],
+      relationships: [
+        // id collides with kept atom "atom-1" — cross-collection collision; dropped.
+        {
+          id: 'atom-1',
+          from_atom_id: 'atom-1',
+          to_atom_id: 'atom-2',
+          predicate: 'explains',
+        },
+        // A normal, non-colliding relationship — kept.
+        {
+          id: 'rel-ok',
+          from_atom_id: 'atom-2',
+          to_atom_id: 'atom-1',
+          predicate: 'requires',
+        },
+      ],
+    }
+
+    const { ingestResult: ir, extraction } = await assembleBundle(draft)
+
+    expect(extraction.relationships.map((r) => r.id)).toEqual(['rel-ok'])
+    expect(extraction.derivation.output_ids).toEqual([
+      'atom-1',
+      'atom-2',
+      'rel-ok',
+    ])
+
+    const pack = toPack(ir, extraction)
+    const validation = validatePack(pack)
+    // Specifically: no cross_collection_duplicate_id (and no errors at all).
+    expect(validation.errors.map((e) => e.code)).not.toContain(
+      'cross_collection_duplicate_id',
+    )
+    expect(validation.errors).toEqual([])
+    expect(validation.ok).toBe(true)
+  })
+
+  it('DROPS an atom whose id collides with the source asset id (reserved); pack validates clean', async () => {
+    const ingestResult = await ingest(TRANSCRIPT)
+    const [a1, a2] = ingestResult.anchors
+    const draft: DraftBundle = {
+      atoms: [
+        // id collides with the reserved source asset id — dropped.
+        {
+          id: ingestResult.source.id,
+          kind: 'model',
+          title: 'Collides with source id — dropped',
+          summary: 'Reserved id collision.',
+          body: 'Interest compounds when earnings are reinvested.',
+          anchors: [{ anchor_id: a1!.id, support_state: 'supports' }],
+        },
+        {
+          id: 'atom-keep',
+          kind: 'claim',
+          title: 'Kept',
+          summary: 'A clean atom.',
+          body: 'A small rate, given enough time, beats a large rate.',
+          anchors: [{ anchor_id: a2!.id, support_state: 'partially' }],
+        },
+      ],
+      relationships: [],
+    }
+
+    const { ingestResult: ir, extraction } = await assembleBundle(draft)
+    expect(extraction.atoms.map((a) => a.id)).toEqual(['atom-keep'])
 
     const pack = toPack(ir, extraction)
     const validation = validatePack(pack)

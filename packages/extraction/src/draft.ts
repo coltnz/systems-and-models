@@ -93,13 +93,17 @@ export class UnknownAnchorError extends Error {
  * model output) can never smuggle in a fabricated anchor.
  *
  * It is also the authoritative chokepoint for graph-integrity, so a draft from
- * ANY adapter is always free of graph errors (bd-12, bd-13). Concretely it:
- *   - DROPS any atom or relationship whose `id` already appeared earlier in the
- *     draft (keep-FIRST dedupe), so a model can't emit a `duplicate_id` graph
- *     error. We drop rather than rename because a relationship endpoint may
- *     reference a duplicated atom id: dropping keeps the FIRST definition intact
- *     so that reference still resolves, whereas renaming would silently break it
- *     (bd-13),
+ * ANY adapter is always free of graph errors (bd-12, bd-13, bd-15). Concretely it:
+ *   - DROPS any atom or relationship whose `id` is already taken pack-wide
+ *     (keep-FIRST dedupe). "Taken" is tracked in a single `used` set seeded with
+ *     the RESERVED ids — `sourceAssetId`, `derivationId`, and every input anchor
+ *     id — plus every atom/relationship id kept so far. This subsumes the old
+ *     per-collection dedupe and additionally guarantees extraction never emits a
+ *     globally-colliding id, so the validator's `cross_collection_duplicate_id`
+ *     check can never strand an extraction draft (D-013). We drop rather than
+ *     rename because a relationship endpoint may reference a duplicated atom id:
+ *     dropping keeps the FIRST definition intact so that reference still resolves,
+ *     whereas renaming would silently break it (bd-13),
  *   - DROPS any relationship whose `from_atom_id`/`to_atom_id` is not an atom
  *     produced in this same draft (a dangling endpoint can't be repaired through
  *     the review UI, so it would otherwise block reviewed-save forever), and
@@ -115,17 +119,38 @@ export function assembleExtraction(args: AssembleArgs): {
 } {
   const { validAnchorIds } = args
 
-  // DROP duplicate-id atoms (keep-FIRST, preserve order): a model may emit two
-  // atoms with the same id, which the validator would flag as `duplicate_id`.
-  // We drop the later one rather than rename it because a relationship endpoint
-  // may reference this id — keeping the FIRST definition means that reference
-  // still resolves, whereas renaming would silently break it (bd-13).
-  const seenAtomIds = new Set<string>()
+  // Pack-global id uniqueness chokepoint (bd-15 / D-013). `used` is the set of
+  // ids already taken pack-wide. It is SEEDED with the RESERVED ids extraction
+  // does not own — the source asset, this extract derivation, and every input
+  // anchor id — so a model can never emit an atom/relationship whose id collides
+  // with one of them (which the validator's new `cross_collection_duplicate_id`
+  // check would otherwise strand on the persisted draft). This single set also
+  // subsumes the old per-collection `seenAtomIds`/`seenRelIds` dedupe: any atom
+  // OR relationship whose id is already in `used` is dropped (keep-FIRST).
+  const used = new Set<string>([
+    args.sourceAssetId,
+    args.derivationId,
+    ...validAnchorIds,
+  ])
+
+  // KEPT atom ids only — a SEPARATE set from `used`, because a relationship
+  // endpoint must point at an atom actually produced in this draft, NOT merely
+  // at some reserved/used id (a reserved id is not an atom). The dangling-endpoint
+  // check below reads `atomIds`, never `used` (bd-15).
+  const atomIds = new Set<string>()
+
+  // DROP id-colliding atoms (keep-FIRST, preserve order): a model may emit two
+  // atoms with the same id (the validator would flag `duplicate_id`) or an atom
+  // whose id collides with a reserved id (cross-collection collision). We drop
+  // the later one rather than rename it because a relationship endpoint may
+  // reference this id — keeping the FIRST definition means that reference still
+  // resolves, whereas renaming would silently break it (bd-13).
   const atoms: Atom[] = args.draft.atoms.flatMap((d) => {
-    if (seenAtomIds.has(d.id)) {
+    if (used.has(d.id)) {
       return []
     }
-    seenAtomIds.add(d.id)
+    used.add(d.id)
+    atomIds.add(d.id)
     for (const ref of d.anchors) {
       if (!validAnchorIds.has(ref.anchor_id)) {
         throw new UnknownAnchorError(ref.anchor_id, `atom "${d.id}"`)
@@ -146,27 +171,22 @@ export function assembleExtraction(args: AssembleArgs): {
     return [atom]
   })
 
-  // The atoms this draft actually produced (after dedupe) — a relationship may
-  // only connect atoms inside its own draft. Anything else is a dangling
-  // endpoint. Built from the DEDUPED set, so an edge referencing a duplicated
-  // atom id still resolves to the kept first atom.
-  const atomIds = seenAtomIds
-
-  const seenRelIds = new Set<string>()
   const relationships: Relationship[] = args.draft.relationships.flatMap((d) => {
-    // DROP duplicate-id relationships (keep-FIRST, preserve order): a model may
-    // emit two relationships with the same id, which the validator would flag
-    // as `duplicate_id`. We drop the later one (keep first) — same rationale as
-    // atoms above. Checked FIRST so a kept edge is both unique-id AND (below)
-    // has valid endpoints AND normalized anchors (bd-13).
-    if (seenRelIds.has(d.id)) {
+    // DROP id-colliding relationships (keep-FIRST, preserve order): a model may
+    // emit two relationships with the same id (the validator would flag
+    // `duplicate_id`), or a relationship whose id collides with a reserved id or
+    // a kept atom id (cross-collection collision). We drop the later one (keep
+    // first) — same rationale as atoms above. Checked FIRST so a kept edge is
+    // unique-id AND (below) has valid endpoints AND normalized anchors (bd-13).
+    if (used.has(d.id)) {
       return []
     }
-    seenRelIds.add(d.id)
+    used.add(d.id)
 
-    // DROP dangling-endpoint edges: an edge to an atom not in this draft can't
-    // be repaired through the review UI, so it would block reviewed-save
-    // forever. Skip it entirely (and thus out of derivation.output_ids too).
+    // DROP dangling-endpoint edges: an edge to an atom not produced in THIS draft
+    // can't be repaired through the review UI, so it would block reviewed-save
+    // forever. Tested against `atomIds` (kept atoms), NOT `used` — a reserved id
+    // is not a valid endpoint. Skip it entirely (and thus out of output_ids too).
     if (!atomIds.has(d.from_atom_id) || !atomIds.has(d.to_atom_id)) {
       return []
     }
