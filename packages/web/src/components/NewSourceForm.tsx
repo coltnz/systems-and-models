@@ -8,6 +8,7 @@ import {
   type DraftResult,
   type PackListItem,
 } from '../api'
+import { DEMO_SOURCE } from '../demo-source'
 
 type WebMediaType = Extract<MediaType, 'markdown' | 'text'>
 
@@ -61,6 +62,18 @@ export function NewSourceForm({
       onLoaded(draft)
     } catch (e) {
       onError(e instanceof Error ? e.message : 'failed to generate draft')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function loadDemo() {
+    setBusy(true)
+    try {
+      const draft = await createSourceAndDraft(DEMO_SOURCE)
+      onLoaded(draft)
+    } catch (e) {
+      onError(e instanceof Error ? e.message : 'failed to load demo')
     } finally {
       setBusy(false)
     }
@@ -134,6 +147,9 @@ export function NewSourceForm({
       <div className="row" style={{ marginTop: 8 }}>
         <button className="primary" onClick={() => void generate()} disabled={busy}>
           Generate draft
+        </button>
+        <button onClick={() => void loadDemo()} disabled={busy}>
+          Load demo
         </button>
       </div>
 

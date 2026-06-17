@@ -8,6 +8,7 @@ import {
   structuralResult,
   graphOnlyResult,
 } from './test-fixtures'
+import { DEMO_SOURCE } from './demo-source'
 
 // Mock the typed API client; the App talks ONLY through it (no real network).
 vi.mock('./api', async (importOriginal) => {
@@ -81,6 +82,24 @@ describe('draft load + atom rendering', () => {
     // review_state badges
     const states = screen.getAllByTestId('atom-review-state')
     expect(states.every((s) => s.textContent === 'Generated')).toBe(true)
+  })
+
+  it('loads the bundled demo source in one click', async () => {
+    const pack = makeDraftPack()
+    mocked.createSourceAndDraft.mockResolvedValue({
+      pack_id: pack.id,
+      pack,
+      validation: validResult,
+    })
+
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: /load demo/i }))
+
+    await screen.findByText('Pack: Learning')
+    await waitFor(() =>
+      expect(mocked.createSourceAndDraft).toHaveBeenCalledWith(DEMO_SOURCE),
+    )
   })
 })
 
