@@ -1,7 +1,7 @@
 # Dashboard — Systems & Models alpha
 
 _Mayor-maintained operator view. Updated each orchestration step._
-Last updated: 2026-06-15 · Branch: `claude/issue-4-followups` (off merged master) · **Alpha merged via PR #3. Issue #4 follow-ups (PR #5) — bd-15 + bd-16 + bd-17 done · 177 tests green.**
+Last updated: 2026-06-18 · Context: docs tidy after PR #5 merge · **Alpha merged via PR #3. Issue #4 follow-ups merged via PR #5 — bd-15 + bd-16 + bd-17 done · 177 tests green.**
 
 ## Issue #4 follow-ups (post-merge hardening)
 - ✅ **bd-15 (3d508ae):** parseDraft runtime enum validation; atom `anchors minItems:1`; pack-global id
@@ -74,7 +74,7 @@ Full gate green: **138 tests**.
 
 **bd-14 (PR "@claude review"):** path-traversal + robustness hardening landed; posted the review verdict.
 **Owner re-review of `9b35ff8` (the bd-14 head): "No new findings"** — threads resolved, local gate green
-(150 tests). PR is owner-reviewed clean and merge-ready (merge is the operator's call; no auto-merge).
+(150 tests). This was the final clean state before PR #3 merged.
 - Human-in-the-loop browser click-through of the UI (logic covered by bd-8 tests; live API path verified).
 - Probe-execution decisions still owed by the operator (non-blocking for the build): named first
   learner + creator, the specific dense source talk, and confirmed kill thresholds (operating brief §"blockers").
@@ -88,7 +88,7 @@ tree contention. (Agent worktrees branch from master and can't see merged scaffo
 only for the read-only audits.)
 
 ## Decisions
-See `ai/decisions.md` (D-001…D-012).
+See `ai/decisions.md` (D-000…D-015).
 
 ## Open product questions (non-blocking — recommended defaults taken)
 - First named learner + creator, first source talk, kill thresholds (operating brief §"blockers").
